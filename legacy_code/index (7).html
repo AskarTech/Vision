@@ -1,0 +1,1676 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <title>Vision | المتجر</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+
+    <style>
+    :root{
+      /* Brand */
+      --teal:#00bdae; --teal-600:#07a79a;
+      --purple:#7338a2;
+      --purple-light:#f3eef7;
+      --teal-light:#e8fbf7;
+      --red: #f94f51;
+      --red-light: #fef2f2;
+      --blue-light: #eff6ff;
+      --blue: #3b82f6;
+      --orange-light: #fff7ed;
+      --orange: #f97316;
+      --floosak: #0185b3;
+
+      /* UI */
+      --ink:#0b1220; --muted:#667085; --line:#e6eaef; --bg:#f8f9fa; --card:#fff;
+      --r12:12px; --r16:16px; --r20:20px; --r24:24px;
+      --shadow-sm:0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md:0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+      --shadow-lg:0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+      --ease:cubic-bezier(.2,.7,.2,1); 
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1); 
+
+      /* Gradients */
+      --grad-chip:linear-gradient(135deg,var(--teal),var(--teal-600));
+      --grad-cta:linear-gradient(135deg,var(--teal) 0%, var(--purple) 100%);
+      --grad-daily: linear-gradient(135deg, var(--red) 0%, var(--teal-600) 100%);
+      --grad-weekly: linear-gradient(135deg, var(--purple) 0%, var(--red) 100%);
+      --grad-monthly: linear-gradient(135deg, var(--teal) 0%, var(--purple) 100%);
+      --nav-h: 90px; 
+    }
+
+    /* ================= FORCE FONT GLOBAL FIX ================= */
+    * { box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+    button, input, select, textarea { font-family: 'Cairo', sans-serif !important; }
+    /* ========================================================= */
+
+    html, body{ margin:0; padding:0; }
+    body{
+      background: var(--bg); color: var(--ink);
+      /* font-family set globally above */
+      min-height: 100vh; overflow-y: auto; text-size-adjust: 100%;
+    }
+    .app{
+      max-width: 480px; margin: 0 auto; box-sizing: border-box; min-height: 100vh;
+      overflow-y: auto; padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom));
+    }
+
+    /* ===================== HEADER ===================== */
+    .topbar{position:sticky;top:0;z-index:60}
+    .topbar__glass{
+      position:relative; padding: 10px 16px; border-bottom:1px solid rgba(255,255,255,.30);
+      backdrop-filter:saturate(150%) blur(10px); border-radius:0 0 18px 18px;
+      background: linear-gradient(125deg, rgba(115, 56, 162, 0.75) 0%, rgba(249, 79, 81, 0.7) 50%, rgba(0, 189, 174, 0.75) 100%);
+      background-size: 300% 300%; animation: headerFlow 10s ease-in-out infinite;
+      box-shadow: 0 10px 26px rgba(249, 79, 81, .12), 0 8px 20px rgba(115, 56, 162, .1);
+    }
+    @keyframes headerFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    .topbar__in{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 2px; color:#fff; min-height: 44px; }
+    .topbar__logo { max-height: 44px; width: auto; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,.1); border: 1px solid rgba(255,255,255,.2); }
+    .topbar__subtitle { display:block; font-size: 12px; font-weight: 600; opacity:.95; letter-spacing: .2px; }
+
+    /* ===================== TABS ===================== */
+    .tabs-container { position: sticky; top: 72px; z-index: 50; background: var(--bg); padding: 8px 16px; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
+    .tabs-container::-webkit-scrollbar { display: none; }
+    .tabs-nav { position: relative; display: flex; flex-wrap: nowrap; list-style: none; margin: 0; padding: 4px; background: #ebeef2; border-radius: var(--r20); }
+    .tabs-glider { position: absolute; top: 4px; left: 0; height: calc(100% - 8px); background: var(--card); border-radius: var(--r16); box-shadow: 0 4px 10px rgba(11,18,32,.1); transition: transform 0.4s var(--ease-out), width 0.4s var(--ease-out); z-index: 1; }
+    .tab-item { display: block; flex: 1 0 auto; text-align: center; white-space: nowrap; }
+    .tab-item a { display: block; padding: 10px 16px; text-decoration: none; font-size: 14px; font-weight: 700; color: var(--muted); position: relative; z-index: 2; transition: color 0.3s var(--ease); }
+    .tab-item.active a { color: var(--purple); }
+
+    /* ================= NEW FILTER CHIPS (ADDED) ================= */
+    .filter-scroll-area {
+        padding: 12px 16px 4px;
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        scrollbar-width: none; /* Firefox */
+        -webkit-overflow-scrolling: touch;
+        background: var(--bg);
+    }
+    .filter-scroll-area::-webkit-scrollbar { display: none; }
+    
+    .filter-chip {
+        background: #fff;
+        border: 1px solid var(--line);
+        padding: 8px 16px;
+        border-radius: 99px;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--muted);
+        white-space: nowrap;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .filter-chip:hover { transform: translateY(-1px); }
+    .filter-chip.active {
+        background: var(--teal);
+        color: #fff;
+        border-color: var(--teal);
+        box-shadow: 0 4px 12px rgba(0, 189, 174, 0.25);
+    }
+    /* ========================================================== */
+
+    .section{padding:16px}
+    
+    /* === RECTANGULAR CARDS LAYOUT === */
+    .pkg-grid { 
+        display: grid; 
+        grid-template-columns: 1fr;
+        gap: 12px; 
+    }
+    
+    .pkg-card { 
+        position: relative; 
+        border-radius: var(--r20); 
+        box-shadow: var(--shadow-lg); 
+        padding: 16px 20px; 
+        color: #fff; 
+        display: flex; 
+        flex-direction: row; 
+        align-items: center;
+        justify-content: space-between;
+        height: auto; 
+        min-height: 100px;
+        overflow: hidden; 
+    }
+    
+    .pkg-card::after { content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; background:linear-gradient(115deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.2) 20%, rgba(255,255,255,0) 42%); background-size:200% 100%; mix-blend-mode:soft-light; animation: sheen 6.8s ease-in-out infinite; }
+    
+    .pkg-content { display: flex; flex-direction: column; gap: 4px; flex: 1; text-align: right; z-index: 2; }
+    .pkg-name { font-size: 18px; font-weight: 800; text-shadow: 0 1px 3px rgba(0,0,0,0.15); margin-bottom: 0; }
+    .pkg-network { font-size: 13px; font-weight: 600; opacity: 0.9; }
+
+    .pkg-data { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 16px; border-right: 1px solid rgba(255,255,255,0.2); border-left: 1px solid rgba(255,255,255,0.2); margin: 0 12px; z-index: 2; min-width: 80px; }
+    .pkg-amount { font-size: 28px; font-weight: 900; line-height: 1; text-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    .pkg-unit { font-size: 12px; font-weight: 700; margin-top: 2px; }
+
+    .pkg-actions { display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 2; min-width: 85px; }
+    .pkg-price-tag { background: rgba(255, 255, 255, 0.25); border-radius: 10px; padding: 4px 10px; font-size: 13px; font-weight: 800; backdrop-filter: blur(5px); white-space: nowrap; }
+    
+    /* === Buy Button Style === */
+    .pkg-buy-btn {
+        background: #fff;
+        color: var(--teal-600);
+        border: none;
+        padding: 8px 16px;
+        border-radius: 99px;
+        font-size: 14px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+    .pkg-buy-btn svg { width: 18px; height: 18px; stroke-width: 2.5; }
+    .pkg-buy-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 20px rgba(0,0,0,0.2); background: #f8fafc; }
+    .pkg-buy-btn:active { transform: scale(0.95); }
+    
+    .pkg-card.disabled { filter: grayscale(1); opacity: 0.8; }
+    .pkg-card.disabled .pkg-buy-btn { pointer-events: none; opacity: 0.5; }
+
+    /* ===================== FLOATING NAVBAR ===================== */
+    .navbar { 
+        position: fixed; 
+        bottom: 20px; 
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 32px);
+        max-width: 448px;
+        /* UPDATED Z-INDEX: Safe high value */
+        z-index: 100000; 
+        background: rgba(255, 255, 255, 0.9); 
+        backdrop-filter: blur(20px); 
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 24px;
+        padding: 12px 16px; 
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .navbar__in { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+    
+    .navbar__actions { 
+        display: flex; align-items: center; width: 100%; 
+        justify-content: space-between; 
+        padding: 0 10px;
+    }
+    
+    .navbar__action { 
+        position: relative; 
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        background: transparent; border: none; cursor: pointer; color: var(--muted); 
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 6px 12px;
+        border-radius: 16px;
+        text-decoration: none;
+        gap: 4px;
+        min-width: 60px;
+    }
+    .navbar__action:hover { color: var(--purple); background: #f1f5f9; }
+    .navbar__action.active { color: var(--teal-600); background: var(--teal-light); }
+    
+    .navbar__icon-box { position: relative; display: grid; place-items: center; }
+    .navbar__label { font-size: 11px; font-weight: 700; margin-top: 0; }
+    
+    .navbar__badge { 
+        position: absolute; top: -6px; right: -8px; 
+        width: 18px; height: 18px; background: var(--red); 
+        color: #fff; font-size: 10px; font-weight: 800; 
+        line-height: 18px; text-align: center; border-radius: 50%; 
+        border: 2px solid #fff; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transform: scale(0); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .navbar__badge.visible { transform: scale(1); }
+
+    /* Cart Bump Animation */
+    @keyframes bump { 0% { transform: scale(1); } 50% { transform: scale(1.4); } 100% { transform: scale(1); } }
+    .bump { animation: bump 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
+
+    /* ===================== MODALS ===================== */
+    .modal { 
+        position: fixed; inset: 0; 
+        /* UPDATED Z-INDEX: Higher than Navbar, lower than Toasts */
+        z-index: 300000; 
+        display: flex; align-items: flex-end; justify-content: center; opacity: 0; visibility: hidden; transition: opacity .3s var(--ease), visibility 0s .3s; 
+    }
+    .modal.is-visible { opacity: 1; visibility: visible; }
+    .modal__backdrop { position: absolute; inset: 0; background: rgba(11, 18, 32, 0.4); backdrop-filter: blur(4px); opacity: 0; transition: opacity .3s var(--ease); }
+    .modal.is-visible .modal__backdrop { opacity: 1; }
+    .modal__dialog { position: relative; z-index: 10; background: var(--bg); border-radius: var(--r24) var(--r24) 0 0; padding: 0; text-align: center; width: 100%; max-width: 480px; margin: 0 auto; transform: translateY(100%); transition: transform .4s var(--ease-out); max-height: 92vh; display: flex; flex-direction: column; overflow: hidden; }
+    .modal.is-visible .modal__dialog { transform: translateY(0); }
+    .modal__header { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; background:var(--card); border-bottom:1px solid var(--line); }
+    .modal__title { margin: 0; font-size: 18px; font-weight: 800; color: var(--ink); }
+    .modal__close-btn { background: var(--bg); border: none; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+    .modal__body { padding: 20px; overflow-y: auto; }
+    .modal__footer { padding: 16px 24px; background:var(--card); border-top:1px solid var(--line); }
+
+    /* ===================== NEW PROFILE DESIGN ===================== */
+    .profile-wrapper { display: flex; flex-direction: column; height: 100%; background: #f8fafc; }
+    .profile-scroll-area { flex: 1; overflow-y: auto; padding-bottom: 30px; }
+
+    /* Header Section */
+    .profile-hero {
+        background: #fff; padding: 30px 20px 24px;
+        display: flex; flex-direction: column; align-items: center;
+        border-bottom: 1px solid var(--line); margin-bottom: 20px;
+    }
+    .profile-avatar-lg {
+        width: 90px; height: 90px; border-radius: 50%;
+        background: var(--grad-cta); color: #fff;
+        font-size: 36px; font-weight: 800; display: grid; place-items: center;
+        box-shadow: 0 10px 20px rgba(115, 56, 162, 0.2);
+        margin-bottom: 12px; position: relative; border: 4px solid #fff;
+    }
+    .profile-avatar-lg::after {
+        content: ""; position: absolute; bottom: 4px; right: 4px;
+        width: 20px; height: 20px; background: #10b981; border: 3px solid #fff;
+        border-radius: 50%;
+    }
+    .profile-name-lg { font-size: 22px; font-weight: 900; color: var(--ink); margin-bottom: 4px; }
+    .profile-phone-lg { 
+        font-family: monospace; font-size: 14px; color: var(--muted); 
+        background: #f1f5f9; padding: 4px 12px; border-radius: 99px; font-weight: 600;
+    }
+
+    /* Premium Wallet Card */
+    .wallet-premium {
+        margin: 0 20px 24px;
+        background: linear-gradient(120deg, #1e293b 0%, #0f172a 100%);
+        border-radius: 24px; padding: 24px; color: #fff;
+        position: relative; overflow: hidden;
+        box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.3);
+        display: flex; flex-direction: column; gap: 20px;
+    }
+    .wallet-premium::before { content:""; position:absolute; top:-50px; right:-50px; width:150px; height:150px; background:var(--teal); filter:blur(60px); opacity:0.3; }
+    .wallet-premium::after { content:""; position:absolute; bottom:-40px; left:-20px; width:120px; height:120px; background:var(--purple); filter:blur(50px); opacity:0.4; }
+    .wp-top { display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 2; }
+    .wp-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; }
+    .wp-logo { font-weight: 800; font-size: 14px; letter-spacing: 1px; }
+    .wp-balance { font-size: 38px; font-weight: 900; line-height: 1; letter-spacing: -1px; position: relative; z-index: 2; }
+    .wp-currency { font-size: 16px; font-weight: 500; opacity: 0.8; margin-right: 4px; }
+    .wp-actions { position: relative; z-index: 2; display: flex; gap: 10px; }
+    .wp-btn {
+        flex: 1; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.1); padding: 12px;
+        border-radius: 14px; color: #fff; font-size: 13px; font-weight: 700;
+        cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+        transition: background 0.2s;
+    }
+    .wp-btn:hover { background: rgba(255,255,255,0.2); }
+
+    /* Transactions Section */
+    .trans-section { padding: 0 20px; }
+    .trans-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .trans-title { font-size: 16px; font-weight: 800; color: var(--ink); }
+    .trans-list { display: flex; flex-direction: column; gap: 10px; }
+    .trans-item {
+        background: #fff; padding: 14px; border-radius: 16px;
+        display: flex; align-items: center; justify-content: space-between;
+        border: 1px solid transparent; box-shadow: var(--shadow-sm);
+        transition: all 0.2s ease; cursor: default;
+    }
+    .trans-item.is-clickable { cursor: pointer; }
+    .trans-item.is-clickable:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--blue-light); }
+    .trans-item:active { transform: scale(0.98); }
+
+    .ti-icon {
+        width: 42px; height: 42px; border-radius: 12px; 
+        display: grid; place-items: center; flex-shrink: 0; margin-left: 14px;
+    }
+    .ti-icon.credit { background: var(--teal-light); color: var(--teal-600); }
+    .ti-icon.debit { background: var(--red-light); color: var(--red); }
+    .ti-info { flex-grow: 1; }
+    .ti-title { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 2px; }
+    .ti-date { font-size: 12px; color: var(--muted); font-weight: 500; }
+    .ti-amount { font-weight: 800; font-size: 15px; direction: ltr; }
+    .ti-arrow { margin-right: 10px; color: #cbd5e1; }
+
+    /* Enhanced Invoice Styles */
+    .inv-container { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-md); position: relative; margin-bottom: 16px; }
+    .inv-container::before {
+        content: ""; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+        background: repeating-linear-gradient(45deg, var(--teal), var(--teal) 10px, var(--purple) 10px, var(--purple) 20px);
+    }
+    .inv-header { padding: 20px 20px 0; text-align: center; }
+    .inv-total { font-size: 32px; font-weight: 900; color: var(--ink); margin-bottom: 4px; letter-spacing: -1px; }
+    .inv-date { font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 20px; display: inline-block; background: #f1f5f9; padding: 4px 12px; border-radius: 20px; }
+
+    .inv-item-card { 
+        margin: 0 16px 16px; border: 1px solid var(--line); border-radius: 12px; 
+        overflow: hidden; background: #fcfcfc;
+    }
+    .inv-item-head { 
+        padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;
+        background: #fff; border-bottom: 1px dashed var(--line);
+    }
+    .inv-item-name { font-weight: 700; font-size: 14px; color: var(--ink); }
+    .inv-item-price { font-weight: 700; font-size: 13px; color: var(--muted); }
+
+    .inv-code-area { 
+        padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;
+        gap: 12px; background: #fafafa;
+    }
+    .inv-code-val { 
+        font-family: 'Courier New', Courier, monospace; font-size: 16px; font-weight: 700; 
+        color: var(--ink); letter-spacing: 1px; background: #fff; padding: 8px 12px;
+        border: 1px solid var(--line); border-radius: 8px; flex-grow: 1; text-align: center;
+    }
+    .inv-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .inv-btn { 
+        width: 36px; height: 36px; border-radius: 8px; border: none; cursor: pointer; 
+        display: grid; place-items: center; transition: background 0.2s;
+    }
+    .inv-btn-copy { background: var(--blue-light); color: var(--blue); }
+    .inv-btn-copy:hover { background: #dbeafe; }
+    .inv-btn-report { background: var(--red-light); color: var(--red); }
+    .inv-btn-report:hover { background: #fee2e2; }
+
+    /* Common UI */
+    .btn{ flex:1; appearance:none; border:none; border-radius:var(--r16); padding:14px 16px; cursor:pointer; font-weight:800; font-size:15px; font-family:inherit; display:inline-flex; gap:10px; align-items:center; justify-content:center; }
+    .btn--brand{ background:var(--grad-cta); color:#ffffff; box-shadow:0 10px 26px rgba(0,189,174,.22); }
+    .btn--danger{ background: var(--red-light); color: var(--red); }
+    .form-input { width: 100%; padding: 14px; border-radius: var(--r16); border: 1px solid var(--line); margin-bottom: 10px; }
+    select.form-input { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: left 1rem center; background-size: 1em; }
+    .file-upload-box { border: 2px dashed var(--line); padding: 20px; text-align: center; border-radius: var(--r16); cursor: pointer; color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+    .bank-details-box { background: #f1f5f9; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #cbd5e1; font-size: 14px; display: none; }
+
+    /* Login Input Styles */
+    .phone-input-group {
+        display: flex;
+        border: 1px solid var(--line);
+        border-radius: var(--r16);
+        overflow: hidden;
+        margin-bottom: 10px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .phone-input-group:focus-within {
+        border-color: var(--teal);
+        box-shadow: 0 0 0 3px rgba(0,189,174,0.1);
+    }
+    .country-select {
+        background: #f1f5f9;
+        border: none;
+        padding: 14px 10px;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--ink);
+        border-left: 1px solid var(--line);
+        cursor: pointer;
+        outline: none;
+        appearance: none;
+        width: 100px;
+        text-align: center;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: left 10px center;
+        background-size: 14px;
+    }
+    .phone-input {
+        flex-grow: 1;
+        border: none;
+        padding: 14px;
+        font-size: 15px;
+        outline: none;
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: 600;
+        /* Remove Arrows */
+        -moz-appearance: textfield; 
+    }
+    /* Remove Arrows Chrome/Safari */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Success Modal Styles */
+    #topupSuccessModal .modal__dialog { text-align: center; padding-bottom: 20px; }
+    .success-icon { width: 70px; height: 70px; background: #d1fae5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 20px auto 10px; }
+    .success-icon svg { width: 40px; height: 40px; color: #059669; stroke-width: 2.5; }
+    .success-title { font-size: 20px; font-weight: 800; color: var(--teal-600); margin-bottom: 10px; }
+    .success-message { font-size: 15px; color: var(--muted); line-height: 1.6; margin-bottom: 20px; padding: 0 20px; }
+    .support-link { color: var(--blue); font-weight: 700; text-decoration: none; background: var(--blue-light); padding: 4px 10px; border-radius: 8px; }
+
+    /* Loader */
+    #preloader { 
+        position: fixed; inset: 0; 
+        /* UPDATED Z-INDEX: Middle Layer */
+        z-index: 200000; 
+        background: linear-gradient(125deg, var(--purple) 0%, var(--red) 50%, var(--teal) 100%); display: grid; place-items: center; transition: transform 0.8s var(--ease-out) 0.3s, visibility 0s 1.1s; 
+    }
+    body.is-loaded #preloader { transform: translateY(-100%); visibility: hidden; }
+
+    /* ================= TOAST NOTIFICATIONS (NEW) ================= */
+    .toast-box { 
+        position: fixed; top: 16px; left: 50%; transform: translateX(-50%); 
+        /* UPDATED Z-INDEX: Absolute Highest */
+        z-index: 400000; 
+        display: flex; flex-direction: column; gap: 8px; 
+        width: 90%; max-width: 400px; pointer-events: none; 
+    }
+    .toast { 
+        background: rgba(255, 255, 255, 0.95); 
+        backdrop-filter: blur(10px);
+        padding: 14px 16px; border-radius: 14px; 
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15), 0 4px 10px rgba(0,0,0,0.05); 
+        display: flex; align-items: center; gap: 12px; 
+        animation: toastSlideDown 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); 
+        pointer-events: auto; border: 1px solid rgba(255,255,255,0.5);
+        color: var(--ink); font-weight: 700; font-size: 14px;
+        transition: opacity 0.3s, transform 0.3s;
+    }
+    .toast.hide { opacity: 0; transform: translateY(-20px); }
+    @keyframes toastSlideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    
+    .toast-icon { width: 24px; height: 24px; flex-shrink: 0; border-radius: 50%; display: grid; place-items: center; }
+    .toast-icon svg { width: 16px; height: 16px; stroke-width: 3; color: #fff; }
+    
+    .toast.success .toast-icon { background: var(--teal); box-shadow: 0 4px 10px rgba(0,189,174,0.3); }
+    .toast.error .toast-icon { background: var(--red); box-shadow: 0 4px 10px rgba(249,79,81,0.3); }
+    .toast.warning .toast-icon { background: var(--orange); box-shadow: 0 4px 10px rgba(249,115,22,0.3); }
+
+    /* ========== TABS IN MODAL (New for Floosak) ========== */
+    .modal-tabs { display: flex; gap: 10px; margin-bottom: 20px; background: #f1f5f9; padding: 4px; border-radius: 12px; }
+    .modal-tab { flex: 1; padding: 10px; text-align: center; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 13px; color: var(--muted); transition: 0.2s; }
+    .modal-tab.active { background: #fff; color: var(--ink); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+    /* ================= NEW PAYMENT MODAL STYLES ================= */
+    .pay-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    .pay-method-card {
+        background: #fff; border: 1px solid var(--line); border-radius: 16px;
+        padding: 16px; display: flex; align-items: center; justify-content: space-between;
+        cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative; overflow: hidden;
+    }
+    .pay-method-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--teal); }
+    .pay-method-card:active { transform: scale(0.98); }
+    
+    .pm-info { display: flex; align-items: center; gap: 12px; }
+    .pm-icon { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; flex-shrink: 0; background-size: cover; background-position: center; }
+    .pm-name { font-weight: 800; font-size: 15px; color: var(--ink); display: block; }
+    .pm-desc { font-size: 12px; color: var(--muted); font-weight: 600; display: block; margin-top: 2px; }
+    .pm-arrow { color: #cbd5e1; }
+
+    /* Specific Styles */
+    .pm-icon.wallet { background: var(--grad-cta); color: #fff; }
+    .pm-icon.jawali { background-image: url('https://projects.pegasusx.net/AlmazhariLITE/med/jawali1.png'); background-color: #fff; border: 1px solid #eee; }
+    .pm-icon.floosak { background-image: url('https://projects.pegasusx.net/AlmazhariLITE/med/floosak.png'); background-color: #730846; }
+    .pm-icon.cc { background: #1e293b; color: #fff; }
+
+    .pay-method-card.disabled { opacity: 0.6; filter: grayscale(1); pointer-events: none; }
+    .pay-topup-hint { color: var(--red); font-size: 12px; font-weight: 700; margin-top: 4px; display: block; }
+
+    </style>
+</head>
+<body>
+
+<div id="preloader"><img src="https://projects.pegasusx.net/vision/vlogo.png" alt="vision logo" style="width:100px;"></div>
+
+<!-- Toast Container -->
+<div id="toast-container" class="toast-box"></div>
+
+<div class="app">
+  <header class="topbar">
+    <div class="topbar__glass">
+      <div class="topbar__in">
+        <img src="https://projects.pegasusx.net/vision/vlogo.png" alt="vision logo" class="topbar__logo">
+        <small class="topbar__subtitle">شركة فيجن للاتصالات</small>
+      </div>
+    </div>
+  </header>
+
+  <div class="tabs-container">
+    <ul class="tabs-nav" role="tablist">
+      <div class="tabs-glider"></div> 
+      <li class="tab-item active"><a href="#best_selling" id="tab-best">الأكثر مبيعاً</a></li>
+      <li class="tab-item"><a href="#short_term" id="tab-short">يوم / أسبوع</a></li>
+      <li class="tab-item"><a href="#monthly" id="tab-monthly">شهرية</a></li>
+    </ul>
+  </div>
+
+  <!-- NEW FILTER CONTAINER -->
+  <div id="network-filters" class="filter-scroll-area">
+      <!-- Chips will be injected here by JS -->
+  </div>
+
+  <div class="section" style="padding-top: 12px;">
+    <!-- UPDATED: Added new panels for the 3 categories -->
+    <div id="panel-best_selling" role="tabpanel"><div class="pkg-grid" id="best_selling-packages-container"></div></div>
+    <div id="panel-short_term" role="tabpanel" hidden><div class="pkg-grid" id="short_term-packages-container"></div></div>
+    <div id="panel-monthly" role="tabpanel" hidden><div class="pkg-grid" id="monthly-packages-container"></div></div>
+  </div>
+</div> 
+
+<!-- ELEGANT FLOATING NAVBAR -->
+<nav class="navbar">
+  <div class="navbar__in">
+    <div class="navbar__actions">
+      <!-- Profile Action -->
+      <a href="#" class="navbar__action" id="profile-btn">
+        <div class="navbar__icon-box">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:24px; height:24px; stroke-width:1.8;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A1.875 1.875 0 0 1 18 22.5H6a1.875 1.875 0 0 1-1.501-2.382Z" />
+            </svg>
+        </div>
+        <span class="navbar__label">حسابي</span>
+      </a>
+
+      <!-- Home Action (Active) -->
+      <a href="#" class="navbar__action active">
+        <div class="navbar__icon-box">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:24px; height:24px; stroke-width:1.8;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+            </svg>
+        </div>
+        <span class="navbar__label">الرئيسية</span>
+      </a>
+
+      <!-- Cart Action -->
+      <a href="#" class="navbar__action" id="cart-button">
+        <div class="navbar__icon-box" style="position:relative;">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:24px; height:24px; stroke-width:1.8;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007Z" />
+            </svg>
+            <span class="navbar__badge" id="cart-badge">0</span>
+        </div>
+        <span class="navbar__label">السلة</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- Cart Modal -->
+<div class="modal" id="cartModal" hidden>
+  <div class="modal__backdrop"></div>
+  <div class="modal__dialog modal__dialog--cart">
+    <div class="modal__header">
+      <h3 class="modal__title">سلة المشتريات</h3>
+      <button class="modal__close-btn"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg></button>
+    </div>
+    <div class="modal__body" id="cart-modal-body"></div>
+    <div class="modal__footer">
+      <button class="btn btn--brand" id="checkoutBtn" style="width:100%">متابعة للدفع</button>
+    </div>
+  </div>
+</div>
+
+<!-- Login Modal -->
+<div class="modal" id="loginModal" hidden>
+  <div class="modal__backdrop"></div>
+  <div class="modal__dialog">
+    <div class="modal__header">
+        <h3 class="modal__title">تسجيل الدخول / إنشاء حساب</h3>
+    </div>
+    <div class="modal__body">
+        
+        <!-- STEP 1: Phone Check -->
+        <div id="auth-step-1">
+            <p style="text-align:center; color:var(--muted); margin-bottom:15px;">أدخل رقم جوالك للبدء</p>
+            <div class="phone-input-group">
+                <select id="loginCountryCode" class="country-select">
+                    <option value="+967" selected>🇾🇪 +967</option>
+                    <option value="+966">🇸🇦 +966</option>
+                </select>
+                <input type="tel" id="loginPhone" class="phone-input" placeholder="770000000" inputmode="numeric">
+            </div>
+            <button id="btnCheckPhone" class="btn btn--brand" style="width:100%;">متابعة</button>
+        </div>
+
+        <!-- STEP 2A: Existing User Login -->
+        <div id="auth-step-login" style="display:none;">
+            <p style="text-align:center; color:var(--ink); font-weight:bold; font-size:16px; margin-bottom:5px;">مرحباً <span id="welcomeName" style="color:var(--teal);">...</span> 👋</p>
+            <p style="text-align:center; color:var(--muted); margin-bottom:15px;">أدخل كلمة المرور للمتابعة</p>
+            
+            <input type="password" id="loginPassword" class="form-input" placeholder="كلمة المرور">
+            <button id="btnLogin" class="btn btn--brand" style="width:100%;">تسجيل دخول</button>
+            
+            <button onclick="StoreApp.resetAuthUI()" class="btn" style="width:100%; background:transparent; color:var(--muted); margin-top:10px;">تغيير الرقم</button>
+        </div>
+
+        <!-- STEP 2B: New User Register -->
+        <div id="auth-step-register" style="display:none;">
+            <p style="text-align:center; color:var(--muted); margin-bottom:15px;">حساب جديد! أكمل بياناتك للتسجيل</p>
+            
+            <input type="text" id="regName" class="form-input" placeholder="الاسم الكامل">
+            <input type="password" id="regPassword" class="form-input" placeholder="كلمة المرور (جديدة)">
+            <input type="password" id="regPasswordConfirm" class="form-input" placeholder="تأكيد كلمة المرور">
+            
+            <button id="btnRegister" class="btn btn--brand" style="width:100%;">إنشاء حساب</button>
+            <button onclick="StoreApp.resetAuthUI()" class="btn" style="width:100%; background:transparent; color:var(--muted); margin-top:10px;">رجوع</button>
+        </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TOP UP REQUEST MODAL (UPDATED FOR FLOOSAK) -->
+<div class="modal" id="requestTopupModal" hidden>
+    <div class="modal__backdrop"></div>
+    <div class="modal__dialog">
+        <div class="modal__header">
+            <h3 class="modal__title">شحن الرصيد</h3>
+            <button class="modal__close-btn" onclick="document.getElementById('requestTopupModal').classList.remove('is-visible')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg></button>
+        </div>
+        <div class="modal__body">
+            
+            <div class="modal-tabs">
+                <div class="modal-tab active" onclick="StoreApp.switchTopupTab('manual')">تحويل بنكي</div>
+                <div class="modal-tab" id="tab-floosak" onclick="StoreApp.switchTopupTab('floosak')">دفع إلكتروني (فلوسك)</div>
+            </div>
+
+            <!-- Manual Bank Transfer -->
+            <div id="topup-manual-content">
+                <label style="display:block; text-align:right; font-weight:bold; margin-bottom:5px;">اختر البنك للتحويل</label>
+                <select id="req-bank-select" class="form-input" onchange="StoreApp.onBankSelect()"></select>
+                
+                <div id="bank-details-display" class="bank-details-box"></div>
+
+                <label style="display:block; text-align:right; font-weight:bold; margin-bottom:5px;">المبلغ المحول</label>
+                <input type="number" id="req-amount" class="form-input" placeholder="مثال: 500">
+
+                <label style="display:block; text-align:right; font-weight:bold; margin-bottom:5px;">رقم العملية (آخر 6 أرقام)</label>
+                <input type="text" id="req-ref" class="form-input" placeholder="------">
+
+                <label style="display:block; text-align:right; font-weight:bold; margin-bottom:5px;">إيصال التحويل (صورة)</label>
+                <input type="file" id="req-image" accept="image/*" style="display:none" onchange="StoreApp.handleImagePreview(this)">
+                <div class="file-upload-box" onclick="document.getElementById('req-image').click()" id="req-image-preview">
+                    اضغط لرفع صورة الإيصال
+                </div>
+
+                <label style="display:block; text-align:right; font-weight:bold; margin-bottom:5px;">ملاحظات (اختياري)</label>
+                <input type="text" id="req-comment" class="form-input" placeholder="...">
+                
+                <button class="btn btn--brand" style="width:100%; margin-top:10px;" onclick="StoreApp.submitTopup()">إرسال الطلب</button>
+            </div>
+
+            <!-- Floosak Payment -->
+            <div id="topup-floosak-content" style="display:none;">
+                <div id="floosak-pay-step1">
+                    <p style="text-align:center; color:var(--muted); margin-bottom:15px; font-size:14px;">أدخل رقم محفظتك في فلوسك والمبلغ المطلوب سحبه.</p>
+                    
+                    <label style="display:block; text-align:right; font-weight:bold; margin-bottom:5px;">رقم محفظة فلوسك</label>
+                    <input type="tel" id="floosak-cust-phone" class="form-input" placeholder="9677xxxxxxxx">
+                    
+                    <label style="display:block; text-align:right; font-weight:bold; margin-bottom:5px;">المبلغ (ر.ي)</label>
+                    <input type="number" id="floosak-amount" class="form-input" placeholder="أقل مبلغ 100">
+
+                    <button class="btn btn--brand" style="width:100%; background:#7338a2; margin-top:10px;" onclick="StoreApp.initFloosakPayment()">
+                        متابعة والدفع
+                    </button>
+                </div>
+
+                <div id="floosak-pay-step2" style="display:none;">
+                    <p style="text-align:center; color:var(--teal); font-weight:bold; margin-bottom:5px;">تم إرسال الطلب!</p>
+                    <p style="text-align:center; color:var(--muted); margin-bottom:15px; font-size:13px;">يرجى إدخال رمز التأكيد (OTP) الذي وصل إلى جوالك لإتمام الخصم.</p>
+                    
+                    <input type="text" id="floosak-pay-otp" class="form-input" placeholder="رمز التأكيد (OTP)" style="text-align:center; letter-spacing:2px; font-weight:bold;">
+                    <input type="hidden" id="floosak-purchase-id">
+                    
+                    <button class="btn btn--brand" style="width:100%; background:#7338a2; margin-top:10px;" onclick="StoreApp.confirmFloosakPayment()">
+                        تأكيد الدفع
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- TOP UP SUCCESS MODAL -->
+<div class="modal" id="topupSuccessModal" hidden>
+    <div class="modal__backdrop"></div>
+    <div class="modal__dialog">
+        <div class="success-icon">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+        </div>
+        <h3 class="success-title">تم إرسال الطلب بنجاح!</h3>
+        <p class="success-message">
+            سيصلك إشعار بتأكيد أو رفض الطلب عبر رسالة واتساب على رقمك المسجل.<br><br>
+            في حال تأخرت المعالجة لأكثر من ساعة، نسعد بتواصلك معنا عبر الرقم: <a href="tel:12345678" class="support-link">12345678</a>
+        </p>
+        <div class="modal__footer" style="border:none; padding-top:0;">
+            <button class="btn btn--brand" style="width:100%" onclick="document.getElementById('topupSuccessModal').classList.remove('is-visible')">حسناً، شكراً</button>
+        </div>
+    </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal" id="profileModal" hidden>
+    <div class="modal__backdrop"></div>
+    <div class="modal__dialog" style="padding:0; height: 90vh;">
+        <button class="modal__close-btn" id="profileCloseBtn" style="position:absolute; top:16px; right:16px; z-index:20; background:rgba(255,255,255,0.9);">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+        </button>
+
+        <div class="profile-wrapper">
+            <div class="profile-scroll-area">
+                <div class="profile-hero">
+                    <div class="profile-avatar-lg" id="profileAvatarChar">A</div>
+                    <div class="profile-name-lg" id="displayProfileName">الاسم</div>
+                    <div class="profile-phone-lg" id="displayProfilePhone">0500000000</div>
+                </div>
+
+                <div class="wallet-premium">
+                    <div class="wp-top">
+                        <span class="wp-logo">VISION PAY</span>
+                        <span class="wp-label">محفظتي</span>
+                    </div>
+                    <div>
+                        <div class="wp-balance"><span id="walletBalanceDisplay">0</span> <span class="wp-currency">ر.ي</span></div>
+                    </div>
+                    <div class="wp-actions">
+                        <button id="addFundsBtn" class="wp-btn">
+                            <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:18px"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg> 
+                            شحن الرصيد
+                        </button>
+                    </div>
+                </div>
+
+                <div class="trans-section">
+                    <div class="trans-header">
+                        <span class="trans-title">آخر العمليات</span>
+                    </div>
+                    <div class="trans-list" id="transactionsList"></div>
+                </div>
+
+                <div style="padding: 30px 20px;">
+                    <button id="logoutBtn" class="btn btn--danger" style="width:100%;">تسجيل الخروج</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Transaction Details Modal -->
+<div class="modal" id="transactionDetailsModal" hidden>
+    <div class="modal__backdrop"></div>
+    <div class="modal__dialog" style="height: auto; max-height: 90vh;">
+        <div class="modal__header">
+            <h3 class="modal__title">تفاصيل الفاتورة</h3>
+            <button class="modal__close-btn" onclick="document.getElementById('transactionDetailsModal').classList.remove('is-visible')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg></button>
+        </div>
+        <div class="modal__body" id="transactionDetailsBody" style="background: #f8fafc; padding: 20px;">
+            <!-- Details Injected Here -->
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="purchaseSuccessModal" hidden>
+  <div class="modal__backdrop"></div>
+  <div class="modal__dialog" style="height: auto; max-height: 90vh;">
+    <div class="modal__header">
+        <h3 class="modal__title">عملية ناجحة!</h3>
+        <button class="modal__close-btn" onclick="document.getElementById('purchaseSuccessModal').classList.remove('is-visible')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg></button>
+    </div>
+    <div class="modal__body" style="background: #f8fafc; padding: 20px;">
+        <!-- New Success Body Injected Here -->
+    </div>
+    <div class="modal__footer">
+        <button class="btn btn--brand" onclick="document.getElementById('purchaseSuccessModal').classList.remove('is-visible')" style="width:100%;">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<!-- Report Modal -->
+<div class="modal" id="reportModal" hidden>
+  <div class="modal__backdrop"></div>
+  <div class="modal__dialog">
+    <div class="modal__header">
+        <h3 class="modal__title">إبلاغ عن مشكلة</h3>
+        <button class="modal__close-btn" onclick="document.getElementById('reportModal').classList.remove('is-visible')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg></button>
+    </div>
+    <div class="modal__body">
+        <p style="text-align:right; margin-bottom:10px; color:var(--muted);">يرجى توضيح المشكلة التي واجهتها:</p>
+        <div id="report-code-display" style="background:#f1f5f9; padding:10px; border-radius:12px; font-family:monospace; margin-bottom:15px; font-weight:800; text-align:center; letter-spacing:1px; color:var(--ink);"></div>
+        <input type="text" id="report-reason" class="form-input" placeholder="اكتب التفاصيل هنا...">
+        <input type="hidden" id="report-code-hidden">
+    </div>
+    <div class="modal__footer">
+        <button class="btn btn--brand" onclick="StoreApp.confirmReport()" style="width:100%">إرسال البلاغ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Methods Modal (NEW) -->
+<div class="modal" id="paymentMethodModal" hidden>
+    <div class="modal__backdrop"></div>
+    <div class="modal__dialog">
+        <div class="modal__header">
+            <h3 class="modal__title">اختر طريقة الدفع</h3>
+            <button class="modal__close-btn" onclick="document.getElementById('paymentMethodModal').classList.remove('is-visible')">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+        <div class="modal__body">
+            <p style="text-align: center; color: var(--muted); margin-bottom: 20px;">إجمالي المبلغ: <span id="pm-total-amount" style="font-weight: 800; color: var(--ink);">0</span> ر.ي</p>
+            
+            <div class="pay-grid">
+                <!-- Wallet Option -->
+                <div class="pay-method-card" id="pm-wallet-btn" onclick="StoreApp.handleWalletClick()">
+                    <div class="pm-info">
+                        <div class="pm-icon wallet"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:24px"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M9 9.563C9 9.252 9.252 9 9.563 9h4.874c.311 0 .563.252.563.563v4.874c0 .311-.252.563-.563.563H9.564A.562.562 0 0 1 9 14.437V9.564Z" /></svg></div>
+                        <div>
+                            <span class="pm-name" id="pm-wallet-title">رصيد المحفظة</span>
+                            <span class="pm-desc" id="pm-wallet-balance">الرصيد: 0 ر.ي</span>
+                            <span class="pay-topup-hint" id="pm-wallet-hint" style="display:none;">شحن فوري سريع</span>
+                        </div>
+                    </div>
+                    <div class="pm-arrow"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:20px"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg></div>
+                </div>
+
+                <!-- Jawali Option -->
+                <div class="pay-method-card" style="background-color: #f7921e;" onclick="StoreApp.showDevMessage('جوالي')">
+                    <div class="pm-info">
+                        <div class="pm-icon jawali"></div>
+                        <div>
+                            <span class="pm-name" style="color: white;" >جوالي</span>
+                            <span class="pm-desc" style="color: #eff6ff;" >دفع عبر محفظة جوالي</span>
+                        </div>
+                    </div>
+                    <div class="pm-arrow"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:20px"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg></div>
+                </div>
+
+                <!-- Floosak Option -->
+                <div class="pay-method-card" style="background-color: #009ec3;" onclick="StoreApp.showDevMessage('فلوسك')">
+                    <div class="pm-info">
+                        <div class="pm-icon floosak"></div>
+                        <div>
+                            <span class="pm-name" style="color: white;">فلوسك</span>
+                            <span class="pm-desc" style="color: #eff6ff;">دفع عبر محفظة فلوسك</span>
+                        </div>
+                    </div>
+                    <div class="pm-arrow"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:20px"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg></div>
+                </div>
+
+                <!-- Credit Card Option -->
+                <div class="pay-method-card" style="background-color: #00bdae; onclick="StoreApp.showDevMessage('البطاقة الائتمانية')">
+                    <div class="pm-info">
+                        <div class="pm-icon cc"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:24px"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" /></svg></div>
+                        <div>
+                            <span class="pm-name">بطاقة ائتمانية</span>
+                            <span class="pm-desc">Visa / MasterCard</span>
+                        </div>
+                    </div>
+                    <div class="pm-arrow"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:20px"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Under Development Modal (NEW) -->
+<div class="modal" id="devModal" hidden>
+    <div class="modal__backdrop"></div>
+    <div class="modal__dialog">
+        <div class="modal__header">
+            <h3 class="modal__title">قريباً...</h3>
+            <button class="modal__close-btn" onclick="document.getElementById('devModal').classList.remove('is-visible')">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+        <div class="modal__body" style="text-align: center; padding: 30px 20px;">
+            <div style="width: 60px; height: 60px; background: #f1f5f9; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 15px; color: var(--muted);">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:30px"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.42 15.17L17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z" /></svg>
+            </div>
+            <h3 style="margin-bottom: 8px;">البوابة قيد التطوير</h3>
+            <p style="color: var(--muted); font-size: 14px; line-height: 1.6;">
+                نعمل حالياً على ربط هذه البوابة وسيتم تشغيلها قريباً.
+                <br>الرجاء الدفع حالياً عن طريق <b>شحن محفظة حسابك</b>.
+            </p>
+        </div>
+        <div class="modal__footer">
+            <button class="btn btn--brand" style="width:100%" onclick="document.getElementById('devModal').classList.remove('is-visible'); StoreApp.openTopupRequest();">شحن المحفظة الآن</button>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN SCRIPT (NO FIREBASE) -->
+<script>
+    const API_URL = 'api.php';
+    let db = { cards: [], packages: [], banks: [], payment_methods: [], partners: [] }; // Added partners
+    let tempReqImage = null;
+    
+    // Auth State
+    let currentAuthPhone = "";
+
+    window.StoreApp = {
+        cart: [],
+        currentUserId: localStorage.getItem('vision_user_id'),
+        _userData: null,
+        currentPartnerFilter: 'all', // NEW: Filter State
+
+        get user() {
+            return this._userData || null;
+        },
+
+        init: async () => {
+            await StoreApp.fetchStoreData();
+            
+            // NEW: Check URL for partner filter (?p=ID)
+            const urlParams = new URLSearchParams(window.location.search);
+            const partnerId = urlParams.get('p');
+            if (partnerId) {
+                StoreApp.currentPartnerFilter = partnerId;
+            }
+
+            StoreApp.renderPartnerFilters(); // NEW: Render Filters
+            StoreApp.renderPackages();
+            
+            if(StoreApp.currentUserId) StoreApp.refreshUser();
+            StoreApp.setupUI();
+        },
+
+        // ================= TOAST FUNCTION (REPLACES ALERT) =================
+        showToast: (message, type = 'success') => {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            let icon = '';
+            if(type === 'success') icon = '<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>';
+            else if(type === 'error') icon = '<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>';
+            else icon = '<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>';
+
+            toast.innerHTML = `<div class="toast-icon">${icon}</div><span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            // Auto Remove
+            setTimeout(() => {
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        },
+        // ===================================================================
+
+        fetchStoreData: async () => {
+            try {
+                const res = await fetch(`${API_URL}?action=get_store_data`);
+                const data = await res.json();
+                if(data) {
+                    db.packages = data.packages;
+                    db.cards = data.cards;
+                    db.banks = data.banks;
+                    db.payment_methods = data.payment_methods;
+                    db.partners = data.partners || []; // Get partners list
+                }
+            } catch(e) { console.error(e); }
+        },
+
+        refreshUser: async () => {
+            if(!StoreApp.currentUserId) return;
+            try {
+                const res = await fetch(API_URL + '?action=refresh_user', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({id: StoreApp.currentUserId}) 
+                });
+                const result = await res.json();
+                if(result.success) {
+                    StoreApp._userData = result.user;
+                    if(document.getElementById('profileModal').classList.contains('is-visible')) {
+                        StoreApp.showProfile();
+                    }
+                } else {
+                    localStorage.removeItem('vision_user_id');
+                    StoreApp.currentUserId = null;
+                }
+            } catch(e) {
+                console.error("User refresh error:", e);
+            }
+        },
+
+        // --- NEW: PARTNER FILTERS LOGIC ---
+        renderPartnerFilters: () => {
+            const container = document.getElementById('network-filters');
+            container.innerHTML = '';
+
+            // Add "All" Chip
+            const allChip = document.createElement('div');
+            allChip.className = `filter-chip ${StoreApp.currentPartnerFilter === 'all' ? 'active' : ''}`;
+            allChip.innerText = 'الكل';
+            allChip.onclick = () => { StoreApp.setPartnerFilter('all'); };
+            container.appendChild(allChip);
+
+            // Add Partner Chips
+            db.partners.forEach(p => {
+                const chip = document.createElement('div');
+                chip.className = `filter-chip ${StoreApp.currentPartnerFilter == p.id ? 'active' : ''}`;
+                chip.innerText = p.name;
+                chip.onclick = () => { StoreApp.setPartnerFilter(p.id); };
+                container.appendChild(chip);
+            });
+        },
+
+        setPartnerFilter: (id) => {
+            StoreApp.currentPartnerFilter = id;
+            StoreApp.renderPartnerFilters(); // Refresh chips state
+            StoreApp.renderPackages(); // Refresh packages
+        },
+
+        renderPackages: () => {
+            const types = ['best_selling', 'short_term', 'monthly'];
+            
+            types.forEach(type => {
+                const container = document.getElementById(type + '-packages-container');
+                container.innerHTML = '';
+                
+                // Filter by type AND by selected partner
+                const items = db.packages.filter(p => {
+                    const isTypeMatch = p.categories && p.categories.includes(type);
+                    const isPartnerMatch = StoreApp.currentPartnerFilter === 'all' || p.partner_id == StoreApp.currentPartnerFilter;
+                    return isTypeMatch && isPartnerMatch;
+                });
+
+                if (items.length === 0) {
+                    container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--muted); grid-column:1/-1;">لا توجد باقات متاحة حالياً في هذا القسم.</div>`;
+                    return;
+                }
+
+                items.forEach(pkg => {
+                    // إصلاح: حساب الكروت النشطة فقط (status = 'active')
+                    const stock = db.cards.filter(c => c.pkg_id == pkg.id && c.status === 'active').length;
+                    const isDisabled = stock === 0 ? 'disabled' : '';
+                    const btnText = stock > 0 ? 'شراء' : 'نفذت';
+                    const icon = stock > 0 ? `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>` : '';
+                    
+                    let grad = pkg.grad || 'linear-gradient(135deg, #64748b, #94a3b8)';
+                    if(grad.startsWith('--')) grad = `var(${grad})`;
+
+                    const cardHtml = `
+                    <div class="pkg-card ${isDisabled}" style="background:${grad}">
+                        <div class="pkg-content">
+                            <h3 class="pkg-name">${pkg.name}</h3>
+                            <span class="pkg-network">${pkg.network || 'شبكة عامة'}</span>
+                        </div>
+                        <div class="pkg-data">
+                            <span class="pkg-amount">${pkg.amount}</span>
+                            <span class="pkg-unit">${pkg.unit === 'جيجابايت' ? 'GB' : 'MB'}</span>
+                        </div>
+                        <div class="pkg-actions">
+                            <span class="pkg-price-tag">${pkg.price} ر.ي</span>
+                            <button class="pkg-buy-btn" onclick="StoreApp.addToCart(${pkg.id}, '${pkg.name}', ${pkg.price})">
+                                ${icon} ${btnText}
+                            </button>
+                        </div>
+                    </div>`;
+                    container.innerHTML += cardHtml;
+                });
+            });
+        },
+        // --- END PARTNER FILTERS LOGIC ---
+
+        // --- AUTH FLOW ---
+        
+        resetAuthUI: () => {
+            document.getElementById('auth-step-1').style.display = 'block';
+            document.getElementById('auth-step-login').style.display = 'none';
+            document.getElementById('auth-step-register').style.display = 'none';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('regName').value = '';
+            document.getElementById('regPassword').value = '';
+            document.getElementById('regPasswordConfirm').value = '';
+        },
+
+        formatPhone: (rawPhone, countryCode) => {
+             const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+            let englishPhone = rawPhone;
+            for(let i=0; i<10; i++) {
+                englishPhone = englishPhone.replace(new RegExp(arabicNumbers[i], 'g'), i);
+            }
+            let clean = englishPhone.replace(/[^0-9]/g, '');
+            if(clean.startsWith('967')) clean = clean.substring(3);
+            if(clean.startsWith('966')) clean = clean.substring(3);
+            if(clean.startsWith('0')) clean = clean.substring(1);
+            
+            return countryCode + clean;
+        },
+
+        checkPhone: async () => {
+            const country = document.getElementById('loginCountryCode').value;
+            const rawPhone = document.getElementById('loginPhone').value;
+            if(!rawPhone) return StoreApp.showToast('أدخل رقم الجوال', 'warning'); // ALERT REPLACED
+            
+            currentAuthPhone = StoreApp.formatPhone(rawPhone, country);
+
+            try {
+                const res = await fetch(API_URL + '?action=check_phone', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({phone: currentAuthPhone})
+                });
+                const result = await res.json();
+                
+                document.getElementById('auth-step-1').style.display = 'none';
+                if(result.exists) {
+                    document.getElementById('welcomeName').innerText = result.name;
+                    document.getElementById('auth-step-login').style.display = 'block';
+                } else {
+                    document.getElementById('auth-step-register').style.display = 'block';
+                }
+            } catch(e) {
+                StoreApp.showToast("خطأ في الاتصال بالسيرفر", 'error'); // ALERT REPLACED
+                console.error(e);
+            }
+        },
+
+        registerUser: async () => {
+            const name = document.getElementById('regName').value;
+            const pass = document.getElementById('regPassword').value;
+            const conf = document.getElementById('regPasswordConfirm').value;
+            
+            if(!name || !pass || !conf) return StoreApp.showToast('جميع الحقول مطلوبة', 'warning'); // ALERT REPLACED
+            if(pass !== conf) return StoreApp.showToast('كلمات المرور غير متطابقة', 'warning'); // ALERT REPLACED
+            if(pass.length < 4) return StoreApp.showToast('كلمة المرور قصيرة جداً', 'warning'); // ALERT REPLACED
+
+            try {
+                const res = await fetch(API_URL + '?action=customer_register', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({phone: currentAuthPhone, name: name, password: pass})
+                });
+                const result = await res.json();
+                StoreApp.handleAuthResponse(result);
+            } catch(e) {
+                StoreApp.showToast("خطأ أثناء التسجيل: " + e.message, 'error'); // ALERT REPLACED
+            }
+        },
+
+        loginUser: async () => {
+            const pass = document.getElementById('loginPassword').value;
+            if(!pass) return StoreApp.showToast('أدخل كلمة المرور', 'warning'); // ALERT REPLACED
+            
+            try {
+                const res = await fetch(API_URL + '?action=customer_login_password', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({phone: currentAuthPhone, password: pass})
+                });
+                const result = await res.json();
+                StoreApp.handleAuthResponse(result);
+            } catch(e) {
+                StoreApp.showToast("فشل تسجيل الدخول. تأكد من البيانات.", 'error'); // ALERT REPLACED
+            }
+        },
+
+        handleAuthResponse: (result) => {
+            if(result.success) {
+                StoreApp.currentUserId = result.user.id;
+                StoreApp._userData = result.user;
+                localStorage.setItem('vision_user_id', result.user.id);
+                document.getElementById('loginModal').classList.remove('is-visible');
+                StoreApp.showToast(`مرحباً ${result.user.name}`, 'success'); // ALERT REPLACED
+                StoreApp.updateCartUI();
+                StoreApp.resetAuthUI();
+            } else {
+                StoreApp.showToast(result.message, 'error'); // ALERT REPLACED
+            }
+        },
+
+        // --- END AUTH FLOW ---
+
+        // NEW: Open Payment Options Modal
+        openPaymentModal: async () => {
+            if(!StoreApp.currentUserId) return document.getElementById('loginModal').classList.add('is-visible');
+            
+            // Ensure we have latest balance
+            await StoreApp.refreshUser();
+            
+            const total = StoreApp.cart.reduce((a,b)=>a+b.price,0);
+            document.getElementById('pm-total-amount').innerText = total;
+            
+            const userBalance = parseFloat(StoreApp.user.balance || 0);
+            document.getElementById('pm-wallet-balance').innerText = `الرصيد: ${userBalance.toLocaleString()} ر.ي`;
+            
+            const walletBtnTitle = document.getElementById('pm-wallet-title');
+            const hint = document.getElementById('pm-wallet-hint');
+            
+            // LOGIC FIX: Change Text Based on Balance
+            if(userBalance < total) {
+                walletBtnTitle.innerText = "شحن المحفظة (رصيد غير كافي)";
+                hint.style.display = 'block';
+                hint.innerText = "شحن فوري سريع";
+            } else {
+                walletBtnTitle.innerText = "دفع من رصيد المحفظة";
+                hint.style.display = 'none';
+            }
+            
+            document.getElementById('cartModal').classList.remove('is-visible');
+            document.getElementById('paymentMethodModal').classList.add('is-visible');
+        },
+
+        // NEW: Handle Wallet Click (Pay or Topup)
+        handleWalletClick: () => {
+            const total = StoreApp.cart.reduce((a,b)=>a+b.price,0);
+            const userBalance = parseFloat(StoreApp.user.balance || 0);
+            
+            if (userBalance >= total) {
+                // Sufficient Balance -> Process Payment
+                StoreApp.processWalletPayment();
+            } else {
+                // Insufficient -> Close Payment Modal FIRST, then Open Topup
+                document.getElementById('paymentMethodModal').classList.remove('is-visible');
+                setTimeout(() => {
+                    StoreApp.openTopupRequest();
+                }, 300); // Small delay for smooth transition
+            }
+        },
+
+        // NEW: Show "Under Development" Message
+        showDevMessage: (gatewayName) => {
+            document.getElementById('devModal').classList.add('is-visible');
+        },
+
+        // RENAMED: Old 'checkout' is now 'processWalletPayment'
+        processWalletPayment: async () => {
+             const total = StoreApp.cart.reduce((a,b)=>a+b.price,0);
+             const date = new Date().toLocaleDateString('en-GB');
+             
+             try {
+                 const res = await fetch(API_URL + '?action=checkout', {
+                     method: 'POST',
+                     headers: { 'Content-Type': 'application/json' }, 
+                     body: JSON.stringify({
+                         customerId: StoreApp.currentUserId,
+                         cart: StoreApp.cart,
+                         total: total,
+                         date: date
+                     })
+                 });
+                 
+                 const result = await res.json();
+                 if(result.success) {
+                     StoreApp.cart = [];
+                     StoreApp.updateCartUI();
+                     document.getElementById('paymentMethodModal').classList.remove('is-visible'); // Close Payment Modal
+                     StoreApp.showSuccess(result.purchased, total); 
+                     StoreApp.refreshUser();
+                 } else {
+                     StoreApp.showToast(result.message, 'error');
+                 }
+             } catch(e) {
+                 StoreApp.showToast("حدث خطأ أثناء الشراء", 'error');
+                 console.error(e);
+             }
+        },
+
+        // --- TOP UP LOGIC (UPDATED) ---
+        
+        openTopupRequest: () => {
+             if(!StoreApp.currentUserId) return document.getElementById('loginModal').classList.add('is-visible');
+             
+             // Ensure Payment Modal is Closed (Fix for Z-Index Issue)
+             document.getElementById('paymentMethodModal').classList.remove('is-visible');
+
+             // Populate Bank Select
+             const select = document.getElementById('req-bank-select');
+             select.innerHTML = '<option value="">اختر البنك...</option>';
+             db.banks.forEach(b => { select.innerHTML += `<option value="${b.id}">${b.name}</option>`; });
+             
+             // Reset UI
+             document.getElementById('topup-manual-content').style.display = 'block';
+             document.getElementById('topup-floosak-content').style.display = 'none';
+             document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+             document.querySelector('.modal-tab:first-child').classList.add('active');
+             
+             // Check Floosak Availability
+             if(!db.payment_methods.floosak) {
+                 document.getElementById('tab-floosak').style.display = 'none';
+             } else {
+                 document.getElementById('tab-floosak').style.display = 'block';
+             }
+
+             document.getElementById('profileModal').classList.remove('is-visible');
+             document.getElementById('requestTopupModal').classList.add('is-visible');
+        },
+
+        switchTopupTab: (tab) => {
+            const tabs = document.querySelectorAll('.modal-tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            if(tab === 'manual') {
+                tabs[0].classList.add('active');
+                document.getElementById('topup-manual-content').style.display = 'block';
+                document.getElementById('topup-floosak-content').style.display = 'none';
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('topup-manual-content').style.display = 'none';
+                document.getElementById('topup-floosak-content').style.display = 'block';
+                // Prefill phone if available
+                if(StoreApp.user && StoreApp.user.phone) {
+                    document.getElementById('floosak-cust-phone').value = StoreApp.user.phone;
+                }
+            }
+        },
+
+        submitTopup: async () => {
+            const amount = document.getElementById('req-amount').value;
+            const refCode = document.getElementById('req-ref').value;
+            const bankId = document.getElementById('req-bank-select').value;
+            
+            if(!amount || !refCode || !bankId || !tempReqImage) return StoreApp.showToast('جميع الحقول مطلوبة', 'warning');
+            
+            const bank = db.banks.find(b => b.id == bankId);
+
+            try {
+                const res = await fetch(API_URL + '?action=request_topup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({
+                        customerId: StoreApp.currentUserId,
+                        bankId: bankId,
+                        bankName: bank ? bank.name : '',
+                        amount: amount,
+                        refCode: refCode,
+                        image: tempReqImage,
+                        comment: document.getElementById('req-comment').value,
+                        date: new Date().toLocaleDateString('en-GB')
+                    })
+                });
+                const result = await res.json();
+                if(result.success) {
+                     document.getElementById('requestTopupModal').classList.remove('is-visible');
+                     document.getElementById('topupSuccessModal').classList.add('is-visible');
+                }
+            } catch(e) {
+                StoreApp.showToast("فشل إرسال الطلب.", 'error');
+            }
+        },
+
+        // --- FLOOSAK PAYMENT LOGIC ---
+        initFloosakPayment: async () => {
+            const phone = document.getElementById('floosak-cust-phone').value;
+            const amount = document.getElementById('floosak-amount').value;
+            
+            if(!phone || amount < 100) return StoreApp.showToast('أدخل رقم محفظة صالح ومبلغ لا يقل عن 100', 'warning');
+            
+            try {
+                const res = await fetch(API_URL + '?action=floosak_init_pay', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customer_id: StoreApp.currentUserId,
+                        phone: phone,
+                        amount: amount
+                    })
+                });
+                
+                const result = await res.json();
+                if(result.success) {
+                    document.getElementById('floosak-purchase-id').value = result.purchase_id;
+                    document.getElementById('floosak-pay-step1').style.display = 'none';
+                    document.getElementById('floosak-pay-step2').style.display = 'block';
+                    StoreApp.showToast(result.message, 'success');
+                } else {
+                    StoreApp.showToast("فشل الطلب: " + result.message, 'error');
+                }
+            } catch(e) { StoreApp.showToast("Server Error", 'error'); console.error(e); }
+        },
+
+        confirmFloosakPayment: async () => {
+            const otp = document.getElementById('floosak-pay-otp').value;
+            const purchaseId = document.getElementById('floosak-purchase-id').value;
+            const amount = document.getElementById('floosak-amount').value;
+            
+            if(!otp) return StoreApp.showToast('أدخل الرمز', 'warning');
+            
+            try {
+                const res = await fetch(API_URL + '?action=floosak_confirm_pay', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        otp: otp,
+                        purchase_id: purchaseId,
+                        customer_id: StoreApp.currentUserId,
+                        amount: amount
+                    })
+                });
+                
+                const result = await res.json();
+                if(result.success) {
+                    StoreApp.showToast(result.message, 'success');
+                    document.getElementById('requestTopupModal').classList.remove('is-visible');
+                    StoreApp.refreshUser(); // Update balance immediately
+                } else {
+                    StoreApp.showToast("فشل التأكيد: " + result.message, 'error');
+                }
+            } catch(e) { StoreApp.showToast("Server Error", 'error'); console.error(e); }
+        },
+
+        // --- END FLOOSAK LOGIC ---
+
+        onBankSelect: () => {
+              const bankId = document.getElementById('req-bank-select').value;
+              const display = document.getElementById('bank-details-display');
+              if(!bankId) { display.style.display = 'none'; return; }
+              const bank = db.banks.find(b => b.id == bankId);
+              if(bank) {
+                  display.style.display = 'block';
+                  display.innerHTML = `<strong>${bank.name}</strong><br>رقم الحساب: ${bank.account}<br>الاسم: ${bank.owner}`;
+              }
+        },
+
+        handleImagePreview: (input) => {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempReqImage = e.target.result;
+                    document.getElementById('req-image-preview').innerText = 'تم اختيار الصورة ✅';
+                    document.getElementById('req-image-preview').style.borderColor = 'var(--teal)';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        },
+        
+        addToCart: (id, name, price) => {
+            StoreApp.cart.push({ id: Date.now(), productId: id, name, price });
+            StoreApp.updateCartUI();
+            
+            // Fix animation trigger
+            const cartBadge = document.getElementById('cart-badge');
+            cartBadge.classList.remove('bump');
+            void cartBadge.offsetWidth; // Force reflow
+            cartBadge.classList.add('bump');
+            
+            StoreApp.showToast('تمت الإضافة للسلة', 'success');
+        },
+        
+        removeFromCart: (index) => {
+            StoreApp.cart.splice(index, 1);
+            StoreApp.updateCartUI();
+        },
+
+        updateCartUI: () => {
+            const badge = document.getElementById('cart-badge');
+            badge.textContent = StoreApp.cart.length;
+            if(StoreApp.cart.length > 0) {
+                 badge.style.display = 'block';
+                 badge.classList.add('visible');
+            } else {
+                 badge.classList.remove('visible');
+                 setTimeout(() => badge.style.display = 'none', 300);
+            }
+            
+            const body = document.getElementById('cart-modal-body');
+            if(StoreApp.cart.length === 0) { body.innerHTML = '<p style="text-align:center;color:#666">السلة فارغة</p>'; } 
+            else { 
+                body.innerHTML = StoreApp.cart.map((item, index) => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #eee;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <button onclick="StoreApp.removeFromCart(${index})" style="background:#fee2e2; border:none; color:#ef4444; width:24px; height:24px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+                                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:14px; height:14px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                            <span>${item.name}</span>
+                        </div>
+                        <span style="font-weight:bold">${item.price} ر.ي</span>
+                    </div>
+                `).join('') + `<div style="margin-top:20px; font-weight:900; text-align:center">الإجمالي: ${StoreApp.cart.reduce((a,b)=>a+b.price,0)} ر.ي</div>`; 
+            }
+        },
+        showSuccess: (items, total) => {
+              const body = document.querySelector('#purchaseSuccessModal .modal__body');
+              body.style.background = "#f8fafc";
+              body.style.padding = "20px";
+              
+              const date = new Date().toLocaleDateString('en-GB');
+
+              body.innerHTML = `
+                  <div style="text-align:center; margin-bottom:15px;">
+                      <div style="width:50px; height:50px; background:#d1fae5; color:#059669; border-radius:50%; display:grid; place-items:center; margin:0 auto 10px;">
+                          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:30px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                      </div>
+                      <h4 style="margin:0; color:var(--teal-600);">تم الشراء بنجاح</h4>
+                  </div>
+                  
+                  <div class="inv-container">
+                      <div class="inv-header">
+                          <div class="inv-total">${total} <small style="font-size:16px;">ر.ي</small></div>
+                          <div class="inv-date">${date}</div>
+                      </div>
+                      ${items.map(item => `
+                          <div class="inv-item-card">
+                              <div class="inv-item-head">
+                                  <span class="inv-item-name">${item.name}</span>
+                                  <span class="inv-item-price">${item.price} ر.ي</span>
+                              </div>
+                              <div class="inv-code-area">
+                                  <div class="inv-code-val">${item.code}</div>
+                                  <div class="inv-actions">
+                                      <button class="inv-btn inv-btn-copy" onclick="navigator.clipboard.writeText('${item.code}'); StoreApp.showToast('تم نسخ الكود', 'success')" title="نسخ الكود">
+                                          <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:18px"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" /></svg>
+                                      </button>
+                                      <button class="inv-btn inv-btn-report" onclick="StoreApp.reportIssue('${item.code}')" title="إبلاغ عن مشكلة">
+                                          <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:18px"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" /></svg>
+                                      </button>
+                                  </div>
+                              </div>
+                          </div>
+                      `).join('')}
+                      <div style="height:16px;"></div>
+                  </div>
+              `;
+              document.getElementById('purchaseSuccessModal').classList.add('is-visible');
+        },
+        showProfile: () => {
+            if(!StoreApp.currentUserId) return document.getElementById('loginModal').classList.add('is-visible');
+            const user = StoreApp.user;
+            if(!user) return;
+            document.getElementById('displayProfileName').innerText = user.name;
+            document.getElementById('displayProfilePhone').innerText = user.phone;
+            document.getElementById('profileAvatarChar').innerText = user.name.charAt(0);
+            document.getElementById('walletBalanceDisplay').innerText = parseFloat(user.balance).toLocaleString();
+            const list = document.getElementById('transactionsList');
+            const transactions = user.transactions || [];
+            if (transactions.length === 0) { list.innerHTML = '<p style="color:var(--muted); text-align:center; padding:20px;">لا توجد عمليات سابقة</p>'; } 
+            else { 
+                list.innerHTML = transactions.slice().reverse().map((t, index) => { 
+                    const isCredit = t.type === 'credit'; 
+                    // إصلاح: التعامل مع الهيكل الجديد والقديم
+                    const detailsCards = t.details ? (t.details.cards || (Array.isArray(t.details) ? t.details : null)) : null;
+                    const hasDetails = detailsCards && detailsCards.length > 0; 
+                    const icon = isCredit ? `<svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:20px;height:20px"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>` : `<svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:20px;height:20px"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007Z" /></svg>`; 
+                    const originalIndex = transactions.length - 1 - index; 
+                    return `<div class="trans-item ${hasDetails ? 'is-clickable' : ''}" onclick="${hasDetails ? `StoreApp.openTransactionDetails(${originalIndex})` : ''}"><div class="ti-icon ${isCredit ? 'credit' : 'debit'}">${icon}</div><div class="ti-info" style="margin-right: 14px;"><div class="ti-title">${t.items}</div><div class="ti-date">${t.date}</div></div><div class="ti-amount">${isCredit ? '+' : '-'}${t.amount} ر.ي</div>${hasDetails ? '<div class="ti-arrow"><svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:16px"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg></div>' : ''}</div>`; 
+                }).join(''); 
+            }
+            document.getElementById('profileModal').classList.add('is-visible');
+        },
+        openTransactionDetails: (index) => {
+            const user = StoreApp.user;
+            const t = user.transactions[index];
+            if (!t || !t.details) return;
+            
+            // إصلاح: استخراج الكروت من الهيكل الجديد أو القديم
+            const cards = t.details.cards || (Array.isArray(t.details) ? t.details : []);
+            if(cards.length === 0) return;
+            
+            const body = document.getElementById('transactionDetailsBody');
+            body.innerHTML = `<div class="inv-container"><div class="inv-header"><div class="inv-total">${t.amount} <small style="font-size:16px;">ر.ي</small></div><div class="inv-date">${t.date}</div></div>${cards.map(item => `<div class="inv-item-card"><div class="inv-item-head"><span class="inv-item-name">${item.name}</span><span class="inv-item-price">${item.price} ر.ي</span></div><div class="inv-code-area"><div class="inv-code-val">${item.code}</div><div class="inv-actions"><button class="inv-btn inv-btn-copy" onclick="navigator.clipboard.writeText('${item.code}'); StoreApp.showToast('تم نسخ الكود', 'success')" title="نسخ الكود"><svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:18px"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" /></svg></button><button class="inv-btn inv-btn-report" onclick="StoreApp.reportIssue('${item.code}')" title="إبلاغ عن مشكلة"><svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:18px"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" /></svg></button></div></div></div>`).join('')}<div style="height:16px;"></div></div>`;
+            document.getElementById('transactionDetailsModal').classList.add('is-visible');
+        },
+        
+        reportIssue: (code) => {
+            document.getElementById('report-code-hidden').value = code;
+            document.getElementById('report-code-display').innerText = code;
+            document.getElementById('report-reason').value = '';
+            document.getElementById('reportModal').classList.add('is-visible');
+        },
+
+        confirmReport: async () => {
+            const code = document.getElementById('report-code-hidden').value;
+            const reason = document.getElementById('report-reason').value;
+            
+            if(!reason) return StoreApp.showToast("يرجى كتابة سبب البلاغ", "warning");
+
+            try {
+                const res = await fetch(API_URL + '?action=report_issue', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: code, reason: reason })
+                });
+                const result = await res.json();
+                if(result.success) {
+                    StoreApp.showToast("تم إرسال البلاغ بنجاح", "success");
+                    document.getElementById('reportModal').classList.remove('is-visible');
+                } else {
+                    StoreApp.showToast("حدث خطأ", "error");
+                }
+            } catch(e) {
+                StoreApp.showToast("خطأ في الاتصال", "error");
+            }
+        },
+
+        setupUI: () => {
+            const tabs = document.querySelectorAll('.tab-item a');
+            const glider = document.querySelector('.tabs-glider');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const target = e.currentTarget;
+                    tabs.forEach(t => t.parentElement.classList.remove('active'));
+                    target.parentElement.classList.add('active');
+                    glider.style.width = `${target.parentElement.offsetWidth}px`;
+                    glider.style.transform = `translateX(${target.parentElement.offsetLeft}px)`;
+                    document.querySelectorAll('[role="tabpanel"]').forEach(p => p.hidden = true);
+                    document.querySelector(target.getAttribute('href').replace('#',' #panel-')).hidden = false;
+                });
+            });
+            if(tabs[0]) {
+               glider.style.width = `${tabs[0].parentElement.offsetWidth}px`;
+               glider.style.transform = `translateX(${tabs[0].parentElement.offsetLeft}px)`;
+            }
+
+            document.getElementById('cart-button').onclick = (e) => { e.preventDefault(); document.getElementById('cartModal').classList.add('is-visible'); };
+            document.querySelector('#cartModal .modal__close-btn').onclick = () => document.getElementById('cartModal').classList.remove('is-visible');
+            document.querySelector('#cartModal .modal__backdrop').onclick = () => document.getElementById('cartModal').classList.remove('is-visible');
+            
+            document.getElementById('profile-btn').onclick = (e) => { e.preventDefault(); StoreApp.showProfile(); };
+            document.getElementById('profileCloseBtn').onclick = () => document.getElementById('profileModal').classList.remove('is-visible');
+            document.querySelector('#profileModal .modal__backdrop').onclick = () => document.getElementById('profileModal').classList.remove('is-visible');
+            
+            document.getElementById('addFundsBtn').onclick = () => { StoreApp.openTopupRequest(); };
+            
+            // NEW AUTH HANDLERS
+            document.getElementById('btnCheckPhone').onclick = () => StoreApp.checkPhone();
+            document.getElementById('btnLogin').onclick = () => StoreApp.loginUser();
+            document.getElementById('btnRegister').onclick = () => StoreApp.registerUser();
+
+            // UPDATED: Checkout Button now opens Payment Modal
+            document.getElementById('checkoutBtn').onclick = () => StoreApp.openPaymentModal();
+            
+            document.getElementById('logoutBtn').onclick = () => { localStorage.removeItem('vision_user_id'); location.reload(); };
+        }
+    };
+
+    setTimeout(() => document.body.classList.add('is-loaded'), 1500);
+    document.addEventListener('DOMContentLoaded', () => StoreApp.init());
+</script>
+</body>
+</html>

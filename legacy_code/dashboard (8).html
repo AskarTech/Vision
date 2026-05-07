@@ -1,0 +1,2923 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة الإدارة | Vision Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ================= Mobile Blocker ================= */
+        .mobile-blocker { display: none; position: fixed; inset: 0; z-index: 999999; background: #ffffff; flex-direction: column; align-items: center; justify-content: center; padding: 32px; text-align: center; }
+        .mb-icon-box { width: 80px; height: 80px; background: var(--slate-50); border-radius: 20px; display: grid; place-items: center; margin-bottom: 24px; box-shadow: var(--shadow-sm); animation: float 3s ease-in-out infinite; }
+        .mb-icon-box svg { width: 40px; height: 40px; stroke: var(--primary); stroke-width: 1.5; }
+        .mb-title { font-size: 20px; font-weight: 800; color: var(--slate-800); margin-bottom: 12px; }
+        .mb-desc { font-size: 15px; color: var(--slate-600); line-height: 1.6; max-width: 300px; margin: 0 auto; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @media (max-width: 1024px) { .mobile-blocker { display: flex; } .sidebar, .main, .modal-overlay { display: none !important; } body { overflow: hidden; background: #fff; } }
+        
+        /* ================= Design System ================= */
+        :root { --primary: #00bdae; --primary-dark: #00968a; --secondary: #7338a2; --accent: #f94f51; --slate-800: #1e293b; --slate-600: #475569; --slate-400: #94a3b8; --slate-50: #f8fafc; --white: #ffffff; --border: #e2e8f0; --radius-lg: 16px; --radius-md: 10px; --shadow-sm: 0 1px 3px rgba(0,0,0,0.05); --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05); --sidebar-w: 280px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; font-family: 'Cairo', sans-serif; }
+        body { background: var(--slate-50); color: var(--slate-800); display: flex; height: 100vh; overflow: hidden; }
+        svg { width: 20px; height: 20px; stroke-width: 1.8; }
+
+        /* ================= Sidebar & Main ================= */
+        .sidebar { width: var(--sidebar-w); background: var(--white); border-left: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px; z-index: 50; }
+        /* إخفاء المحتوى حتى تسجيل الدخول */
+        body:not(.logged-in) .sidebar,
+        body:not(.logged-in) .main { opacity: 0.3; pointer-events: none; filter: blur(3px); }
+        .brand { display: flex; align-items: center; gap: 14px; margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+        .brand-icon { width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 12px; color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 20px; box-shadow: 0 4px 10px rgba(0,189,174,0.2); }
+        .brand-text h2 { font-size: 18px; font-weight: 800; color: var(--slate-800); margin: 0; }
+        .brand-text p { font-size: 12px; color: var(--slate-400); margin: 0; }
+        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: var(--radius-md); color: var(--slate-600); font-weight: 600; cursor: pointer; transition: all .2s ease; font-size: 15px; }
+        .nav-item svg { stroke: currentColor; transition: .2s; }
+        .nav-item:hover { background: #f1f5f9; color: var(--slate-800); }
+        .nav-item.active { background: rgba(0,189,174,0.08); color: var(--primary-dark); font-weight: 700; }
+        .nav-item.active svg { stroke: var(--primary); }
+        .nav-badge { margin-right: auto; background: var(--accent); color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
+
+        .main { flex: 1; padding: 40px; overflow-y: auto; position: relative; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+        .page-title h1 { font-size: 26px; font-weight: 800; color: var(--slate-800); }
+        .page-title p { color: var(--slate-600); font-size: 15px; margin-top: 4px; }
+        .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 32px; }
+        .card { background: var(--white); border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 24px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+        .card-icon { width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; margin-bottom: 16px; }
+        .card-label { font-size: 14px; font-weight: 600; color: var(--slate-600); }
+        .card-value { font-size: 32px; font-weight: 800; color: var(--slate-800); margin-top: 8px; }
+        
+        .table-wrapper { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+        .table-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #fff; }
+        .search-box { display: flex; align-items: center; gap: 10px; background: #f8fafc; border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; width: 300px; }
+        .search-box input { border: none; background: transparent; width: 100%; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: right; padding: 16px 24px; background: #f8fafc; color: var(--slate-600); font-size: 12px; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+        td { padding: 18px 24px; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 600; color: var(--slate-800); }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #fbfcfd; }
+        .badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
+        .badge-active { background: #d1fae5; color: #065f46; }
+        .badge-sold { background: #e0f2fe; color: #075985; }
+        .badge-alert { background: #fee2e2; color: #991b1b; }
+        .badge-disabled { background: #f1f5f9; color: #64748b; }
+        .badge-payout { background: #fff7ed; color: #c2410c; }
+        .badge-warning { background: #fef3c7; color: #b45309; }
+        .badge-purple { background: #f3e8ff; color: #7e22ce; }
+        .btn { padding: 12px 20px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; transition: .2s; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; box-shadow: 0 4px 12px rgba(0,189,174,0.25); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,189,174,0.3); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--slate-600); }
+        .btn-outline:hover { border-color: var(--slate-600); color: var(--slate-800); }
+        .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 8px; }
+        .btn-success-light { background: #dcfce7; color: #166534; }
+        .btn-success-light:hover { background: #bbf7d0; }
+        .btn-danger-light { background: #fef2f2; color: #ef4444; }
+        .btn-danger-light:hover { background: #fee2e2; }
+
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeSlide 0.4s ease-out; }
+        @keyframes fadeSlide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 100; display: none; place-items: center; }
+        .modal-overlay.open { display: grid; }
+        .modal-box { background: #fff; width: 500px; padding: 32px; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); transform: scale(0.95); transition: .3s; }
+        .modal-overlay.open .modal-box { transform: scale(1); }
+        .modal-box-lg { width: 700px; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 14px; color: var(--slate-800); }
+        .form-input { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 14px; transition: .2s; }
+        .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,189,174,0.1); }
+        select.form-input { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: left 1rem center; background-size: 1em; }
+        option { padding: 10px; }
+        .file-upload-box { border: 2px dashed var(--border); padding: 20px; text-align: center; border-radius: 10px; cursor: pointer; color: var(--slate-600); font-size: 13px; }
+        .file-upload-box:hover { border-color: var(--primary); background: var(--slate-50); }
+
+        /* Bank Cards */
+        .bank-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 30px; }
+        .bank-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 20px; position: relative; }
+        .bank-card h4 { font-size: 16px; font-weight: 800; color: var(--slate-800); margin-bottom: 8px; }
+        .bank-card p { font-size: 13px; color: var(--slate-600); margin: 4px 0; word-break: break-all; }
+        .bank-delete { position: absolute; top: 10px; left: 10px; color: #ef4444; cursor: pointer; }
+
+        /* ================= LOGIN SCREEN ================= */
+        .login-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 999998;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .login-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .login-box {
+            background: #fff;
+            padding: 48px;
+            border-radius: 24px;
+            width: 420px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+            text-align: center;
+            animation: loginPop 0.5s ease-out;
+        }
+        @keyframes loginPop {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .login-logo {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 24px;
+            font-size: 32px;
+            font-weight: 800;
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(0,189,174,0.3);
+        }
+        .login-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--slate-800);
+            margin-bottom: 8px;
+        }
+        .login-subtitle {
+            font-size: 14px;
+            color: var(--slate-600);
+            margin-bottom: 32px;
+        }
+        .login-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            margin-bottom: 16px;
+            transition: all 0.2s;
+            text-align: right;
+        }
+        .login-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(0,189,174,0.1);
+        }
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,189,174,0.3);
+        }
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,189,174,0.4);
+        }
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .login-error {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: none;
+        }
+        .login-error.show { display: block; animation: shake 0.5s ease; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        /* ================= GLOBAL LOADER ================= */
+        .global-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 999997;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .global-loader.active { display: flex; }
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loader-text {
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        /* ================= TOAST NOTIFICATIONS ================= */
+        .toast-container {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+        .toast {
+            background: #fff;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 320px;
+            animation: toastIn 0.4s ease-out;
+            pointer-events: auto;
+            border-right: 4px solid var(--primary);
+        }
+        .toast.toast-success { border-right-color: #10b981; }
+        .toast.toast-error { border-right-color: #ef4444; }
+        .toast.toast-warning { border-right-color: #f59e0b; }
+        .toast.toast-out { animation: toastOut 0.3s ease-in forwards; }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes toastOut {
+            to { opacity: 0; transform: translateX(-30px); }
+        }
+        .toast-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+        }
+        .toast-icon.success { background: #d1fae5; color: #059669; }
+        .toast-icon.error { background: #fee2e2; color: #dc2626; }
+        .toast-icon.warning { background: #fef3c7; color: #d97706; }
+        .toast-icon svg { width: 14px; height: 14px; stroke-width: 2.5; }
+        .toast-content { flex: 1; }
+        .toast-title { font-size: 14px; font-weight: 700; color: var(--slate-800); }
+        .toast-message { font-size: 13px; color: var(--slate-600); margin-top: 2px; }
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--slate-400);
+            cursor: pointer;
+            padding: 4px;
+        }
+        .toast-close:hover { color: var(--slate-600); }
+
+        /* Customer Profile Styles */
+        .cust-header { background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
+        .cust-info h3 { font-size: 20px; font-weight: 800; color: var(--slate-800); margin: 0; }
+        .cust-info p { color: var(--slate-600); font-size: 14px; margin: 4px 0 0; }
+        .cust-balance { text-align: left; }
+        .cust-balance small { display: block; color: var(--slate-400); font-size: 12px; font-weight: 600; text-transform: uppercase; }
+        .cust-balance span { font-size: 28px; font-weight: 800; color: var(--primary-dark); }
+
+        /* Checklist Checkbox */
+        .check-review { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
+        
+        /* Category Checkboxes Styles */
+        .category-group { display: flex; flex-direction: column; gap: 8px; background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid var(--border); }
+        .cat-option { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; color: var(--slate-600); cursor: pointer; }
+        .cat-option input { accent-color: var(--primary); width: 18px; height: 18px; }
+
+        /* Gateway Cards (New) */
+        .gateway-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 30px; }
+        .gateway-card { background: #fff; padding: 20px; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 8px; transition: .2s; }
+        .gateway-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+        .gw-header { display: flex; justify-content: space-between; align-items: center; }
+        .gw-title { font-size: 14px; font-weight: 700; color: var(--slate-600); }
+        .gw-icon { width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; }
+        .gw-balance { font-size: 24px; font-weight: 800; color: var(--slate-800); direction: ltr; text-align: right; }
+        .gw-status { font-size: 11px; padding: 2px 8px; border-radius: 6px; font-weight: 700; }
+        .gw-status.active { background: #d1fae5; color: #065f46; }
+        .gw-status.inactive { background: #f1f5f9; color: #64748b; }
+        
+        /* Partner Breakdown Table */
+        .breakdown-table { width: 100%; font-size: 13px; margin-top: 10px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .breakdown-table th { background: #f1f5f9; padding: 8px; text-align: center; }
+        .breakdown-table td { padding: 8px; text-align: center; border-bottom: 1px solid var(--border); }
+        .breakdown-wrapper { display: none; animation: fadeSlide 0.3s ease-out; margin-bottom: 20px; background: #fff; padding: 20px; border-radius: 16px; border: 1px solid var(--border); }
+
+        /* AUDIT & DEPOSITS CONTROLS */
+        .audit-controls { background: #fff; padding: 20px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 24px; box-shadow: var(--shadow-sm); }
+        .audit-filters { display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; }
+        .audit-report-container { display: none; animation: fadeSlide 0.4s ease-out; }
+        .report-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px dashed var(--border); }
+        .report-header h2 { font-size: 24px; font-weight: 800; color: var(--slate-800); }
+        .report-header p { color: var(--slate-600); margin-top: 5px; font-size: 14px; }
+        
+        .print-btn { background: #334155; color: #fff; border:none; padding: 8px 16px; border-radius:8px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13px; }
+        .print-btn:hover { background: #1e293b; }
+        
+        /* PRINT STYLES FIXED */
+        @media print {
+            body { background-color: #fff; -webkit-print-color-adjust: exact; overflow: visible !important; height: auto !important; }
+            .sidebar, .mobile-blocker, .header, .audit-controls, .nav-menu, .brand { display: none !important; }
+            .main { margin: 0 !important; padding: 0 !important; overflow: visible !important; height: auto !important; width: 100% !important; flex: none !important; }
+            .audit-report-container { display: block !important; width: 100% !important; margin: 0 !important; }
+            .card { break-inside: avoid; border: 1px solid #ddd; box-shadow: none; }
+            .view-section { display: none; }
+            #view-audit { display: block !important; }
+            .print-btn { display: none; }
+        }
+        
+        /* Quick Date Buttons */
+        .quick-dates { display: flex; gap: 8px; margin-bottom: 12px; }
+        .quick-date-btn { font-size: 11px; padding: 4px 8px; border: 1px solid var(--border); background: #f8fafc; border-radius: 6px; cursor: pointer; color: var(--slate-600); font-weight: 600; }
+        .quick-date-btn:hover { background: #e2e8f0; color: var(--slate-800); }
+    </style>
+</head>
+<body>
+    <!-- ================= LOGIN SCREEN ================= -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <div class="login-logo">V</div>
+            <h1 class="login-title">لوحة تحكم Vision</h1>
+            <p class="login-subtitle">أدخل بيانات الدخول للمتابعة</p>
+            
+            <div class="login-error" id="loginError">بيانات الدخول غير صحيحة</div>
+            
+            <input type="text" class="login-input" id="loginUsername" placeholder="اسم المستخدم" autocomplete="off">
+            <input type="password" class="login-input" id="loginPassword" placeholder="كلمة المرور" autocomplete="off">
+            
+            <button class="login-btn" id="loginBtn" onclick="app.auth.login()">
+                <span id="loginBtnText">تسجيل الدخول</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ================= GLOBAL LOADER ================= -->
+    <div class="global-loader" id="globalLoader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text" id="loaderText">جاري التحميل...</div>
+    </div>
+
+    <!-- ================= TOAST CONTAINER ================= -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="mobile-blocker">
+        <div class="mb-icon-box"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" /></svg></div>
+        <h2 class="mb-title">تجربة مخصصة للكمبيوتر</h2>
+        <p class="mb-desc">عذراً، لوحة تحكم الأدمن مصممة لتعمل بكفاءة على شاشات سطح المكتب فقط.</p>
+    </div>
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">V</div>
+            <div class="brand-text"><h2>Vision</h2><p>لوحة الإدارة</p></div>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" onclick="app.router('dashboard')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg><span>الرئيسية</span></li>
+            <li class="nav-item" onclick="app.router('deposits')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span>إدارة الإيداعات</span><span class="nav-badge" id="nav-deposits-badge" style="display:none">0</span></li>
+            <li class="nav-item" onclick="app.router('customers')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg><span>إدارة العملاء</span></li>
+            <li class="nav-item" onclick="app.router('partners')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /></svg><span>الشركاء (التجار)</span></li>
+            <li class="nav-item" onclick="app.router('managers')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /></svg><span>مدراء الشبكات</span></li>
+            <li class="nav-item" onclick="app.router('products')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m8.25 3.75h3.75M12 7.5a2.25 2.25 0 012.25-2.25h2.25A2.25 2.25 0 0120.25 7.5v2.25m-14.25 0h2.25a2.25 2.25 0 012.25 2.25V12a2.25 2.25 0 01-2.25 2.25H3.75a2.25 2.25 0 01-2.25-2.25V9.75a2.25 2.25 0 012.25-2.25z" /></svg><span>إدارة الباقات</span></li>
+            <li class="nav-item" onclick="app.router('inventory')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0112 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125-1.125 1.125M12 10.875v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125M13.125 12h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125M20.25 12c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5M12 14.625v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 14.625c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m0 1.5v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 18.375v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125" /></svg><span>أكواد المخزون</span></li>
+            <li class="nav-item" onclick="app.router('audit')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg><span>الجرد والمحاسبة</span></li>
+            <li class="nav-item" onclick="app.router('disputes')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg><span>البلاغات</span><span class="nav-badge" id="nav-alert" style="display:none">0</span></li>
+            <li class="nav-item" onclick="app.router('finance')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" /></svg><span>المالية</span></li>
+            <li class="nav-item" style="margin-top:auto" onclick="app.auth.logout()"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" /></svg><span>تسجيل خروج</span></li>
+        </ul>
+    </aside>
+
+    <main class="main">
+        <!-- Dashboard -->
+        <section id="view-dashboard" class="view-section active">
+            <header class="header">
+                <div class="page-title"><h1>لوحة المعلومات</h1><p>مرحباً بك، إليك ملخص لأداء المنصة والشركاء اليوم.</p></div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-outline" onclick="app.modals.openFloosakSetup()" style="border-color:#7338a2; color:#7338a2;">إعدادات فلوسك</button>
+                    <button class="btn btn-primary" onclick="app.modals.openUpload()"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>رفع مخزون جديد</button>
+                </div>
+            </header>
+            <div class="grid-stats">
+                <div class="card"><div class="card-icon" style="background:#e0f2fe; color:#0369a1"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" /></svg></div><span class="card-label">أرباح المنصة (العمولة)</span><span class="card-value" id="kpi-net">0.00 ر.ي</span></div>
+                <div class="card"><div class="card-icon" style="background:#d1fae5; color:#059669"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg></div><span class="card-label">حجم المبيعات الكلي</span><span class="card-value" id="kpi-sales">0.00 ر.ي</span></div>
+                <div class="card"><div class="card-icon" style="background:#f3e8ff; color:#7e22ce"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m8.25 3.75h3.75M12 7.5a2.25 2.25 0 012.25-2.25h2.25A2.25 2.25 0 0120.25 7.5v2.25m-14.25 0h2.25a2.25 2.25 0 012.25 2.25V12a2.25 2.25 0 01-2.25 2.25H3.75a2.25 2.25 0 01-2.25-2.25V9.75a2.25 2.25 0 012.25-2.25z" /></svg></div><span class="card-label">الكروت النشطة</span><span class="card-value" id="kpi-stock">0</span></div>
+            </div>
+            <div class="table-wrapper">
+                <div class="table-header"><h3>أحدث عمليات البيع</h3><button class="btn btn-outline btn-sm" onclick="app.router('finance')">عرض الكل</button></div>
+                <table><thead><tr><th>العملية</th><th>القيمة</th><th>الوقت</th><th>الحالة</th></tr></thead><tbody id="table-recent"></tbody></table>
+            </div>
+        </section>
+
+        <!-- Audit & Inventory -->
+        <section id="view-audit" class="view-section">
+            <header class="header">
+                <div class="page-title">
+                    <h1>الجرد والمحاسبة</h1>
+                    <p>أدوات الحساب الدقيقة وتصفية المستحقات مع الشركاء.</p>
+                </div>
+            </header>
+
+            <div class="audit-controls">
+                <div class="audit-filters">
+                    <div class="form-group" style="margin:0; flex:1; min-width:200px;">
+                        <label class="form-label">اختر التاجر/الشريك</label>
+                        <select id="audit-partner-select" class="form-input" style="width:100%;">
+                            <option value="">-- اختر --</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin:0; flex:1; min-width:150px;">
+                        <label class="form-label">من تاريخ</label>
+                        <input type="date" id="audit-date-start" class="form-input">
+                    </div>
+                    <div class="form-group" style="margin:0; flex:1; min-width:150px;">
+                        <label class="form-label">إلى تاريخ</label>
+                        <input type="date" id="audit-date-end" class="form-input">
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label class="form-label">&nbsp;</label>
+                        <button class="btn btn-primary" onclick="app.logic.generateAuditReport()">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" /></svg>
+                            إنشاء تقرير الجرد
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="audit-result" class="audit-report-container">
+                <div class="report-header">
+                    <h2 id="report-partner-name">اسم الشريك</h2>
+                    <p id="report-period">من ... إلى ...</p>
+                    <button class="print-btn" onclick="window.print()">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z" /></svg>
+                        طباعة / PDF
+                    </button>
+                </div>
+
+                <div class="grid-stats">
+                    <div class="card">
+                        <div class="card-label">إجمالي المبيعات (الفترة المحددة)</div>
+                        <div class="card-value" id="audit-sales">0 ر.ي</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-label">عمولة المنصة المستقطعة</div>
+                        <div class="card-value" id="audit-commission" style="color:var(--primary);">0 ر.ي</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-label">المسحوبات (تم صرفها)</div>
+                        <div class="card-value" id="audit-withdrawn" style="color:#c2410c;">0 ر.ي</div>
+                    </div>
+                    <div class="card" style="border: 2px solid var(--secondary);">
+                        <div class="card-label">الرصيد الصافي المستحق</div>
+                        <div class="card-value" id="audit-net-due">0 ر.ي</div>
+                        <small style="color:var(--slate-400);">(المبيعات - العمولة - المسحوبات)</small>
+                    </div>
+                </div>
+
+                <div style="margin-top:30px; display:flex; gap:20px; flex-wrap:wrap;">
+                    <!-- Sales Breakdown -->
+                    <div class="table-wrapper" style="flex:1; min-width:300px;">
+                        <div class="table-header"><h3>تفاصيل المبيعات (حسب الباقة)</h3></div>
+                        <table>
+                            <thead><tr><th>الباقة</th><th>العدد المباع</th><th>السعر الفردي</th><th>الإجمالي</th></tr></thead>
+                            <tbody id="audit-table-sales"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Inventory Status -->
+                    <div class="table-wrapper" style="flex:1; min-width:300px;">
+                        <div class="table-header" style="background:#f0f9ff;"><h3>حالة المخزون المتبقي (النشط)</h3></div>
+                        <table>
+                            <thead><tr><th>الباقة</th><th>الكمية المتوفرة</th><th>قيمة المخزون (سوقية)</th></tr></thead>
+                            <tbody id="audit-table-stock"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Withdrawals List -->
+                <div class="table-wrapper" style="margin-top:20px;">
+                    <div class="table-header"><h3>سجل المسحوبات خلال الفترة</h3></div>
+                    <table>
+                        <thead><tr><th>التاريخ</th><th>المبلغ</th><th>المستلم</th><th>ملاحظات</th></tr></thead>
+                        <tbody id="audit-table-withdrawals"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Deposits Management (ENHANCED) -->
+        <section id="view-deposits" class="view-section">
+            <header class="header">
+                <div class="page-title"><h1>إدارة الإيداعات والتحليل</h1><p>مراجعة طلبات الشحن وتحليل الدخل عبر القنوات المختلفة.</p></div>
+                <button class="btn btn-primary" onclick="app.modals.openAddBank()">+ إضافة حساب بنكي</button>
+            </header>
+            
+            <div style="margin-bottom: 20px;">
+                <h3 style="margin-bottom:12px; font-size:16px;">وسائل الدفع المتاحة للعملاء</h3>
+                <div id="banks-container" class="bank-list"></div>
+            </div>
+
+            <!-- NEW: Deposit Analysis Controls -->
+            <div class="audit-controls" style="margin-bottom: 20px;">
+                <div class="quick-dates">
+                    <button class="quick-date-btn" onclick="app.ui.setDepositDateRange('thisMonth')">الشهر الحالي</button>
+                    <button class="quick-date-btn" onclick="app.ui.setDepositDateRange('lastMonth')">الشهر السابق</button>
+                    <button class="quick-date-btn" onclick="app.ui.setDepositDateRange('all')">كل الفترات</button>
+                </div>
+                <div class="audit-filters" style="align-items: flex-end;">
+                    <div class="form-group" style="margin:0; flex:1;">
+                        <label class="form-label">من تاريخ</label>
+                        <input type="date" id="dep-date-start" class="form-input" onchange="app.ui.renderDeposits()">
+                    </div>
+                    <div class="form-group" style="margin:0; flex:1;">
+                        <label class="form-label">إلى تاريخ</label>
+                        <input type="date" id="dep-date-end" class="form-input" onchange="app.ui.renderDeposits()">
+                    </div>
+                    <div class="form-group" style="margin:0; flex:1;">
+                        <label class="form-label">طريقة الدفع / البنك</label>
+                        <select id="dep-filter-method" class="form-input" onchange="app.ui.renderDeposits()">
+                            <option value="all">الكل</option>
+                            <!-- Populated by JS -->
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin:0; flex:1;">
+                        <label class="form-label">الحالة</label>
+                        <select id="dep-filter-status" class="form-input" onchange="app.ui.renderDeposits()">
+                            <option value="all">الكل</option>
+                            <option value="pending">قيد المراجعة</option>
+                            <option value="approved">مقبول</option>
+                            <option value="rejected">مرفوض</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin:0; flex:1;">
+                        <label class="form-label">ترتيب حسب</label>
+                        <select id="dep-sort" class="form-input" onchange="app.ui.renderDeposits()">
+                            <option value="date-desc">الأحدث أولاً</option>
+                            <option value="date-asc">الأقدم أولاً</option>
+                            <option value="amount-desc">الأعلى مبلغاً</option>
+                            <option value="amount-asc">الأقل مبلغاً</option>
+                        </select>
+                    </div>
+                    <div class="search-box" style="margin:0; flex:1.5;">
+                        <input type="text" id="dep-search" placeholder="بحث باسم العميل أو رقم العملية..." onkeyup="app.ui.renderDeposits()">
+                    </div>
+                </div>
+                <div style="margin-top:10px; font-size:13px; color:var(--slate-600);">
+                    <span id="dep-analysis-text">جاري التحليل...</span>
+                </div>
+            </div>
+
+            <!-- NEW: Deposit Stats Cards -->
+            <div class="grid-stats" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 20px;">
+                <div class="card" style="padding: 16px;">
+                    <div class="card-label">إجمالي الدخل (حسب الفلتر)</div>
+                    <div class="card-value" id="dep-total-amount" style="color:var(--primary); font-size: 24px;">0 ر.ي</div>
+                </div>
+                <div class="card" style="padding: 16px;">
+                    <div class="card-label">عدد العمليات (حسب الفلتر)</div>
+                    <div class="card-value" id="dep-total-count" style="font-size: 24px;">0</div>
+                </div>
+                 <div class="card" style="padding: 16px;">
+                    <div class="card-label">طلبات قيد المراجعة</div>
+                    <div class="card-value" id="dep-pending-count" style="color:#f59e0b; font-size: 24px;">0</div>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <div class="table-header"><h3>سجل الإيداعات</h3></div>
+                <table>
+                    <thead><tr><th>مراجعة</th><th>التاريخ</th><th>العميل</th><th>المبلغ</th><th>البنك</th><th>رقم العملية</th><th>الإيصال</th><th>الإجراء</th></tr></thead>
+                    <tbody id="table-deposits"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Customers Management -->
+        <section id="view-customers" class="view-section">
+            <header class="header">
+                <div class="page-title"><h1>إدارة العملاء</h1><p>قائمة العملاء المسجلين والاطلاع على رصيدهم ومشترياتهم.</p></div>
+            </header>
+            <div class="table-wrapper">
+                <div class="table-header"><h3>قائمة العملاء</h3></div>
+                <table>
+                    <thead><tr><th>اسم العميل</th><th>رقم الهاتف</th><th>الرصيد الحالي</th><th>إجمالي المشتريات</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+                    <tbody id="table-customers"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Partners Management -->
+        <section id="view-partners" class="view-section">
+            <header class="header">
+                <div class="page-title"><h1>إدارة الشركاء (التجار)</h1><p>إضافة أصحاب الشبكات وتحديد نسبة العمولة.</p></div>
+                <button class="btn btn-primary" onclick="app.modals.openAddPartner()">+ إضافة شريك</button>
+            </header>
+            <div class="table-wrapper">
+                <div class="table-header"><h3>قائمة الشركاء المسجلين</h3></div>
+                <table><thead><tr><th>اسم الشبكة/التاجر</th><th>بيانات التواصل</th><th>نسبة العمولة</th><th>عدد الباقات</th><th>إجراءات</th></tr></thead><tbody id="table-partners"></tbody></table>
+            </div>
+        </section>
+
+        <!-- NEW: Network Managers Section -->
+        <section id="view-managers" class="view-section">
+            <header class="header">
+                <div class="page-title">
+                    <h1>مدراء الشبكات</h1>
+                    <p>تعيين حسابات دخول لمدراء الشبكات لمتابعة المبيعات والمخزون.</p>
+                </div>
+                <button class="btn btn-primary" onclick="app.modals.openAddManager()">+ إضافة مدير جديد</button>
+            </header>
+            <div class="table-wrapper">
+                <div class="table-header">
+                    <h3>قائمة المدراء</h3>
+                    <button class="btn btn-outline btn-sm" onclick="app.logic.copyManagerLink()">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:16px"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" /></svg>
+                        نسخ رابط بوابة المدراء
+                    </button>
+                </div>
+                <table>
+                    <thead><tr><th>اسم المدير</th><th>اسم المستخدم</th><th>الشبكة التابعة له</th><th>تاريخ الإنشاء</th><th>إجراءات</th></tr></thead>
+                    <tbody id="table-managers"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Products Management -->
+        <section id="view-products" class="view-section">
+            <header class="header">
+                <div class="page-title"><h1>إدارة الباقات</h1><p>إنشاء باقات جديدة وتعيينها للشركاء.</p></div>
+                <button class="btn btn-primary" onclick="app.modals.openAddPackage()">+ إضافة باقة جديدة</button>
+            </header>
+            <div class="table-wrapper">
+                <div class="table-header"><h3>قائمة الباقات المتوفرة</h3></div>
+                <table><thead><tr><th>اسم الباقة</th><th>الشبكة (المالك)</th><th>السعر</th><th>البيانات</th><th>اللون</th><th>التصنيف</th><th>المخزون المتوفر</th><th>إجراءات</th></tr></thead><tbody id="table-packages"></tbody></table>
+            </div>
+        </section>
+
+        <!-- Inventory (IMPROVED - FIXED DROPDOWN) -->
+        <section id="view-inventory" class="view-section">
+            <header class="header">
+                <div class="page-title"><h1>إدارة أكواد المخزون</h1><p>التحكم في الكروت، تتبع حالتها، أو تعطيلها.</p></div>
+                <button class="btn btn-primary" onclick="app.modals.openUpload()">+ رفع كروت</button>
+            </header>
+            <div class="table-wrapper">
+                <div class="table-header" style="flex-wrap: wrap; gap: 10px;">
+                    <!-- Filters -->
+                    <select id="inv-filter-partner" class="form-input" style="width:160px; padding:8px;" onchange="app.ui.handlePartnerChange()">
+                        <option value="all">كل الشركاء</option>
+                    </select>
+                    <select id="inv-filter-pkg" class="form-input" style="width:160px; padding:8px;" onchange="app.ui.renderInventory()">
+                        <option value="all">كل الباقات</option>
+                    </select>
+                    <select id="inv-filter-status" class="form-input" style="width:120px; padding:8px;" onchange="app.ui.renderInventory()">
+                        <option value="all">جميع الحالات</option>
+                        <option value="active">نشط (بالمتجر)</option>
+                        <option value="sold">مباع</option>
+                        <option value="disabled">معطل</option>
+                        <option value="reported">بلاغ</option>
+                    </select>
+                    <!-- Search -->
+                    <div class="search-box" style="margin-right:auto;"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color:var(--slate-400)"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg><input type="text" placeholder="ابحث برقم الكود..." onkeyup="app.logic.searchInventory(this.value)"></div>
+                </div>
+                
+                <!-- Summary Stats Bar -->
+                <div id="inventory-summary" style="padding:15px 24px; background:#f8fafc; border-bottom:1px solid var(--border); display:flex; gap:20px; font-size:14px; font-weight:700;">
+                    <span>إجمالي الكروت: <span id="sum-total">0</span></span>
+                    <span style="color:#059669">نشط: <span id="sum-active">0</span></span>
+                    <span style="color:#0369a1">مباع: <span id="sum-sold">0</span></span>
+                </div>
+
+                <table><thead><tr><th>الباقة</th><th>المالك (الشبكة)</th><th>الكود</th><th>السعر</th><th>تاريخ الرفع</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody id="table-inventory"></tbody></table>
+            </div>
+        </section>
+
+        <!-- Disputes (ENHANCED: Filters & Stats) -->
+        <section id="view-disputes" class="view-section">
+            <header class="header"><div class="page-title"><h1>مركز البلاغات</h1><p>معالجة مشاكل الكروت المبلغ عنها من قبل العملاء.</p></div></header>
+            
+            <!-- NEW: Disputes Controls -->
+            <div class="audit-controls" style="margin-bottom: 20px;">
+                <div class="quick-dates">
+                    <button class="quick-date-btn" onclick="app.ui.setDisputeDateRange('thisMonth')">الشهر الحالي</button>
+                    <button class="quick-date-btn" onclick="app.ui.setDisputeDateRange('lastMonth')">الشهر السابق</button>
+                    <button class="quick-date-btn" onclick="app.ui.setDisputeDateRange('all')">كل الفترات</button>
+                </div>
+                <div class="audit-filters" style="align-items: flex-end;">
+                    <div class="form-group" style="margin:0; flex:1;">
+                        <label class="form-label">من تاريخ (البيع)</label>
+                        <input type="date" id="disp-date-start" class="form-input" onchange="app.ui.renderDisputes()">
+                    </div>
+                    <div class="form-group" style="margin:0; flex:1;">
+                        <label class="form-label">إلى تاريخ</label>
+                        <input type="date" id="disp-date-end" class="form-input" onchange="app.ui.renderDisputes()">
+                    </div>
+                    <div class="form-group" style="margin:0; flex:1;">
+                        <label class="form-label">حالة البلاغ</label>
+                        <select id="disp-filter-status" class="form-input" onchange="app.ui.renderDisputes()">
+                            <option value="all">الكل</option>
+                            <option value="reported">بلاغات جديدة (انتظار)</option>
+                            <option value="refunded">تم الاسترجاع</option>
+                            <option value="rejected">تم الرفض</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin:0; flex:1;">
+                        <label class="form-label">ترتيب حسب</label>
+                        <select id="disp-sort" class="form-input" onchange="app.ui.renderDisputes()">
+                            <option value="date-desc">الأحدث أولاً</option>
+                            <option value="date-asc">الأقدم أولاً</option>
+                        </select>
+                    </div>
+                    <div class="search-box" style="margin:0; flex:1.5;">
+                        <input type="text" id="disp-search" placeholder="بحث برقم الكود أو الباقة..." onkeyup="app.ui.renderDisputes()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW: Disputes Stats -->
+            <div class="grid-stats" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 20px;">
+                <div class="card" style="padding: 16px;">
+                    <div class="card-label">إجمالي البلاغات</div>
+                    <div class="card-value" id="disp-stat-total" style="font-size: 24px;">0</div>
+                </div>
+                <div class="card" style="padding: 16px;">
+                    <div class="card-label">قيد الانتظار</div>
+                    <div class="card-value" id="disp-stat-pending" style="color:#f59e0b; font-size: 24px;">0</div>
+                </div>
+                <div class="card" style="padding: 16px; border-color:#fee2e2;">
+                    <div class="card-label">قيمة المسترجعات (خسارة)</div>
+                    <div class="card-value" id="disp-stat-refunded-val" style="color:#ef4444; font-size: 24px;">0 ر.ي</div>
+                </div>
+            </div>
+
+            <div id="disputes-container"></div>
+        </section>
+
+        <!-- Finance -->
+        <section id="view-finance" class="view-section">
+            <header class="header">
+                <div class="page-title"><h1>التقارير المالية</h1><p>تتبع الأرباح ومستحقات الشركاء وأرصدة البوابات.</p></div>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <div class="search-box" style="width:250px;">
+                        <span style="font-weight:700; font-size:13px; color:var(--slate-600); margin-left:8px;">عرض تقرير:</span>
+                        <select id="finance-filter-partner" style="border:none; background:transparent; font-weight:700; width:100%; outline:none;" onchange="app.ui.renderFinance(this.value)">
+                            <option value="all">الكل (عام)</option>
+                        </select>
+                    </div>
+                    <!-- NEW Withdraw Button, Hidden by default -->
+                    <button id="btn-withdraw" class="btn btn-primary" style="display:none;" onclick="app.modals.openWithdraw()">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                        تسجيل سحب أرباح
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Gateway Balances (Admin) -->
+            <h3 style="margin-bottom:12px; font-size:16px; display:flex; align-items:center; gap:8px;">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M9 9.563C9 9.252 9.252 9 9.563 9h4.874c.311 0 .563.252.563.563v4.874c0 .311-.252.563-.563.563H9.564A.562.562 0 0 1 9 14.437V9.564Z" /></svg>
+                أرصدة بوابات الدفع (رصيدك الحالي)
+            </h3>
+            <div class="gateway-grid" id="gateway-balances">
+                <!-- Injected by JS -->
+            </div>
+
+            <!-- Partner Breakdown (Collapsible) -->
+            <div id="partner-breakdown-area" class="breakdown-wrapper">
+                <h4 style="margin-bottom:10px;">تحليل مبيعات الشبكة حسب البوابة</h4>
+                <table class="breakdown-table">
+                    <thead><tr><th>البوابة</th><th>إجمالي المبيعات</th><th>عدد العمليات</th></tr></thead>
+                    <tbody id="partner-breakdown-body"></tbody>
+                </table>
+            </div>
+
+            <div class="grid-stats">
+                <div class="card" style="border-right: 4px solid var(--primary);">
+                    <div class="card-label">إجمالي المبيعات</div>
+                    <div class="card-value" id="fin-total">0.00 ر.ي</div>
+                </div>
+                <div class="card" style="border-right: 4px solid var(--secondary);">
+                    <div class="card-label">أرباح المنصة (العمولة)</div>
+                    <div class="card-value" id="fin-commission">0.00 ر.ي</div>
+                </div>
+                <div class="card" style="border-right: 4px solid #f59e0b;">
+                    <div class="card-label">صافي مستحقات الشريك</div>
+                    <div class="card-value" id="fin-net">0.00 ر.ي</div>
+                    <div style="font-size:12px; color:var(--slate-400); margin-top:5px;">(المبيعات - العمولة - المسحوبات)</div>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <div class="table-header"><h3>تفاصيل العمليات (مبيعات ومسحوبات)</h3></div>
+                <table><thead><tr><th>تاريخ العملية</th><th>نوع العملية</th><th>وسيلة الدفع</th><th>البيان</th><th>القيمة</th><th>الرصيد/العمولة</th></tr></thead><tbody id="table-finance"></tbody></table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal: Customer Profile -->
+    <div class="modal-overlay" id="customerModal">
+        <div class="modal-box modal-box-lg">
+            <h2 style="margin-bottom:24px; font-size:20px; font-weight:800; display:flex; align-items:center; gap:10px;">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
+                ملف العميل
+            </h2>
+            <div id="customer-profile-content">
+                <!-- Content injected by JS -->
+            </div>
+            <div style="margin-top:20px; text-align:left;">
+                <button class="btn btn-outline" onclick="app.modals.closeAll()">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Top Up Customer -->
+    <div class="modal-overlay" id="topUpModal">
+        <div class="modal-box">
+            <h2 style="margin-bottom:24px; font-size:20px; font-weight:800;">شحن رصيد العميل</h2>
+            <p id="topup-customer-name" style="margin-bottom:20px; color:var(--slate-600);">...</p>
+            <input type="hidden" id="topup-customer-id">
+            <div class="form-group">
+                <label class="form-label">المبلغ (ر.ي)</label>
+                <input type="number" id="topup-amount" class="form-input" placeholder="0">
+            </div>
+            <div style="display:flex; gap:12px; margin-top:32px;">
+                <button class="btn btn-primary" style="flex:1; justify-content:center;" onclick="app.logic.confirmTopUp()">تأكيد الشحن</button>
+                <button class="btn btn-outline" style="flex:1; justify-content:center;" onclick="app.modals.closeAll()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Reset Password (NEW) -->
+    <div class="modal-overlay" id="resetPasswordModal">
+        <div class="modal-box">
+            <h2 style="margin-bottom:24px; font-size:20px; font-weight:800; color:var(--slate-800);">تعيين كلمة مرور للعميل</h2>
+            <p id="reset-customer-name" style="margin-bottom:20px; color:var(--slate-600);">...</p>
+            <input type="hidden" id="reset-customer-id">
+            <div class="form-group">
+                <label class="form-label">كلمة المرور الجديدة</label>
+                <input type="text" id="new-password" class="form-input" placeholder="اكتب كلمة المرور الجديدة">
+            </div>
+            <div style="display:flex; gap:12px; margin-top:32px;">
+                <button class="btn btn-primary" style="flex:1; justify-content:center;" onclick="app.logic.resetPassword()">حفظ التغيير</button>
+                <button class="btn btn-outline" style="flex:1; justify-content:center;" onclick="app.modals.closeAll()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add Bank (NEW) -->
+    <div class="modal-overlay" id="addBankModal">
+        <div class="modal-box">
+            <h2 style="margin-bottom:24px; font-size:20px; font-weight:800;">إضافة حساب بنكي</h2>
+            <div class="form-group">
+                <label class="form-label">اسم البنك / المحفظة</label>
+                <input type="text" id="bank-name" class="form-input" placeholder="مثال: بنك الكريمي">
+            </div>
+            <div class="form-group">
+                <label class="form-label">رقم الحساب</label>
+                <input type="text" id="bank-account" class="form-input" placeholder="رقم الحساب">
+            </div>
+            <div class="form-group">
+                <label class="form-label">اسم صاحب الحساب</label>
+                <input type="text" id="bank-owner" class="form-input" placeholder="الاسم كما يظهر للعميل">
+            </div>
+            <div style="display:flex; gap:12px; margin-top:32px;">
+                <button class="btn btn-primary" style="flex:1; justify-content:center;" onclick="app.logic.addBank()">حفظ</button>
+                <button class="btn btn-outline" style="flex:1; justify-content:center;" onclick="app.modals.closeAll()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Upload Stock -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal-box">
+            <h2 style="margin-bottom:24px; font-size:20px; font-weight:800; display:flex; align-items:center; gap:10px;"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" /></svg>رفع كروت للمتجر</h2>
+            <div class="form-group">
+                <label class="form-label">اختر الباقة</label>
+                <select id="input-pkg-select" class="form-input">
+                    <!-- سيتم تعبئته ديناميكياً -->
+                </select>
+            </div>
+            <div class="form-group"><label class="form-label">الأكواد (كل كود في سطر)</label><textarea id="input-codes" rows="5" class="form-input" placeholder="مثال:&#10;VIS-1002-3921&#10;VIS-9921-0021"></textarea></div>
+            <div style="display:flex; gap:12px; margin-top:32px;"><button class="btn btn-primary" style="flex:1; justify-content:center;" onclick="app.logic.uploadCards()">رفع الآن</button><button class="btn btn-outline" style="flex:1; justify-content:center;" onclick="app.modals.closeAll()">إلغاء</button></div>
+        </div>
+    </div>
+
+    <!-- Modal: Add Partner (NEW) -->
+    <div class="modal-overlay" id="addPartnerModal">
+        <div class="modal-box">
+            <h2 style="margin-bottom:24px; font-size:20px; font-weight:800;">إضافة شريك (تاجر) جديد</h2>
+            <div class="form-group">
+                <label class="form-label">اسم الشبكة / التاجر</label>
+                <input type="text" id="new-partner-name" class="form-input" placeholder="مثال: شبكة النجم">
+            </div>
+            <div class="form-group">
+                <label class="form-label">رقم التواصل / المسؤول</label>
+                <input type="text" id="new-partner-phone" class="form-input" placeholder="مثال: 05xxxxxxxxx">
+            </div>
+            <div class="form-group">
+                <label class="form-label">نسبة عمولة المنصة (%)</label>
+                <input type="number" id="new-partner-commission" class="form-input" placeholder="مثال: 10" value="10">
+                <small style="color:var(--slate-400);">هذه النسبة التي ستخصمها المنصة من مبيعات التاجر.</small>
+            </div>
+            <div style="display:flex; gap:12px; margin-top:32px;">
+                <button class="btn btn-primary" style="flex:1; justify-content:center;" onclick="app.logic.createPartner()">حفظ الشريك</button>
+                <button class="btn btn-outline" style="flex:1; justify-content:center;" onclick="app.modals.closeAll()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add Manager (NEW) -->
+    <div class="modal-overlay" id="addManagerModal">
+        <div class="modal-box">
+            <h2 style="margin-bottom:24px; font-size:20px; font-weight:800;">إضافة مدير شبكة جديد</h2>
+            
+            <div class="form-group">
+                <label class="form-label">الشبكة (الشريك)</label>
+                <select id="mgr-partner-select" class="form-input">
+                    <!-- populated by JS -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">اسم المدير</label>
+                <input type="text" id="mgr-name" class="form-input" placeholder="مثال: محمد أحمد">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">اسم المستخدم (للدخول)</label>
+                <input type="text" id="mgr-username" class="form-input" placeholder="مثال: mohammed1">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">كلمة المرور</label>
+                <input type="text" id="mgr-password" class="form-input" placeholder="تعيين كلمة مرور">
+            </div>
+
+            <div style="display:flex; gap:12px; margin-top:32px;">
+                <button class="btn btn-primary" style="flex:1; justify-content:center;" onclick="app.logic.createManager()">حفظ المدير</button>
+                <button class="btn btn-outline" style="flex:1; justify-content:center;" onclick="app.modals.closeAll()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Withdrawal (NEW) -->
+    <div class="modal-overlay" id="withdrawModal">
+        <div class="modal-box">
+            <h2 style="margin-bottom:24px; font-size:20px; font-weight:800; color:#c2410c;">إجراء سحب مبلغ (صرف)</h2>
+            <div id="withdraw-info" style="background:#fff7ed; padding:10px; border-radius:10px; margin-bottom:20px; font-size:14px; color:#9a3412;">
+                جاري التحقق من الرصيد...
+            </div>
+            
+            <div style="display:flex; gap:12px;">
+                <div class="form-group" style="flex:1">
+                    <label class="form-label">المبلغ المطلوب (ر.ي)</label>
+                    <input type="number" id="wd-amount" class="form-input" placeholder="0">
+                </div>
+                <div class="form-group" style="flex:1">
+                    <label class="form-label">اسم المستلم</label>
+                    <input type="text" id="wd-receiver" class="form-input" placeholder="الاسم الرباعي">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">البنك / جهة التحويل</label>
+                <input type="text" id="wd-bank" class="form-input" placeholder="مثال: بنك الكريمي - حساب رقم...">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">تعليق (اختياري)</label>
+                <input type="text" id="wd-note" class="form-input" placeholder="ملاحظات إضافية...">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">صورة الإيصال</label>
+                <input type="file" id="wd-image" accept="image/*" style="display:none" onchange="app.logic.handleImagePreview(this)">
+                <div class="file-upload-box" onclick="document.getElementById('wd-image').click()" id="wd-image-preview">
+                    انقر لرفع صورة الإيصال (اختياري)
+                </div>
+            </div>
+
+            <div style="display:flex; gap:12px; margin-top:32px;">
+                <button class="btn btn-primary" style="flex:1; justify-content:center; background:#c2410c;" onclick="app.logic.processWithdrawal()">تأكيد السحب</button>
+                <button class="btn btn-outline" style="flex:1; justify-content:center;" onclick="app.modals.closeAll()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add Package (Updated) -->
+    <div class="modal-overlay" id="addPackageModal">
+        <div class="modal-box">
+            <h2 style="margin-bottom:24px; font-size:20px; font-weight:800;">إضافة باقة جديدة</h2>
+            
+            <div class="form-group">
+                <label class="form-label">اسم الباقة</label>
+                <input type="text" id="new-pkg-name" class="form-input" placeholder="مثال: باقة العيد 50 جيجا">
+            </div>
+
+            <!-- UPDATED: Select Partner instead of Text Input -->
+            <div class="form-group">
+                <label class="form-label">مالك الباقة (الشبكة)</label>
+                <select id="new-pkg-partner-select" class="form-input">
+                    <!-- سيتم تعبئته من الشركاء -->
+                </select>
+            </div>
+
+            <div style="display:flex; gap:12px;">
+                <div class="form-group" style="flex:1">
+                    <label class="form-label">السعر (ر.ي)</label>
+                    <input type="number" id="new-pkg-price" class="form-input" placeholder="100">
+                </div>
+                <!-- REPLACED: Category Checkboxes instead of Type Select -->
+                <div class="form-group" style="flex:1">
+                    <label class="form-label">تصنيف العرض (اختر مكان الظهور)</label>
+                    <div class="category-group">
+                        <label class="cat-option">
+                            <input type="checkbox" name="pkg_cat" value="best_selling" checked> الأكثر مبيعا
+                        </label>
+                        <label class="cat-option">
+                            <input type="checkbox" name="pkg_cat" value="short_term"> يوم / اسبوع
+                        </label>
+                        <label class="cat-option">
+                            <input type="checkbox" name="pkg_cat" value="monthly"> شهرية
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:12px;">
+                <div class="form-group" style="flex:1">
+                    <label class="form-label">حجم البيانات</label>
+                    <input type="number" id="new-pkg-amount" class="form-input" placeholder="50">
+                </div>
+                <div class="form-group" style="flex:1">
+                    <label class="form-label">الوحدة</label>
+                    <select id="new-pkg-unit" class="form-input">
+                        <option value="جيجابايت">جيجابايت</option>
+                        <option value="ميجابايت">ميجابايت</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">لون الباقة (للمتجر)</label>
+                <select id="new-pkg-grad" class="form-input">
+                    <option value="--grad-daily">أحمر (نمط يومي)</option>
+                    <option value="--grad-monthly">أزرق/بنفسجي (نمط شهري)</option>
+                    <option value="--grad-weekly">بنفسجي/أحمر (مميز)</option>
+                </select>
+            </div>
+
+            <div style="display:flex; gap:12px; margin-top:32px;">
+                <button class="btn btn-primary" style="flex:1; justify-content:center;" onclick="app.logic.createPackage()">حفظ الباقة</button>
+                <button class="btn btn-outline" style="flex:1; justify-content:center;" onclick="app.modals.closeAll()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Edit Package (NEW) -->
+    <div class="modal-overlay" id="editPackageModal">
+        <div class="modal-box">
+            <h2 style="margin-bottom:24px; font-size:20px; font-weight:800;">تعديل الباقة</h2>
+            <input type="hidden" id="edit-pkg-id">
+            
+            <div class="form-group">
+                <label class="form-label">اسم الباقة</label>
+                <input type="text" id="edit-pkg-name" class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">السعر (ر.ي)</label>
+                <input type="number" id="edit-pkg-price" class="form-input">
+            </div>
+
+            <div style="display:flex; gap:12px; margin-top:32px;">
+                <button class="btn btn-primary" style="flex:1; justify-content:center;" onclick="app.logic.updatePackage()">حفظ التعديلات</button>
+                <button class="btn btn-outline" style="flex:1; justify-content:center;" onclick="app.modals.closeAll()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Floosak Setup (NEW) -->
+    <div class="modal-overlay" id="floosakModal">
+        <div class="modal-box">
+            <h2 style="margin-bottom:24px; font-size:20px; font-weight:800; color:#7338a2;">إعدادات بوابة فلوسك</h2>
+            <p id="floosak-status" style="margin-bottom:20px; color:var(--slate-600); background:#f1f5f9; padding:10px; border-radius:10px;">الحالة: جاري التحقق...</p>
+            
+            <div id="floosak-step-1">
+                <div class="form-group">
+                    <label class="form-label">رقم التاجر (Merchant Phone)</label>
+                    <input type="text" id="floosak-phone" class="form-input" placeholder="9677xxxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">الكود المختصر (Short Code)</label>
+                    <input type="text" id="floosak-shortcode" class="form-input" placeholder="xxxxxx">
+                </div>
+                <button class="btn btn-primary" style="width:100%" onclick="app.logic.floosakRequestKey()">طلب رمز التحقق (OTP)</button>
+            </div>
+
+            <div id="floosak-step-2" style="display:none;">
+                <div class="form-group">
+                    <label class="form-label">أدخل رمز التحقق (OTP) الواصل للجوال</label>
+                    <input type="text" id="floosak-otp" class="form-input" placeholder="xxxxxx">
+                    <input type="hidden" id="floosak-req-id">
+                </div>
+                <button class="btn btn-primary" style="width:100%" onclick="app.logic.floosakVerifyKey()">تفعيل البوابة</button>
+            </div>
+
+            <div style="margin-top:20px; text-align:left;">
+                <button class="btn btn-outline" onclick="app.modals.closeAll()">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Viewer Modal -->
+    <div class="modal-overlay" id="imageViewModal" onclick="this.classList.remove('open')">
+        <div style="position:relative; max-width:90%; max-height:90%;">
+            <img id="img-view-target" src="" style="max-width:100%; max-height:80vh; border-radius:10px; box-shadow:0 20px 50px rgba(0,0,0,0.5);">
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'api.php';
+        
+        // --- بيانات تسجيل الدخول (يمكن تغييرها) ---
+        const ADMIN_CREDENTIALS = {
+            username: 'adminral',
+            password: 'pablo888'
+        };
+
+        // --- Data Store ---
+        const db = {
+            cards: [], packages: [], partners: [], withdrawals: [], customers: [], banks: [], topupRequests: [], floosak: {}, managers: []
+        };
+
+        // ================= TOAST SYSTEM =================
+        const Toast = {
+            show: (title, message, type = 'success') => {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                
+                const icons = {
+                    success: '<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>',
+                    error: '<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>',
+                    warning: '<svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" /></svg>'
+                };
+                
+                toast.innerHTML = `
+                    <div class="toast-icon ${type}">${icons[type]}</div>
+                    <div class="toast-content">
+                        <div class="toast-title">${title}</div>
+                        ${message ? `<div class="toast-message">${message}</div>` : ''}
+                    </div>
+                    <button class="toast-close" onclick="this.parentElement.remove()">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:16px"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                `;
+                
+                container.appendChild(toast);
+                
+                // Auto remove after 4 seconds
+                setTimeout(() => {
+                    toast.classList.add('toast-out');
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            },
+            success: (title, message) => Toast.show(title, message, 'success'),
+            error: (title, message) => Toast.show(title, message, 'error'),
+            warning: (title, message) => Toast.show(title, message, 'warning')
+        };
+
+        // ================= LOADER SYSTEM =================
+        const Loader = {
+            show: (text = 'جاري التحميل...') => {
+                document.getElementById('loaderText').innerText = text;
+                document.getElementById('globalLoader').classList.add('active');
+            },
+            hide: () => {
+                document.getElementById('globalLoader').classList.remove('active');
+            }
+        };
+
+        const app = {
+            // ================= AUTH SYSTEM =================
+            auth: {
+                isLoggedIn: false,
+                
+                checkSession: () => {
+                    const session = sessionStorage.getItem('vision_admin_auth');
+                    if(session === 'authenticated') {
+                        app.auth.isLoggedIn = true;
+                        document.getElementById('loginScreen').classList.add('hidden');
+                        document.body.classList.add('logged-in');
+                        return true;
+                    }
+                    return false;
+                },
+                
+                login: () => {
+                    const username = document.getElementById('loginUsername').value.trim();
+                    const password = document.getElementById('loginPassword').value;
+                    const errorEl = document.getElementById('loginError');
+                    const btn = document.getElementById('loginBtn');
+                    
+                    if(!username || !password) {
+                        errorEl.innerText = 'يرجى إدخال اسم المستخدم وكلمة المرور';
+                        errorEl.classList.add('show');
+                        return;
+                    }
+                    
+                    btn.disabled = true;
+                    btn.innerHTML = '<span>جاري التحقق...</span>';
+                    
+                    setTimeout(() => {
+                        if(username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                            sessionStorage.setItem('vision_admin_auth', 'authenticated');
+                            app.auth.isLoggedIn = true;
+                            errorEl.classList.remove('show');
+                            document.getElementById('loginScreen').classList.add('hidden');
+                            document.body.classList.add('logged-in');
+                            Toast.success('مرحباً بك!', 'تم تسجيل الدخول بنجاح');
+                            app.startApp();
+                        } else {
+                            errorEl.innerText = 'اسم المستخدم أو كلمة المرور غير صحيحة';
+                            errorEl.classList.add('show');
+                            btn.disabled = false;
+                            btn.innerHTML = '<span>تسجيل الدخول</span>';
+                        }
+                    }, 800);
+                },
+                
+                logout: () => {
+                    sessionStorage.removeItem('vision_admin_auth');
+                    app.auth.isLoggedIn = false;
+                    location.reload();
+                }
+            },
+
+            init: async () => {
+                // Check if already logged in
+                if(app.auth.checkSession()) {
+                    await app.startApp();
+                } else {
+                    // Show login screen, add enter key listener
+                    document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+                        if(e.key === 'Enter') app.auth.login();
+                    });
+                    document.getElementById('loginUsername').addEventListener('keypress', (e) => {
+                        if(e.key === 'Enter') document.getElementById('loginPassword').focus();
+                    });
+                }
+            },
+            
+            startApp: async () => {
+                Loader.show('جاري تحميل البيانات...');
+                await app.fetchData();
+                app.ui.renderAll();
+                app.logic.loadGatewayBalances();
+                Loader.hide();
+                Toast.success('تم التحميل', 'البيانات جاهزة');
+            },
+
+            fetchData: async () => {
+                try {
+                    const res = await fetch(`${API_URL}?action=get_all_data`);
+                    const data = await res.json();
+                    if(data) {
+                        Object.assign(db, data);
+                        // Check Floosak Status
+                        if(db.floosak_settings && db.floosak_settings.is_active == 1) {
+                            document.getElementById('floosak-status').innerText = "الحالة: مفعل ✅";
+                            document.getElementById('floosak-status').style.color = "green";
+                            document.getElementById('floosak-phone').value = db.floosak_settings.merchant_phone;
+                            document.getElementById('floosak-shortcode').value = db.floosak_settings.short_code;
+                        } else {
+                            document.getElementById('floosak-status').innerText = "الحالة: غير مفعل ❌";
+                        }
+                    }
+                } catch(e) { 
+                    console.error("Connection Error", e);
+                    Toast.error('خطأ في الاتصال', 'تعذر الاتصال بالسيرفر');
+                }
+            },
+
+            // دالة مساعدة لتنفيذ العمليات مع Loader
+            executeWithLoader: async (action, loadingText, successMsg, errorMsg) => {
+                Loader.show(loadingText);
+                try {
+                    await action();
+                    Loader.hide();
+                    if(successMsg) Toast.success('تم بنجاح', successMsg);
+                    return true;
+                } catch(e) {
+                    Loader.hide();
+                    Toast.error('خطأ', errorMsg || e.message);
+                    return false;
+                }
+            },
+
+            router: (page) => {
+                document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); // Reset active nav
+                document.getElementById('view-' + page).classList.add('active');
+                
+                // Highlight active nav item
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(item => {
+                    if(item.getAttribute('onclick').includes(`'${page}'`)) item.classList.add('active');
+                });
+                
+                if(page === 'finance') app.ui.renderFinance('all');
+                if(page === 'audit') app.ui.renderAudit(); 
+                if(page === 'deposits') app.ui.renderDeposits();
+                if(page === 'disputes') app.ui.renderDisputes();
+                if(page === 'customers') app.ui.renderCustomers();
+                if(page === 'managers') app.ui.renderManagers(); // NEW
+            },
+
+            modals: {
+                openAddBank: () => document.getElementById('addBankModal').classList.add('open'),
+                openAddPartner: () => document.getElementById('addPartnerModal').classList.add('open'),
+                openAddManager: () => {
+                    app.ui.populateManagerPartnerSelect();
+                    document.getElementById('addManagerModal').classList.add('open');
+                },
+                openAddPackage: () => {
+                    app.ui.populatePartnerSelect();
+                    document.getElementById('addPackageModal').classList.add('open');
+                },
+                openEditPackage: (id) => {
+                    const pkg = db.packages.find(p => p.id == id);
+                    if (!pkg) return;
+                    document.getElementById('edit-pkg-id').value = pkg.id;
+                    document.getElementById('edit-pkg-name').value = pkg.name;
+                    document.getElementById('edit-pkg-price').value = pkg.price;
+                    document.getElementById('editPackageModal').classList.add('open');
+                },
+                openUpload: () => {
+                    app.ui.populatePackageSelect(); 
+                    document.getElementById('uploadModal').classList.add('open');
+                },
+                openFloosakSetup: () => {
+                    document.getElementById('floosakModal').classList.add('open');
+                },
+                openWithdraw: () => {
+                    const partnerId = document.getElementById('finance-filter-partner').value;
+                    if(partnerId === 'all') return alert('يرجى تحديد شريك من القائمة المنسدلة أولاً لإجراء سحب.');
+                    const partner = db.partners.find(p => p.id == partnerId);
+                    const bal = app.logic.calculatePartnerBalance(partner.id);
+                    document.getElementById('withdraw-info').innerHTML = `<strong>سحب لصالح: ${partner.name}</strong><br>الرصيد المتاح للسحب: ${bal.net.toLocaleString()} ر.ي`;
+                    document.getElementById('wd-amount').max = bal.net;
+                    document.getElementById('withdrawModal').classList.add('open');
+                    tempImageBase64 = null;
+                    document.getElementById('wd-image-preview').innerText = 'انقر لرفع صورة الإيصال (اختياري)';
+                },
+                openTopUp: (id) => {
+                    const customer = db.customers.find(c => c.id == id); // Loose equality
+                    if (!customer) return;
+                    document.getElementById('topup-customer-id').value = id;
+                    document.getElementById('topup-customer-name').innerText = `شحن رصيد للعميل: ${customer.name}`;
+                    document.getElementById('topup-amount').value = '';
+                    document.getElementById('topUpModal').classList.add('open');
+                },
+                openResetPassword: (id) => {
+                    const customer = db.customers.find(c => c.id == id);
+                    if(!customer) return;
+                    document.getElementById('reset-customer-id').value = id;
+                    document.getElementById('reset-customer-name').innerText = `تعيين كلمة مرور جديدة للعميل: ${customer.name}`;
+                    document.getElementById('new-password').value = '';
+                    document.getElementById('resetPasswordModal').classList.add('open');
+                },
+                openCustomer: (id) => {
+                    app.fetchData().then(() => {
+                        const customer = db.customers.find(c => c.id == id);
+                        if(!customer) return;
+                        
+                        const content = document.getElementById('customer-profile-content');
+                        let historyRows = '';
+                        const transactions = customer.transactions || [];
+                        
+                        [...transactions].reverse().forEach(t => {
+                            const isCredit = t.type === 'credit';
+                            const color = isCredit ? 'var(--primary)' : 'var(--slate-800)';
+                            const sign = isCredit ? '+' : '-';
+                            
+                            let detailsHtml = '';
+                            // إصلاح: التعامل مع الهيكل الجديد والقديم
+                            let cardsArray = null;
+                            if(t.details) {
+                                if(t.details.cards && Array.isArray(t.details.cards)) {
+                                    cardsArray = t.details.cards; // الهيكل الجديد
+                                } else if(Array.isArray(t.details)) {
+                                    cardsArray = t.details; // الهيكل القديم
+                                }
+                            }
+                            
+                            if(cardsArray && cardsArray.length > 0) {
+                                detailsHtml = `<div style="margin-top:4px; font-size:12px; color:#64748b; background:#f1f5f9; padding:6px; border-radius:6px;">`;
+                                cardsArray.forEach(d => {
+                                    if(d && d.code) {
+                                        detailsHtml += `<div>كود: <span style="font-family:monospace; font-weight:bold;">${d.code}</span> (${d.price} ر.ي)</div>`;
+                                    }
+                                });
+                                detailsHtml += `</div>`;
+                            }
+    
+                            historyRows += `
+                                <tr>
+                                    <td>${t.date}</td>
+                                    <td>${t.items}${detailsHtml}</td>
+                                    <td style="color:${color}; font-weight:bold; direction:ltr; text-align:left;">${sign}${t.amount}</td>
+                                </tr>
+                            `;
+                        });
+    
+                        content.innerHTML = `
+                            <div class="cust-header">
+                                <div class="cust-info">
+                                    <h3>${customer.name}</h3>
+                                    <p>${customer.phone}</p>
+                                </div>
+                                <div class="cust-balance">
+                                    <small>الرصيد الحالي</small>
+                                    <span>${parseFloat(customer.balance).toLocaleString()} <span style="font-size:14px; color:#64748b;">ر.ي</span></span>
+                                </div>
+                            </div>
+                            <div class="table-wrapper">
+                                <div class="table-header" style="padding:12px 20px;"><h4>سجل العمليات</h4></div>
+                                <div style="max-height:300px; overflow-y:auto;">
+                                    <table>
+                                        <thead><tr><th>التاريخ</th><th>البيان</th><th>المبلغ</th></tr></thead>
+                                        <tbody>${historyRows || '<tr><td colspan="3" style="text-align:center; padding:20px;">لا توجد عمليات</td></tr>'}</tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        `;
+                        document.getElementById('customerModal').classList.add('open');
+                    });
+                },
+                openImage: (src) => {
+                    document.getElementById('img-view-target').src = src;
+                    document.getElementById('imageViewModal').classList.add('open');
+                },
+                closeAll: () => document.querySelectorAll('.modal-overlay').forEach(el => el.classList.remove('open'))
+            },
+
+            logic: {
+                loadGatewayBalances: async () => {
+                    try {
+                        const res = await fetch(`${API_URL}?action=get_gateway_balances`);
+                        const data = await res.json();
+                        const container = document.getElementById('gateway-balances');
+                        container.innerHTML = '';
+                        const createCard = (title, balance, status, iconColor) => `
+                            <div class="gateway-card">
+                                <div class="gw-header">
+                                    <div class="gw-title">${title}</div>
+                                    <div class="gw-icon" style="background:${iconColor}20; color:${iconColor}">
+                                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:18px"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M9 9.563C9 9.252 9.252 9 9.563 9h4.874c.311 0 .563.252.563.563v4.874c0 .311-.252.563-.563.563H9.564A.562.562 0 0 1 9 14.437V9.564Z" /></svg>
+                                    </div>
+                                </div>
+                                <div class="gw-balance">${balance.toLocaleString()} ر.ي</div>
+                                <div style="display:flex; justify-content:flex-end;">
+                                    <span class="gw-status ${status === 'active' ? 'active' : 'inactive'}">${status === 'active' ? 'متصل' : 'غير متصل'}</span>
+                                </div>
+                            </div>`;
+                        if (data.floosak) container.innerHTML += createCard('محفظة فلوسك', data.floosak.balance, data.floosak.status, '#7338a2');
+                        if (data.jawali) container.innerHTML += createCard('محفظة جوالي', data.jawali.balance, data.jawali.status, '#00bdae');
+                        if (data.credit_card) container.innerHTML += createCard('البطاقات الائتمانية', data.credit_card.balance, data.credit_card.status, '#f94f51');
+                    } catch(e) { console.error("Failed to load gateway balances", e); }
+                },
+                
+                parseDate: (str) => {
+                    if(!str) return null;
+                    if(str.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+                        const [day, month, year] = str.split('/');
+                        return new Date(`${year}-${month}-${day}`);
+                    }
+                    if(str.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                        return new Date(str);
+                    }
+                    return null;
+                },
+                
+                generateAuditReport: () => {
+                    const partnerId = document.getElementById('audit-partner-select').value;
+                    const startDateVal = document.getElementById('audit-date-start').value;
+                    const endDateVal = document.getElementById('audit-date-end').value;
+
+                    if(!partnerId) return alert('يرجى اختيار الشريك/التاجر أولاً');
+
+                    const partner = db.partners.find(p => String(p.id) === String(partnerId));
+                    document.getElementById('report-partner-name').innerText = `تقرير الجرد: ${partner.name}`;
+                    document.getElementById('report-period').innerText = `الفترة من ${startDateVal || '-'} إلى ${endDateVal || '-'}`;
+
+                    const start = startDateVal ? new Date(startDateVal) : null;
+                    const end = endDateVal ? new Date(endDateVal) : null;
+
+                    let salesTotal = 0;
+                    let commissionTotal = 0;
+                    const salesBreakdown = {};
+
+                    const partnerPackages = db.packages.filter(p => String(p.partner_id) === String(partnerId)).map(p => String(p.id));
+                    
+                    const soldCards = db.cards.filter(c => {
+                        if (c.status !== 'sold') return false;
+                        if (!partnerPackages.includes(String(c.pkg_id))) return false;
+                        
+                        if(start || end) {
+                            const soldDate = app.logic.parseDate(c.sold_date);
+                            if(soldDate) {
+                                if(start && soldDate < start) return false;
+                                if(end && soldDate > end) return false;
+                            }
+                        }
+                        return true;
+                    });
+
+                    soldCards.forEach(c => {
+                        salesTotal += parseFloat(c.price);
+                        if(!salesBreakdown[c.pkg_name]) salesBreakdown[c.pkg_name] = { count: 0, price: c.price, total: 0 };
+                        salesBreakdown[c.pkg_name].count++;
+                        salesBreakdown[c.pkg_name].total += parseFloat(c.price);
+                    });
+
+                    const commRate = parseFloat(partner.commission) || 0;
+                    commissionTotal = salesTotal * (commRate / 100);
+
+                    let withdrawnTotal = 0;
+                    const relevantWithdrawals = db.withdrawals.filter(w => {
+                         if(String(w.partner_id) !== String(partnerId)) return false;
+                         if(start || end) {
+                            const wDate = app.logic.parseDate(w.date);
+                            if(wDate) {
+                                if(start && wDate < start) return false;
+                                if(end && wDate > end) return false;
+                            }
+                         }
+                         return true;
+                    });
+                    
+                    relevantWithdrawals.forEach(w => withdrawnTotal += parseFloat(w.amount));
+
+                    const stockCards = db.cards.filter(c => c.status === 'active' && partnerPackages.includes(String(c.pkg_id)));
+                    const stockBreakdown = {};
+                    stockCards.forEach(c => {
+                        if(!stockBreakdown[c.pkg_name]) stockBreakdown[c.pkg_name] = { count: 0, price: c.price };
+                        stockBreakdown[c.pkg_name].count++;
+                    });
+
+                    document.getElementById('audit-sales').innerText = salesTotal.toLocaleString() + ' ر.ي';
+                    document.getElementById('audit-commission').innerText = commissionTotal.toLocaleString() + ' ر.ي';
+                    document.getElementById('audit-withdrawn').innerText = withdrawnTotal.toLocaleString() + ' ر.ي';
+                    document.getElementById('audit-net-due').innerText = (salesTotal - commissionTotal - withdrawnTotal).toLocaleString() + ' ر.ي';
+
+                    const salesBody = document.getElementById('audit-table-sales');
+                    salesBody.innerHTML = '';
+                    if(Object.keys(salesBreakdown).length === 0) salesBody.innerHTML = '<tr><td colspan="4" style="text-align:center">لا توجد مبيعات</td></tr>';
+                    else {
+                        for(const [name, data] of Object.entries(salesBreakdown)) {
+                            salesBody.innerHTML += `<tr><td>${name}</td><td>${data.count}</td><td>${data.price}</td><td>${data.total.toLocaleString()}</td></tr>`;
+                        }
+                    }
+
+                    const stockBody = document.getElementById('audit-table-stock');
+                    stockBody.innerHTML = '';
+                    if(Object.keys(stockBreakdown).length === 0) stockBody.innerHTML = '<tr><td colspan="3" style="text-align:center">لا يوجد مخزون</td></tr>';
+                    else {
+                        for(const [name, data] of Object.entries(stockBreakdown)) {
+                            const val = data.count * parseFloat(data.price);
+                            stockBody.innerHTML += `<tr><td>${name}</td><td>${data.count}</td><td>${val.toLocaleString()} ر.ي</td></tr>`;
+                        }
+                    }
+
+                    const wdBody = document.getElementById('audit-table-withdrawals');
+                    wdBody.innerHTML = '';
+                    if(relevantWithdrawals.length === 0) wdBody.innerHTML = '<tr><td colspan="4" style="text-align:center">لا توجد مسحوبات</td></tr>';
+                    else {
+                        relevantWithdrawals.forEach(w => {
+                             wdBody.innerHTML += `<tr><td>${w.date}</td><td style="color:#c2410c;font-weight:bold;">${w.amount}</td><td>${w.receiver}</td><td>${w.note || '-'}</td></tr>`;
+                        });
+                    }
+
+                    document.getElementById('audit-result').style.display = 'block';
+                },
+
+                addBank: async () => {
+                    const name = document.getElementById('bank-name').value;
+                    const account = document.getElementById('bank-account').value;
+                    const owner = document.getElementById('bank-owner').value;
+                    
+                    if(!name || !account) {
+                        Toast.warning('تنبيه', 'يرجى ملء جميع الحقول المطلوبة');
+                        return;
+                    }
+                    
+                    Loader.show('جاري إضافة البنك...');
+                    const res = await fetch(API_URL + '?action=add_bank', {
+                        method: 'POST', body: JSON.stringify({name, account, owner})
+                    });
+                    const result = await res.json();
+                    Loader.hide();
+                    
+                    if(result.success) {
+                        await app.fetchData();
+                        app.ui.renderDeposits();
+                        app.modals.closeAll();
+                        Toast.success('تمت الإضافة', 'تم إضافة البنك بنجاح');
+                    } else {
+                        Toast.error('خطأ', 'فشل في إضافة البنك');
+                    }
+                },
+                
+                deleteBank: async (id) => {
+                    if(!confirm('هل أنت متأكد من حذف هذا البنك؟')) return;
+                    Loader.show('جاري الحذف...');
+                    const res = await fetch(API_URL + '?action=delete_bank', { method: 'POST', body: JSON.stringify({id}) });
+                    Loader.hide();
+                    if((await res.json()).success) { 
+                        await app.fetchData(); 
+                        app.ui.renderDeposits(); 
+                        Toast.success('تم الحذف', 'تم حذف البنك بنجاح');
+                    }
+                },
+
+                approveDeposit: async (id) => {
+                    if(!confirm('تأكيد قبول طلب الشحن؟')) return;
+                    Loader.show('جاري معالجة الطلب...');
+                    const res = await fetch(API_URL + '?action=process_deposit', {
+                        method: 'POST', body: JSON.stringify({id, status: 'approved'})
+                    });
+                    Loader.hide();
+                    if((await res.json()).success) { 
+                        await app.fetchData(); 
+                        app.ui.renderDeposits(); 
+                        Toast.success('تم القبول', 'تم شحن رصيد العميل بنجاح');
+                    }
+                },
+
+                rejectDeposit: async (id) => {
+                    const reason = prompt("سبب الرفض:");
+                    if(!reason) return;
+                    Loader.show('جاري معالجة الطلب...');
+                    const res = await fetch(API_URL + '?action=process_deposit', {
+                        method: 'POST', body: JSON.stringify({id, status: 'rejected', reason})
+                    });
+                    Loader.hide();
+                    if((await res.json()).success) { 
+                        await app.fetchData(); 
+                        app.ui.renderDeposits(); 
+                        Toast.warning('تم الرفض', 'تم رفض طلب الشحن');
+                    }
+                },
+
+                sendWhatsappNotification: (reqId) => {
+                    const req = db.topupRequests.find(r => r.id == reqId);
+                    if(!req) return;
+                    const customer = db.customers.find(c => c.id == req.customer_id);
+                    if(!customer) return;
+
+                    let phone = customer.phone.replace(/\D/g, '');
+                    if (phone.startsWith('0')) phone = '967' + phone.substring(1);
+                    else if (!phone.startsWith('967')) phone = '967' + phone;
+
+                    let msg = "";
+                    if(req.status === 'approved') {
+                        msg = `مرحباً بك عزيزي 🌹\n\nتم تأكيد عملية الشحن بنجاح ✅\n💰 المبلغ: ${req.amount} ر.ي\n🏦 عبر: ${req.bank_name}\n🔢 مرجع: ..${req.ref_code.slice(-6)}\n📅 التاريخ: ${req.date}\n\nرصيدك الآن جاهز، يمكنك البدء بشراء كروت الإنترنت فوراً 🚀\nشكراً لثقتك بنا.`;
+                    } else {
+                        msg = `مرحباً بك عزيزي ✋\n\nنأسف لإبلاغك بأنه تم رفض طلب الشحن ❌\n💰 المبلغ: ${req.amount} ر.ي\n⚠️ السبب: ${req.rejection_reason}\n\nيرجى التحقق وإعادة المحاولة.`;
+                    }
+                    window.open(`https://web.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`, '_blank');
+                    Toast.success('تم', 'جاري فتح واتساب...');
+                },
+
+                toggleCheck: async (id) => {
+                   await fetch(API_URL + '?action=toggle_deposit_review', { method: 'POST', body: JSON.stringify({id}) });
+                },
+
+                floosakRequestKey: async () => {
+                    const phone = document.getElementById('floosak-phone').value;
+                    const short_code = document.getElementById('floosak-shortcode').value;
+                    if(!phone || !short_code) {
+                        Toast.warning('تنبيه', 'يرجى ملء جميع البيانات');
+                        return;
+                    }
+                    
+                    Loader.show('جاري إرسال الطلب...');
+                    try {
+                        const res = await fetch(API_URL + '?action=floosak_request_key', {
+                            method: 'POST', body: JSON.stringify({phone, short_code})
+                        });
+                        const result = await res.json();
+                        Loader.hide();
+                        if(result.success) {
+                            document.getElementById('floosak-req-id').value = result.request_id;
+                            document.getElementById('floosak-step-1').style.display = 'none';
+                            document.getElementById('floosak-step-2').style.display = 'block';
+                            Toast.success('تم الإرسال', 'تم إرسال رمز OTP إلى جوالك');
+                        } else {
+                            Toast.error('فشل', result.message || 'خطأ غير معروف');
+                        }
+                    } catch(e) { Loader.hide(); Toast.error('خطأ', 'فشل الاتصال بالسيرفر'); console.error(e); }
+                },
+
+                floosakVerifyKey: async () => {
+                    const otp = document.getElementById('floosak-otp').value;
+                    const reqId = document.getElementById('floosak-req-id').value;
+                    if(!otp) {
+                        Toast.warning('تنبيه', 'أدخل رمز التأكيد');
+                        return;
+                    }
+                    
+                    Loader.show('جاري التحقق...');
+                    try {
+                        const res = await fetch(API_URL + '?action=floosak_verify_key', {
+                            method: 'POST', body: JSON.stringify({otp, request_id: reqId})
+                        });
+                        const result = await res.json();
+                        Loader.hide();
+                        if(result.success) {
+                            Toast.success('تم التفعيل', 'بوابة فلوسك جاهزة للاستخدام');
+                            app.modals.closeAll();
+                            await app.fetchData();
+                        } else {
+                            Toast.error('فشل التفعيل', result.message || 'خطأ غير معروف');
+                        }
+                    } catch(e) { Loader.hide(); Toast.error('خطأ', 'فشل الاتصال بالسيرفر'); console.error(e); }
+                },
+
+                createPartner: async () => {
+                    const name = document.getElementById('new-partner-name').value;
+                    const phone = document.getElementById('new-partner-phone').value;
+                    const commission = document.getElementById('new-partner-commission').value;
+                    
+                    if(!name || !phone || !commission) {
+                        Toast.warning('تنبيه', 'يرجى ملء جميع الحقول');
+                        return;
+                    }
+                    
+                    Loader.show('جاري إضافة الشريك...');
+                    const res = await fetch(API_URL + '?action=add_partner', {
+                        method: 'POST', body: JSON.stringify({name, phone, commission})
+                    });
+                    Loader.hide();
+                    if((await res.json()).success) { 
+                        await app.fetchData(); 
+                        app.ui.renderPartners(); 
+                        app.modals.closeAll(); 
+                        Toast.success('تمت الإضافة', 'تم إضافة الشريك بنجاح');
+                    }
+                },
+                
+                deletePartner: async (id) => {
+                     if(!confirm('هل أنت متأكد من حذف هذا الشريك؟')) return;
+                     Loader.show('جاري الحذف...');
+                     const res = await fetch(API_URL + '?action=delete_partner', { method: 'POST', body: JSON.stringify({id}) });
+                     Loader.hide();
+                     if((await res.json()).success) { 
+                         await app.fetchData(); 
+                         app.ui.renderPartners(); 
+                         Toast.success('تم الحذف', 'تم حذف الشريك بنجاح');
+                     }
+                },
+
+                // New function to copy partner link
+                copyStoreLink: (id) => {
+                    const url = window.location.href.replace('dashboard.html', 'index.html').split('?')[0] + '?p=' + id;
+                    navigator.clipboard.writeText(url).then(() => Toast.success('تم النسخ', 'تم نسخ رابط المتجر'));
+                },
+
+                // NEW: Logic for Network Managers
+                createManager: async () => {
+                    const partnerId = document.getElementById('mgr-partner-select').value;
+                    const name = document.getElementById('mgr-name').value;
+                    const username = document.getElementById('mgr-username').value;
+                    const password = document.getElementById('mgr-password').value;
+
+                    if(!partnerId || !name || !username || !password) {
+                        Toast.warning('تنبيه', 'يرجى ملء جميع البيانات');
+                        return;
+                    }
+
+                    Loader.show('جاري إضافة المدير...');
+                    const res = await fetch(API_URL + '?action=add_network_manager', {
+                        method: 'POST', body: JSON.stringify({ partnerId, name, username, password })
+                    });
+                    const data = await res.json();
+                    Loader.hide();
+                    if(data.success) {
+                        Toast.success('تمت الإضافة', 'تم إضافة المدير بنجاح');
+                        await app.fetchData();
+                        app.ui.renderManagers();
+                        app.modals.closeAll();
+                    } else {
+                        Toast.error('خطأ', data.message);
+                    }
+                },
+
+                deleteManager: async (id) => {
+                    if(!confirm("حذف هذا المدير؟ لن يتمكن من تسجيل الدخول بعد الآن.")) return;
+                    Loader.show('جاري الحذف...');
+                    const res = await fetch(API_URL + '?action=delete_network_manager', {
+                        method: 'POST', body: JSON.stringify({ id })
+                    });
+                    Loader.hide();
+                    if((await res.json()).success) {
+                        await app.fetchData();
+                        app.ui.renderManagers();
+                        Toast.success('تم الحذف', 'تم حذف المدير بنجاح');
+                    }
+                },
+
+                copyManagerLink: () => {
+                    const link = window.location.href.replace('dashboard.html', 'manager.html');
+                    navigator.clipboard.writeText(link).then(() => {
+                        Toast.success('تم النسخ', 'تم نسخ رابط بوابة المدراء');
+                    });
+                },
+
+                createPackage: async () => {
+                    const partnerSelect = document.getElementById('new-pkg-partner-select').value;
+                    if(!partnerSelect) {
+                        Toast.warning('تنبيه', 'يرجى اختيار الشريك');
+                        return;
+                    }
+                    const [partnerId, network] = partnerSelect.split('|');
+                    const checkedCats = [];
+                    document.querySelectorAll('input[name="pkg_cat"]:checked').forEach(cb => {
+                        checkedCats.push(cb.value);
+                    });
+                    const categoriesStr = checkedCats.length > 0 ? checkedCats.join(',') : 'best_selling';
+
+                    const pkgData = {
+                        name: document.getElementById('new-pkg-name').value,
+                        price: document.getElementById('new-pkg-price').value,
+                        amount: document.getElementById('new-pkg-amount').value,
+                        unit: document.getElementById('new-pkg-unit').value,
+                        categories: categoriesStr, 
+                        grad: document.getElementById('new-pkg-grad').value,
+                        partnerId: partnerId,
+                        network: network
+                    };
+                    
+                    if(!pkgData.name || !pkgData.price) {
+                        Toast.warning('تنبيه', 'يرجى ملء اسم الباقة والسعر');
+                        return;
+                    }
+                    
+                    Loader.show('جاري إضافة الباقة...');
+                    const res = await fetch(API_URL + '?action=add_package', { method: 'POST', body: JSON.stringify(pkgData) });
+                    Loader.hide();
+                    if((await res.json()).success) { 
+                        await app.fetchData(); 
+                        app.ui.renderPackagesList(); 
+                        app.modals.closeAll(); 
+                        Toast.success('تمت الإضافة', 'تم إضافة الباقة بنجاح');
+                    }
+                },
+
+                updatePackage: async () => {
+                    const id = document.getElementById('edit-pkg-id').value;
+                    const name = document.getElementById('edit-pkg-name').value;
+                    const price = document.getElementById('edit-pkg-price').value;
+                    
+                    if(!name || !price) {
+                        Toast.warning('تنبيه', 'يرجى ملء جميع البيانات');
+                        return;
+                    }
+
+                    Loader.show('جاري حفظ التعديلات...');
+                    const res = await fetch(API_URL + '?action=update_package', {
+                        method: 'POST', body: JSON.stringify({id, name, price})
+                    });
+                    Loader.hide();
+                    if((await res.json()).success) { 
+                        await app.fetchData(); 
+                        app.ui.renderPackagesList(); 
+                        app.modals.closeAll(); 
+                        Toast.success('تم التعديل', 'تم حفظ التعديلات بنجاح');
+                    }
+                },
+
+                deletePackage: async (id) => {
+                    if(!confirm("هل أنت متأكد من حذف هذه الباقة؟ سيتم حذفها نهائياً!")) return;
+                    Loader.show('جاري الحذف...');
+                    const res = await fetch(API_URL + '?action=delete_package', {
+                        method: 'POST', body: JSON.stringify({id})
+                    });
+                    Loader.hide();
+                    if((await res.json()).success) { 
+                        await app.fetchData(); 
+                        app.ui.renderPackagesList(); 
+                        Toast.success('تم الحذف', 'تم حذف الباقة بنجاح');
+                    }
+                },
+
+                uploadCards: async () => {
+                    const rawVal = document.getElementById('input-pkg-select').value;
+                    if(!rawVal) {
+                        Toast.warning('تنبيه', 'يرجى اختيار باقة');
+                        return;
+                    }
+                    const [pkgId, price, pkgName] = rawVal.split('|');
+                    const codesText = document.getElementById('input-codes').value;
+                    const codes = codesText.split('\n').filter(c => c.trim() !== '');
+                    
+                    if(codes.length === 0) {
+                        Toast.warning('تنبيه', 'يرجى إدخال الأكواد');
+                        return;
+                    }
+
+                    const cardsData = codes.map(c => ({
+                        pkgId: pkgId,
+                        pkgName: pkgName,
+                        code: c.trim(),
+                        price: price,
+                        date: new Date().toLocaleDateString('en-GB')
+                    }));
+
+                    Loader.show(`جاري رفع ${codes.length} كرت...`);
+                    const res = await fetch(API_URL + '?action=upload_cards', { method: 'POST', body: JSON.stringify({cards: cardsData}) });
+                    const result = await res.json();
+                    Loader.hide();
+                    if(result.success) { 
+                        await app.fetchData(); 
+                        app.ui.renderAll(); 
+                        app.modals.closeAll(); 
+                        document.getElementById('input-codes').value = '';
+                        Toast.success('تم الرفع', `تم رفع ${result.count || codes.length} كرت بنجاح`);
+                    } else {
+                        Toast.error('خطأ', 'فشل في رفع الأكواد');
+                    }
+                },
+
+                confirmTopUp: async () => {
+                    const id = document.getElementById('topup-customer-id').value;
+                    const amount = document.getElementById('topup-amount').value;
+                    if(!amount || amount <= 0) {
+                        Toast.warning('تنبيه', 'يرجى إدخال مبلغ صحيح');
+                        return;
+                    }
+                    Loader.show('جاري شحن الرصيد...');
+                    const res = await fetch(API_URL + '?action=admin_topup', { method: 'POST', body: JSON.stringify({id, amount}) });
+                    Loader.hide();
+                    if((await res.json()).success) { 
+                        await app.fetchData(); 
+                        app.ui.renderCustomers(); 
+                        app.modals.closeAll(); 
+                        Toast.success('تم الشحن', `تم شحن ${amount} ر.ي بنجاح`);
+                    }
+                },
+
+                resetPassword: async () => {
+                    const id = document.getElementById('reset-customer-id').value;
+                    const password = document.getElementById('new-password').value;
+                    if(!password || password.length < 4) {
+                        Toast.warning('تنبيه', 'كلمة المرور يجب أن تكون 4 أحرف على الأقل');
+                        return;
+                    }
+                    
+                    Loader.show('جاري تغيير كلمة المرور...');
+                    const res = await fetch(API_URL + '?action=admin_reset_password', { 
+                        method: 'POST', body: JSON.stringify({id, password}) 
+                    });
+                    Loader.hide();
+                    if((await res.json()).success) {
+                        Toast.success('تم التغيير', 'تم تغيير كلمة المرور بنجاح');
+                        app.modals.closeAll();
+                    }
+                },
+
+                toggleCustomerStatus: async (id) => {
+                    const cust = db.customers.find(c => c.id == id);
+                    const newStatus = cust.status === 'active' ? 'disabled' : 'active';
+                    const statusText = newStatus === 'active' ? 'تفعيل' : 'تعطيل';
+                    if(!confirm(`هل تريد ${statusText} هذا العميل؟`)) return;
+                    Loader.show('جاري التحديث...');
+                    const res = await fetch(API_URL + '?action=toggle_customer_status', { method: 'POST', body: JSON.stringify({id, status: newStatus}) });
+                    Loader.hide();
+                    if((await res.json()).success) { 
+                        await app.fetchData(); 
+                        app.ui.renderCustomers(); 
+                        Toast.success('تم', `تم ${statusText} العميل`);
+                    }
+                },
+
+                toggleCard: async (id, status) => {
+                    Loader.show('جاري التحديث...');
+                    const res = await fetch(API_URL + '?action=toggle_card', { method: 'POST', body: JSON.stringify({id, status}) });
+                    Loader.hide();
+                    if((await res.json()).success) { 
+                        await app.fetchData(); 
+                        app.ui.renderInventory(); 
+                        Toast.success('تم', 'تم تحديث حالة الكرت');
+                    }
+                },
+                
+                deleteCard: async (id) => {
+                    if(!confirm("هل أنت متأكد من حذف هذا الكرت نهائياً؟ لا يمكن التراجع!")) return;
+                    Loader.show('جاري الحذف...');
+                    const res = await fetch(API_URL + '?action=delete_card', { method: 'POST', body: JSON.stringify({id}) });
+                    Loader.hide();
+                    if((await res.json()).success) { 
+                        await app.fetchData(); 
+                        app.ui.renderInventory(); 
+                        Toast.success('تم الحذف', 'تم حذف الكرت');
+                    }
+                },
+
+                searchInventory: (q) => {
+                    app.ui.renderInventory(q);
+                },
+
+                resolveDispute: async (id, action) => {
+                    let reason = null;
+                    if(action === 'reject') {
+                        reason = prompt("سبب الرفض:");
+                        if(!reason) return;
+                    } else {
+                        if(!confirm("تأكيد استرجاع قيمة الكرت للعميل؟")) return;
+                    }
+
+                    Loader.show('جاري معالجة البلاغ...');
+                    const res = await fetch(API_URL + '?action=resolve_dispute', {
+                         method: 'POST', body: JSON.stringify({id, action, reason})
+                    });
+                    Loader.hide();
+                    
+                    if((await res.json()).success) { 
+                        await app.fetchData(); 
+                        app.ui.renderDisputes(); 
+                        app.ui.renderCustomers();
+                        if(action === 'refund') {
+                            Toast.success('تم الاسترجاع', 'تم استرجاع قيمة الكرت للعميل');
+                        } else {
+                            Toast.warning('تم الرفض', 'تم رفض البلاغ');
+                        }
+                    }
+                },
+
+                sendDisputeWhatsapp: (cardId) => {
+                    const card = db.cards.find(c => c.id == cardId);
+                    if(!card) return;
+                    
+                    let customer = null;
+                    for(let c of db.customers) {
+                         if(c.transactions) {
+                             for(let t of c.transactions) {
+                                 if(t.details) {
+                                     // إصلاح: التعامل مع الهيكل الجديد والقديم
+                                     let cardsArray = null;
+                                     if(t.details.cards && Array.isArray(t.details.cards)) {
+                                         cardsArray = t.details.cards; // الهيكل الجديد
+                                     } else if(Array.isArray(t.details)) {
+                                         cardsArray = t.details; // الهيكل القديم
+                                     }
+                                     
+                                     if(cardsArray) {
+                                         if(cardsArray.some(d => d && d.code === card.code)) {
+                                             customer = c;
+                                             break;
+                                         }
+                                     } else if (typeof t.details === 'string' && t.details.includes(card.code)) {
+                                          customer = c;
+                                          break;
+                                     }
+                                 }
+                             }
+                         }
+                         if(customer) break;
+                    }
+
+                    if(!customer) {
+                        Toast.error('خطأ', 'لم يتم العثور على العميل');
+                        return;
+                    }
+
+                    let phone = customer.phone.replace(/\D/g, '');
+                    if (phone.startsWith('0')) phone = '967' + phone.substring(1);
+                    else if (!phone.startsWith('967')) phone = '967' + phone;
+
+                    let msg = "";
+                    if(card.status === 'refunded') {
+                        msg = `مرحباً بك عزيزي 🌹\n\nبخصوص بلاغك عن الكرت: ${card.pkg_name}\nالكود: ${card.code}\n\nتم قبول البلاغ واسترجاع قيمة الكرت (${card.price} ر.ي) إلى محفظتك بنجاح ✅\n\nنعتذر عن الإزعاج وشكراً لتفهمك.`;
+                    } else if(card.dispute_resolution === 'rejected') {
+                        msg = `مرحباً بك عزيزي ✋\n\nبخصوص بلاغك عن الكرت: ${card.pkg_name}\nالكود: ${card.code}\n\nنود إبلاغك بأنه تم فحص الكرت ورفض البلاغ.\n⚠️ السبب: ${card.dispute_reason || 'الكرت سليم ومطابق للمواصفات'}\n\nشكراً لتواصلك معنا.`;
+                    }
+                    window.open(`https://web.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`, '_blank');
+                    Toast.success('تم', 'جاري فتح واتساب...');
+                },
+                
+                calculatePartnerBalance: (partnerId) => {
+                    const sales = db.cards.filter(c => c.status === 'sold');
+                    let totalSales = 0;
+                    sales.forEach(c => {
+                         const pkg = db.packages.find(p => p.id == c.pkg_id);
+                         if(pkg && pkg.partner_id == partnerId) totalSales += parseFloat(c.price);
+                    });
+                    
+                    const partner = db.partners.find(p => p.id == partnerId);
+                    const commRate = partner ? parseFloat(partner.commission) : 0;
+                    const totalCommission = totalSales * (commRate / 100);
+
+                    const withdrawals = db.withdrawals.filter(w => w.partner_id == partnerId);
+                    const totalWithdrawn = withdrawals.reduce((sum, w) => sum + parseFloat(w.amount), 0);
+                    
+                    return { sales: totalSales, commission: totalCommission, withdrawn: totalWithdrawn, net: totalSales - totalCommission - totalWithdrawn };
+                },
+
+                handleImagePreview: (input) => {
+                    if (input.files && input.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            tempImageBase64 = e.target.result;
+                            document.getElementById('wd-image-preview').innerText = 'تم اختيار الصورة ✅';
+                        }
+                        reader.readAsDataURL(input.files[0]);
+                    }
+                },
+
+                processWithdrawal: async () => {
+                    const partnerId = document.getElementById('finance-filter-partner').value;
+                    const amount = document.getElementById('wd-amount').value;
+                    const receiver = document.getElementById('wd-receiver').value;
+                    const bank = document.getElementById('wd-bank').value;
+                    const note = document.getElementById('wd-note').value;
+                    
+                    if(!amount || !receiver) {
+                        Toast.warning('تنبيه', 'يرجى ملء جميع البيانات المطلوبة');
+                        return;
+                    }
+                    
+                    Loader.show('جاري تسجيل السحب...');
+                    const res = await fetch(API_URL + '?action=add_withdrawal', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                             partnerId, amount, receiver, bank, note, 
+                             image: tempImageBase64,
+                             date: new Date().toLocaleDateString('en-GB')
+                        })
+                    });
+                    Loader.hide();
+                    
+                    if((await res.json()).success) {
+                        await app.fetchData();
+                        app.ui.renderFinance(partnerId);
+                        app.modals.closeAll();
+                        Toast.success('تم السحب', `تم تسجيل سحب ${amount} ر.ي بنجاح`);
+                    }
+                }
+            },
+
+            ui: {
+                renderAll: () => {
+                    const soldCards = db.cards.filter(c => c.status === 'sold');
+                    const totalSales = soldCards.reduce((a,b)=>a+parseFloat(b.price),0);
+                    let totalComm = 0;
+                    soldCards.forEach(c => {
+                        const pkg = db.packages.find(p => p.id == c.pkg_id);
+                        if(pkg) {
+                            const partner = db.partners.find(pt => pt.id == pkg.partner_id);
+                            const rate = partner ? parseFloat(partner.commission) : 10;
+                            totalComm += parseFloat(c.price) * (rate/100);
+                        }
+                    });
+
+                    document.getElementById('kpi-sales').innerText = totalSales.toLocaleString() + ' ر.ي';
+                    document.getElementById('kpi-net').innerText = totalComm.toLocaleString() + ' ر.ي';
+                    
+                    const pendingDeposits = db.topupRequests.filter(r => r.status === 'pending').length;
+                    document.getElementById('nav-deposits-badge').innerText = pendingDeposits;
+                    document.getElementById('nav-deposits-badge').style.display = pendingDeposits > 0 ? 'inline-block' : 'none';
+
+                    app.ui.renderPartners();
+                    app.ui.renderPackagesList();
+                    app.ui.populateInventoryFilters(); 
+                    app.ui.populateInventoryPackages(); 
+                    app.ui.renderInventory();
+                    app.ui.renderRecent();
+                    app.ui.renderDisputes();
+                    app.ui.populateFinanceFilter();
+                    app.ui.renderCustomers();
+                    app.ui.renderDeposits();
+                    app.ui.renderManagers(); // NEW
+                },
+                
+                renderAudit: () => {
+                    const select = document.getElementById('audit-partner-select');
+                    const currentVal = select.value;
+                    select.innerHTML = '<option value="">-- اختر --</option>';
+                    db.partners.forEach(p => { select.innerHTML += `<option value="${p.id}">${p.name}</option>`; });
+                    select.value = currentVal;
+                },
+
+                setDepositDateRange: (range) => {
+                    const startInput = document.getElementById('dep-date-start');
+                    const endInput = document.getElementById('dep-date-end');
+                    const now = new Date();
+                    let start, end;
+
+                    if (range === 'thisMonth') {
+                        start = new Date(now.getFullYear(), now.getMonth(), 1);
+                        end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                    } else if (range === 'lastMonth') {
+                        start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                        end = new Date(now.getFullYear(), now.getMonth(), 0);
+                    } else if (range === 'all') {
+                        startInput.value = '';
+                        endInput.value = '';
+                        app.ui.renderDeposits();
+                        return;
+                    }
+
+                    const formatDate = (d) => {
+                        const y = d.getFullYear();
+                        const m = String(d.getMonth() + 1).padStart(2, '0');
+                        const day = String(d.getDate()).padStart(2, '0');
+                        return `${y}-${m}-${day}`;
+                    };
+
+                    startInput.value = formatDate(start);
+                    endInput.value = formatDate(end);
+                    app.ui.renderDeposits();
+                },
+
+                setDisputeDateRange: (range) => {
+                    const startInput = document.getElementById('disp-date-start');
+                    const endInput = document.getElementById('disp-date-end');
+                    const now = new Date();
+                    let start, end;
+
+                    if (range === 'thisMonth') {
+                        start = new Date(now.getFullYear(), now.getMonth(), 1);
+                        end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                    } else if (range === 'lastMonth') {
+                        start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                        end = new Date(now.getFullYear(), now.getMonth(), 0);
+                    } else if (range === 'all') {
+                        startInput.value = '';
+                        endInput.value = '';
+                        app.ui.renderDisputes();
+                        return;
+                    }
+
+                    const formatDate = (d) => {
+                        const y = d.getFullYear();
+                        const m = String(d.getMonth() + 1).padStart(2, '0');
+                        const day = String(d.getDate()).padStart(2, '0');
+                        return `${y}-${m}-${day}`;
+                    };
+
+                    startInput.value = formatDate(start);
+                    endInput.value = formatDate(end);
+                    app.ui.renderDisputes();
+                },
+
+                renderDeposits: () => {
+                    const tbody = document.getElementById('table-deposits');
+                    const list = document.getElementById('banks-container');
+                    const startInput = document.getElementById('dep-date-start');
+                    const endInput = document.getElementById('dep-date-end');
+                    const methodSelect = document.getElementById('dep-filter-method');
+                    const statusSelect = document.getElementById('dep-filter-status');
+                    const sortSelect = document.getElementById('dep-sort'); 
+                    const searchInput = document.getElementById('dep-search');
+                    const analysisText = document.getElementById('dep-analysis-text');
+
+                    if (methodSelect.children.length === 1) {
+                        db.banks.forEach(b => {
+                            methodSelect.innerHTML += `<option value="${b.id}">${b.name}</option>`;
+                        });
+                    }
+
+                    if (!startInput.value && !endInput.value && !startInput.dataset.touched) {
+                        const now = new Date();
+                        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+                        const y = firstDay.getFullYear();
+                        const m = String(firstDay.getMonth() + 1).padStart(2, '0');
+                        startInput.value = `${y}-${m}-01`;
+                        
+                        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                        const yd = lastDay.getFullYear();
+                        const md = String(lastDay.getMonth() + 1).padStart(2, '0');
+                        const dd = String(lastDay.getDate()).padStart(2, '0');
+                        endInput.value = `${yd}-${md}-${dd}`;
+                        startInput.dataset.touched = "true";
+                    }
+
+                    const startDate = startInput.value ? new Date(startInput.value) : null;
+                    const endDate = endInput.value ? new Date(endInput.value) : null;
+                    const method = methodSelect.value;
+                    const status = statusSelect.value;
+                    const sortMode = sortSelect.value;
+                    const search = searchInput.value.toLowerCase();
+
+                    list.innerHTML = db.banks.map(b => `<div class="bank-card"><h4>${b.name}</h4><div class="bank-delete" onclick="app.logic.deleteBank(${b.id})">x</div><p>${b.account}</p><p>${b.owner}</p></div>`).join('');
+
+                    let filtered = db.topupRequests.filter(r => {
+                        const rDate = app.logic.parseDate(r.date);
+                        if (rDate && startDate && endDate) {
+                            if (rDate < startDate || rDate > endDate) return false;
+                        }
+                        if (method !== 'all' && r.bank_id != method) return false;
+                        if (status !== 'all' && r.status !== status) return false;
+                        if (search) {
+                            const cust = db.customers.find(c => c.id == r.customer_id);
+                            const custName = cust ? cust.name.toLowerCase() : '';
+                            const ref = r.ref_code ? r.ref_code.toLowerCase() : '';
+                            if (!custName.includes(search) && !ref.includes(search)) return false;
+                        }
+                        return true;
+                    });
+
+                    let totalAmt = 0;
+                    let totalCount = filtered.length;
+                    let pendingCount = 0;
+                    
+                    filtered.forEach(r => {
+                        if (r.status === 'approved') totalAmt += parseFloat(r.amount);
+                        if (r.status === 'pending') pendingCount++;
+                    });
+
+                    document.getElementById('dep-total-amount').innerText = totalAmt.toLocaleString() + ' ر.ي';
+                    document.getElementById('dep-total-count').innerText = totalCount;
+                    document.getElementById('dep-pending-count').innerText = pendingCount;
+                    
+                    let analysisMsg = `تحليل الفترة: ${startDate ? startInput.value : 'الكل'} إلى ${endDate ? endInput.value : 'الآن'}`;
+                    if(method !== 'all') {
+                        const bankName = methodSelect.options[methodSelect.selectedIndex].text;
+                        analysisMsg += ` | عبر: ${bankName}`;
+                    }
+                    analysisText.innerText = analysisMsg;
+
+                    filtered.sort((a,b) => {
+                        const dateA = app.logic.parseDate(a.date) || new Date(0);
+                        const dateB = app.logic.parseDate(b.date) || new Date(0);
+                        const amtA = parseFloat(a.amount);
+                        const amtB = parseFloat(b.amount);
+
+                        switch(sortMode) {
+                            case 'date-asc': return dateA - dateB;
+                            case 'amount-desc': return amtB - amtA;
+                            case 'amount-asc': return amtA - amtB;
+                            case 'date-desc': default: return dateB - dateA;
+                        }
+                    });
+
+                    tbody.innerHTML = '';
+                    filtered.forEach(r => {
+                        let actions = '';
+                        if(r.status === 'pending') {
+                            actions = `<button class="btn-sm btn-primary" onclick="app.logic.approveDeposit(${r.id})">قبول</button><button class="btn-sm btn-danger-light" onclick="app.logic.rejectDeposit(${r.id})">رفض</button>`;
+                        } else {
+                            actions = `<button class="btn-sm btn-outline" onclick="app.logic.sendWhatsappNotification(${r.id})">واتساب</button>`;
+                        }
+                        
+                        let imgBtn = r.image ? `<button class="btn-sm btn-outline" onclick="app.modals.openImage('${r.image}')">صورة</button>` : '-';
+                        const cust = db.customers.find(c => c.id == r.customer_id);
+                        
+                        let statusBadge = '';
+                        if(r.status === 'approved') statusBadge = '<span class="badge badge-active">مقبول</span>';
+                        else if(r.status === 'rejected') statusBadge = '<span class="badge badge-alert">مرفوض</span>';
+                        else statusBadge = '<span class="badge badge-warning">انتظار</span>';
+
+                        tbody.innerHTML += `<tr>
+                            <td>${statusBadge}</td>
+                            <td>${r.date}</td>
+                            <td>${cust ? cust.name : '?'}</td>
+                            <td style="font-weight:bold;">${r.amount}</td>
+                            <td>${r.bank_name}</td>
+                            <td style="font-family:monospace;">${r.ref_code}</td>
+                            <td>${imgBtn}</td>
+                            <td>${actions}</td>
+                        </tr>`;
+                    });
+                    
+                    if(filtered.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px; color:#94a3b8;">لا توجد عمليات تطابق البحث</td></tr>';
+                    }
+                },
+                
+                renderCustomers: () => {
+                     const tbody = document.getElementById('table-customers');
+                     tbody.innerHTML = db.customers.map(c => {
+                         const totalSpent = (c.transactions || []).filter(t => t.type === 'debit').reduce((sum,t) => sum + parseFloat(t.amount), 0);
+                         const isBlocked = c.status === 'disabled';
+                         const statusBadge = isBlocked ? '<span class="badge badge-alert">معطل</span>' : '<span class="badge badge-active">نشط</span>';
+                         const toggleBtn = `<button class="btn-sm btn-outline" onclick="app.logic.toggleCustomerStatus(${c.id})">${isBlocked ? 'تفعيل' : 'تعطيل'}</button>`;
+                         return `<tr style="${isBlocked?'opacity:0.7':''}">
+                            <td>${c.name}</td>
+                            <td>${c.phone}</td>
+                            <td>${parseFloat(c.balance).toLocaleString()}</td>
+                            <td>${totalSpent.toLocaleString()}</td>
+                            <td>${statusBadge}</td>
+                            <td>
+                                <button class="btn-sm btn-primary" onclick="app.modals.openTopUp(${c.id})">شحن</button> 
+                                <button class="btn-sm btn-outline" onclick="app.modals.openCustomer(${c.id})">تفاصيل</button> 
+                                <button class="btn-sm btn-outline" onclick="app.modals.openResetPassword(${c.id})">تعيين كلمة مرور</button> 
+                                ${toggleBtn}
+                            </td>
+                        </tr>`;
+                     }).join('');
+                },
+                renderPartners: () => { 
+                    const tbody = document.getElementById('table-partners'); 
+                    tbody.innerHTML = ''; 
+                    db.partners.forEach(p => { 
+                        const pkgCount = db.packages.filter(pkg => pkg.partner_id == p.id).length; 
+                        tbody.innerHTML += `
+                        <tr>
+                            <td><div style="font-weight:700;">${p.name}</div></td>
+                            <td>${p.phone}</td>
+                            <td><span style="font-weight:800; color:var(--primary);">${p.commission}%</span></td>
+                            <td><span class="badge badge-sold">${pkgCount} باقة</span></td>
+                            <td style="display:flex; gap:5px;">
+                                <button class="btn-sm btn-outline" onclick="app.logic.copyStoreLink(${p.id})" title="نسخ رابط المتجر الخاص بالشريك"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:14px;"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" /></svg> نسخ الرابط</button>
+                                <button class="btn-sm btn-danger-light" onclick="app.logic.deletePartner(${p.id})">حذف</button>
+                            </td>
+                        </tr>`; 
+                    }); 
+                },
+                
+                // NEW: Render Network Managers List
+                renderManagers: () => {
+                    const tbody = document.getElementById('table-managers');
+                    tbody.innerHTML = '';
+                    if (!db.managers || db.managers.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:var(--slate-400);">لا يوجد مدراء.. أضف واحداً</td></tr>';
+                        return;
+                    }
+                    db.managers.forEach(m => {
+                        const partner = db.partners.find(p => p.id == m.partner_id);
+                        tbody.innerHTML += `
+                            <tr>
+                                <td style="font-weight:bold;">${m.name}</td>
+                                <td>${m.username}</td>
+                                <td style="color:var(--secondary); font-weight:700;">${partner ? partner.name : 'غير محدد'}</td>
+                                <td>${m.created_at || '-'}</td>
+                                <td>
+                                    <button class="btn-sm btn-danger-light" onclick="app.logic.deleteManager(${m.id})">حذف</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                },
+
+                // NEW: Populate Partner Select in Add Manager Modal
+                populateManagerPartnerSelect: () => {
+                    const select = document.getElementById('mgr-partner-select');
+                    select.innerHTML = '';
+                    if(db.partners.length === 0) {
+                        select.innerHTML = '<option value="">لا يوجد شركاء.. أضف شريكاً أولاً</option>';
+                        return;
+                    }
+                    db.partners.forEach(p => {
+                        select.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+                    });
+                },
+
+                renderPackagesList: () => { 
+                    const tbody = document.getElementById('table-packages'); 
+                    tbody.innerHTML = ''; 
+                    db.packages.forEach(p => { 
+                        const stockCount = db.cards.filter(c => c.pkg_id == p.id && c.status === 'active').length; 
+                        let colorBadge = '<span style="width:15px;height:15px;border-radius:50%;display:inline-block;background:var(--red);"></span>'; 
+                        if(p.grad.includes('monthly')) colorBadge = '<span style="width:15px;height:15px;border-radius:50%;display:inline-block;background:var(--primary);"></span>'; 
+                        let shortUnit = p.unit; 
+                        if(p.unit === 'جيجابايت') shortUnit = 'GB'; 
+                        if(p.unit === 'ميجابايت') shortUnit = 'MB'; 
+                        const cats = p.categories ? p.categories.replace('best_selling', 'الأكثر مبيعاً').replace('short_term', 'يوم/أسبوع').replace('monthly', 'شهرية') : 'غير محدد';
+                        tbody.innerHTML += `<tr>
+                            <td>${p.name}</td>
+                            <td style="color:var(--secondary); font-weight:700;">${p.network || 'غير محدد'}</td>
+                            <td>${p.price} ر.ي</td>
+                            <td>${p.amount} ${shortUnit}</td>
+                            <td>${colorBadge}</td>
+                            <td><span style="font-size:12px; color:var(--slate-600);">${cats}</span></td>
+                            <td><span class="badge ${stockCount>0 ? 'badge-active' : 'badge-disabled'}">${stockCount} كرت</span></td>
+                            <td>
+                                <button class="btn-sm btn-outline" onclick="app.modals.openEditPackage(${p.id})">تعديل</button>
+                                <button class="btn-sm btn-danger-light" onclick="app.logic.deletePackage(${p.id})">حذف</button>
+                            </td>
+                        </tr>`; 
+                    }); 
+                },
+                populatePartnerSelect: () => { const select = document.getElementById('new-pkg-partner-select'); select.innerHTML = ''; if(db.partners.length === 0) { select.innerHTML = '<option value="">لا يوجد شركاء.. أضف شريكاً أولاً</option>'; return; } db.partners.forEach(p => { select.innerHTML += `<option value="${p.id}|${p.name}">${p.name}</option>`; }); },
+                populatePackageSelect: () => { const select = document.getElementById('input-pkg-select'); select.innerHTML = ''; if(db.packages.length === 0) { select.innerHTML = '<option value="">لا توجد باقات.. أنشئ باقة أولاً</option>'; return; } db.packages.forEach(p => { select.innerHTML += `<option value="${p.id}|${p.price}|${p.name}">${p.name} - ${p.network} (${p.price} ر.ي)</option>`; }); },
+                populateFinanceFilter: () => { const select = document.getElementById('finance-filter-partner'); const currentVal = select.value; select.innerHTML = '<option value="all">الكل (عام)</option>'; db.partners.forEach(p => { select.innerHTML += `<option value="${p.id}">${p.name}</option>`; }); select.value = currentVal; },
+                
+                populateInventoryFilters: () => {
+                    const pSelect = document.getElementById('inv-filter-partner');
+                    const currentP = pSelect.value;
+                    pSelect.innerHTML = '<option value="all">كل الشركاء</option>';
+                    db.partners.forEach(p => { pSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`; });
+                    pSelect.value = currentP;
+                },
+
+                populateInventoryPackages: () => {
+                    const partnerId = document.getElementById('inv-filter-partner').value;
+                    const pkgSelect = document.getElementById('inv-filter-pkg');
+                    const currentPkg = pkgSelect.value;
+                    
+                    pkgSelect.innerHTML = '<option value="all">كل الباقات</option>';
+                    
+                    db.packages.forEach(p => {
+                        if(partnerId === 'all' || p.partner_id == partnerId) {
+                            pkgSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+                        }
+                    });
+
+                    const options = Array.from(pkgSelect.options).map(o => o.value);
+                    if(options.includes(currentPkg)) {
+                        pkgSelect.value = currentPkg;
+                    } else {
+                        pkgSelect.value = 'all';
+                    }
+                },
+
+                handlePartnerChange: () => {
+                    app.ui.populateInventoryPackages();
+                    app.ui.renderInventory();
+                },
+
+                renderInventory: (queryOverride = null) => {
+                    const filterPartner = document.getElementById('inv-filter-partner').value;
+                    const filterPkg = document.getElementById('inv-filter-pkg').value;
+                    const filterStatus = document.getElementById('inv-filter-status').value;
+                    const searchBox = document.querySelector('#view-inventory .search-box input');
+                    const query = queryOverride !== null ? queryOverride : searchBox.value;
+
+                    const tbody = document.getElementById('table-inventory');
+                    tbody.innerHTML = '';
+                    
+                    let filtered = db.cards;
+
+                    if(filterPartner !== 'all') {
+                        filtered = filtered.filter(c => {
+                            const pkg = db.packages.find(p => p.id == c.pkg_id);
+                            return pkg && pkg.partner_id == filterPartner;
+                        });
+                    }
+
+                    if (filterPkg !== 'all') {
+                        filtered = filtered.filter(c => c.pkg_id == filterPkg);
+                    }
+
+                    if (filterStatus !== 'all') {
+                        filtered = filtered.filter(c => c.status === filterStatus);
+                    }
+
+                    if (query) {
+                        filtered = filtered.filter(c => c.code.toLowerCase().includes(query.toLowerCase()));
+                    }
+
+                    document.getElementById('sum-total').innerText = filtered.length;
+                    document.getElementById('sum-active').innerText = filtered.filter(c => c.status === 'active').length;
+                    document.getElementById('sum-sold').innerText = filtered.filter(c => c.status === 'sold').length;
+
+                    if(filtered.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#94a3b8;">لا توجد نتائج</td></tr>';
+                        return;
+                    }
+
+                    const limit = 100;
+                    filtered.slice(0, limit).forEach(c => {
+                        let badge = '', action = '';
+                        const pkg = db.packages.find(p => p.id == c.pkg_id);
+                        const networkName = pkg ? (pkg.network || 'غير محدد') : '-';
+
+                        if(c.status === 'active') { 
+                            badge = '<span class="badge badge-active">نشط بالمتجر</span>'; 
+                            action = `<button class="btn-sm btn-outline" onclick="app.logic.toggleCard(${c.id}, 'disabled')">تعطيل</button> <button class="btn-sm btn-danger-light" onclick="app.logic.deleteCard(${c.id})">حذف</button>`; 
+                        } else if(c.status === 'sold') { 
+                            badge = '<span class="badge badge-sold">مباع</span>'; 
+                            action = '<span style="color:#94a3b8; font-size:12px">-</span>'; 
+                        } else if(c.status === 'reported') { 
+                            badge = '<span class="badge badge-alert">بلاغ</span>'; 
+                        } else if(c.status === 'refunded') { 
+                            badge = '<span class="badge badge-payout">مسترجع</span>'; 
+                        } else { 
+                            badge = '<span class="badge badge-disabled">معطل</span>'; 
+                            action = `<button class="btn-sm btn-outline" onclick="app.logic.toggleCard(${c.id}, 'active')">تفعيل</button> <button class="btn-sm btn-danger-light" onclick="app.logic.deleteCard(${c.id})">حذف</button>`; 
+                        } 
+                        
+                        tbody.innerHTML += `<tr>
+                            <td>${c.pkg_name}</td>
+                            <td style="color:var(--secondary); font-weight:600;">${networkName}</td>
+                            <td style="font-family:monospace; color:#64748b">${c.code}</td>
+                            <td>${c.price}</td>
+                            <td>${c.upload_date}</td>
+                            <td>${badge}</td>
+                            <td>${action}</td>
+                        </tr>`; 
+                    });
+                    
+                    if(filtered.length > limit) {
+                        tbody.innerHTML += `<tr><td colspan="7" style="text-align:center; color:#94a3b8;">... تم عرض أول ${limit} نتيجة فقط من أصل ${filtered.length} ...</td></tr>`;
+                    }
+                },
+                renderRecent: () => { const tbody = document.getElementById('table-recent'); tbody.innerHTML = ''; db.cards.filter(c => c.status === 'sold').sort((a,b) => b.id - a.id).slice(0,5).forEach(c => { tbody.innerHTML += `<tr><td>بيع ${c.pkg_name}</td><td style="color:var(--primary); font-weight:bold">+${c.price}</td><td>${c.sold_date || '-'}</td><td><span class="badge badge-sold">مكتمل</span></td></tr>`; }); },
+                
+                renderDisputes: () => {
+                    const div = document.getElementById('disputes-container');
+                    const badge = document.getElementById('nav-alert');
+                    
+                    const startInput = document.getElementById('disp-date-start');
+                    const endInput = document.getElementById('disp-date-end');
+                    const statusSelect = document.getElementById('disp-filter-status');
+                    const sortSelect = document.getElementById('disp-sort');
+                    const searchInput = document.getElementById('disp-search');
+
+                    if (!startInput.value && !endInput.value && !startInput.dataset.touched) {
+                        const now = new Date();
+                        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+                        const y = firstDay.getFullYear();
+                        const m = String(firstDay.getMonth() + 1).padStart(2, '0');
+                        startInput.value = `${y}-${m}-01`;
+                        
+                        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                        const yd = lastDay.getFullYear();
+                        const md = String(lastDay.getMonth() + 1).padStart(2, '0');
+                        const dd = String(lastDay.getDate()).padStart(2, '0');
+                        endInput.value = `${yd}-${md}-${dd}`;
+                        startInput.dataset.touched = "true";
+                    }
+
+                    const startDate = startInput.value ? new Date(startInput.value) : null;
+                    const endDate = endInput.value ? new Date(endInput.value) : null;
+                    const statusFilter = statusSelect.value;
+                    const sortMode = sortSelect.value;
+                    const search = searchInput.value.toLowerCase();
+
+                    let disputes = db.cards.filter(c => c.status === 'reported' || c.dispute_resolution);
+
+                    const globalPending = db.cards.filter(c => c.status === 'reported').length;
+                    badge.style.display = globalPending > 0 ? 'inline-block' : 'none';
+                    badge.innerText = globalPending;
+
+                    disputes = disputes.filter(d => {
+                        const dDate = app.logic.parseDate(d.sold_date);
+                        if (dDate && startDate && endDate) {
+                            if (dDate < startDate || dDate > endDate) return false;
+                        }
+                        return true;
+                    });
+
+                    if (statusFilter !== 'all') {
+                        if (statusFilter === 'reported') {
+                            disputes = disputes.filter(d => d.status === 'reported');
+                        } else if (statusFilter === 'refunded') {
+                            disputes = disputes.filter(d => d.dispute_resolution === 'refunded');
+                        } else if (statusFilter === 'rejected') {
+                            disputes = disputes.filter(d => d.dispute_resolution === 'rejected');
+                        }
+                    }
+
+                    if (search) {
+                        disputes = disputes.filter(d => 
+                            d.code.toLowerCase().includes(search) || 
+                            d.pkg_name.toLowerCase().includes(search)
+                        );
+                    }
+
+                    let totalCount = disputes.length;
+                    let pendingCount = 0;
+                    let refundedVal = 0;
+
+                    disputes.forEach(d => {
+                        if (d.status === 'reported') pendingCount++;
+                        if (d.dispute_resolution === 'refunded') refundedVal += parseFloat(d.price);
+                    });
+
+                    document.getElementById('disp-stat-total').innerText = totalCount;
+                    document.getElementById('disp-stat-pending').innerText = pendingCount;
+                    document.getElementById('disp-stat-refunded-val').innerText = refundedVal.toLocaleString() + ' ر.ي';
+
+                    disputes.sort((a, b) => {
+                        const dateA = app.logic.parseDate(a.sold_date) || new Date(0);
+                        const dateB = app.logic.parseDate(b.sold_date) || new Date(0);
+                        return sortMode === 'date-asc' ? dateA - dateB : dateB - dateA;
+                    });
+
+                    div.innerHTML = '';
+                    if(disputes.length > 0) {
+                        disputes.forEach(d => {
+                            let actionArea = '';
+                            let statusLabel = '';
+
+                            if(d.status === 'reported') {
+                                statusLabel = '<span class="badge badge-alert">جديد</span>';
+                                actionArea = `
+                                    <button class="btn btn-sm btn-danger-light" onclick="app.logic.resolveDispute(${d.id}, 'refund')">قبول الاسترجاع</button>
+                                    <button class="btn btn-sm btn-outline" onclick="app.logic.resolveDispute(${d.id}, 'reject')">رفض البلاغ</button>
+                                `;
+                            } else if (d.dispute_resolution === 'refunded') {
+                                statusLabel = '<span class="badge badge-active">تم الاسترجاع</span>';
+                                actionArea = `<button class="btn btn-sm btn-success-light" onclick="app.logic.sendDisputeWhatsapp(${d.id})">إشعار واتساب</button>`;
+                            } else if (d.dispute_resolution === 'rejected') {
+                                statusLabel = '<span class="badge badge-disabled">تم الرفض</span>';
+                                actionArea = `<button class="btn btn-sm btn-outline" onclick="app.logic.sendDisputeWhatsapp(${d.id})">إشعار واتساب</button>`;
+                            }
+
+                            div.innerHTML += `
+                                <div class="card" style="margin-bottom:16px; border-color:${d.status === 'reported' ? '#fee2e2' : 'var(--border)'};">
+                                    <div style="display:flex; justify-content:space-between; align-items:start;">
+                                        <div>
+                                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                                                <h3 style="font-size:16px; margin:0;">${d.pkg_name}</h3>
+                                                ${statusLabel}
+                                                <span style="font-size:12px; color:var(--slate-400);">تاريخ البيع: ${d.sold_date || '-'}</span>
+                                            </div>
+                                            <p style="font-family:monospace; color:#64748b; font-weight:bold;">${d.code}</p>
+                                            <p style="color:#64748b; font-size:14px; margin-top:8px;">تفاصيل البلاغ: "${d.report_reason || 'غير محدد'}"</p>
+                                            ${d.dispute_reason ? `<p style="color:#ef4444; font-size:13px;">سبب الرفض: ${d.dispute_reason}</p>` : ''}
+                                        </div>
+                                        <div style="display:flex; gap:8px;">${actionArea}</div>
+                                    </div>
+                                </div>`;
+                        });
+                    } else {
+                        div.innerHTML = '<div style="padding:40px; text-align:center; color:#94a3b8;">لا توجد بلاغات تطابق الفلتر.</div>';
+                    }
+                },
+
+                renderFinance: (filterPartnerId = 'all') => { 
+                    const tbody = document.getElementById('table-finance'); 
+                    tbody.innerHTML = ''; 
+                    const withdrawBtn = document.getElementById('btn-withdraw'); 
+                    const breakdownArea = document.getElementById('partner-breakdown-area');
+                    const breakdownBody = document.getElementById('partner-breakdown-body');
+
+                    if(filterPartnerId === 'all') { 
+                        withdrawBtn.style.display = 'none'; 
+                        breakdownArea.style.display = 'none';
+                    } else { 
+                        withdrawBtn.style.display = 'flex'; 
+                        breakdownArea.style.display = 'block';
+                    } 
+                    
+                    let timeline = []; 
+                    let salesData = db.cards.filter(c => c.status === 'sold'); 
+                    
+                    if(filterPartnerId !== 'all') { 
+                        salesData = salesData.filter(c => { 
+                            const pkg = db.packages.find(p => p.id == c.pkg_id); 
+                            return pkg && pkg.partner_id == filterPartnerId; 
+                        }); 
+                    } 
+                    
+                    const breakdownStats = {};
+
+                    salesData.forEach(c => { 
+                        const pkg = db.packages.find(p => p.id == c.pkg_id); 
+                        let partnerName = 'غير معروف'; 
+                        let commissionAmt = 0; 
+                        if(pkg) { 
+                            const partner = db.partners.find(pt => pt.id == pkg.partner_id); 
+                            if(partner) { 
+                                partnerName = partner.name; 
+                                commissionAmt = c.price * (partner.commission / 100); 
+                            } 
+                        } 
+                        
+                        let paymentMethod = 'wallet';
+                        let trans = null;
+                        
+                        for(const cust of db.customers) {
+                            if(cust.transactions) {
+                                const found = cust.transactions.find(t => t.details && JSON.stringify(t.details).includes(c.code));
+                                if(found) {
+                                    trans = found;
+                                    // إصلاح: التعامل مع الهيكل الجديد والقديم
+                                    if(trans.details) {
+                                        // الهيكل الجديد: { cards: [...], method: 'wallet' }
+                                        if(trans.details.method) {
+                                            paymentMethod = trans.details.method;
+                                        }
+                                        // الهيكل القديم: مصفوفة مع method كعنصر
+                                        else if(Array.isArray(trans.details)) {
+                                            // البحث عن method في المصفوفة (للتوافق مع البيانات القديمة)
+                                            for(let key in trans.details) {
+                                                if(key === 'method') {
+                                                    paymentMethod = trans.details[key];
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+
+                        let methodDisplay = '<span class="badge badge-purple">محفظة</span>';
+                        if(paymentMethod === 'floosak') methodDisplay = '<span class="badge" style="background:#7338a2; color:#fff">فلوسك</span>';
+                        else if(paymentMethod === 'jawali') methodDisplay = '<span class="badge" style="background:#00bdae; color:#fff">جوالي</span>';
+                        else if(paymentMethod === 'credit_card') methodDisplay = '<span class="badge" style="background:#1e293b; color:#fff">بطاقة</span>';
+
+                        if(filterPartnerId !== 'all') {
+                            if(!breakdownStats[paymentMethod]) breakdownStats[paymentMethod] = { count: 0, total: 0 };
+                            breakdownStats[paymentMethod].count++;
+                            breakdownStats[paymentMethod].total += parseFloat(c.price);
+                        }
+
+                        timeline.push({ 
+                            type: 'sale', 
+                            date: c.sold_date || '-', 
+                            name: c.pkg_name, 
+                            partner: partnerName, 
+                            amount: parseFloat(c.price), 
+                            commission: commissionAmt, 
+                            timestamp: c.id,
+                            method: methodDisplay
+                        }); 
+                    }); 
+                    
+                    let withdrawalsData = db.withdrawals; 
+                    if(filterPartnerId !== 'all') { 
+                        withdrawalsData = withdrawalsData.filter(w => w.partner_id == filterPartnerId); 
+                    } 
+                    
+                    withdrawalsData.forEach(w => { 
+                        const partner = db.partners.find(pt => pt.id == w.partner_id); 
+                        timeline.push({ 
+                            type: 'withdraw', 
+                            date: w.date, 
+                            name: `سحب - ${w.receiver}`, 
+                            partner: partner ? partner.name : 'Unknown', 
+                            amount: parseFloat(w.amount), 
+                            note: w.note, 
+                            image: w.image, 
+                            timestamp: w.timestamp,
+                            method: '-'
+                        }); 
+                    }); 
+                    
+                    timeline.sort((a,b) => b.timestamp - a.timestamp); 
+                    
+                    let totalSales = 0; let totalCommission = 0; let totalWithdrawn = 0; 
+                    
+                    timeline.forEach(t => { 
+                        if(t.type === 'sale') { 
+                            totalSales += t.amount; 
+                            totalCommission += t.commission; 
+                            tbody.innerHTML += `<tr><td>${t.date}</td><td><span class="badge badge-sold">بيع</span></td><td>${t.method}</td><td>${t.name} <small style="color:#94a3b8">(${t.partner})</small></td><td style="font-weight:700;">+${t.amount}</td><td style="color:var(--primary); font-size:12px;">عمولة: -${t.commission.toFixed(2)}</td></tr>`; 
+                        } else { 
+                            totalWithdrawn += t.amount; 
+                            let imgBtn = t.image ? `<button class="btn-sm btn-outline" style="margin-right:5px; font-size:10px;" onclick="app.modals.openImage('${t.image}')">صورة</button>` : ''; 
+                            tbody.innerHTML += `<tr style="background:#fff7ed;"><td>${t.date}</td><td><span class="badge badge-payout">سحب</span></td><td>-</td><td>${t.name} ${t.note ? `<div style="font-size:11px; color:#c2410c;">${t.note}</div>` : ''}</td><td style="font-weight:700; color:#c2410c;">-${t.amount}</td><td>${imgBtn}</td></tr>`; 
+                        } 
+                    }); 
+                    
+                    document.getElementById('fin-total').innerText = totalSales.toLocaleString() + ' ر.ي'; 
+                    document.getElementById('fin-commission').innerText = totalCommission.toLocaleString() + ' ر.ي'; 
+                    document.getElementById('fin-net').innerText = (totalSales - totalCommission - totalWithdrawn).toLocaleString() + ' ر.ي'; 
+
+                    if(filterPartnerId !== 'all') {
+                        breakdownBody.innerHTML = '';
+                        if(Object.keys(breakdownStats).length === 0) {
+                            breakdownBody.innerHTML = '<tr><td colspan="3" style="color:#94a3b8">لا توجد مبيعات</td></tr>';
+                        } else {
+                            for(const [method, data] of Object.entries(breakdownStats)) {
+                                let name = 'رصيد المحفظة';
+                                if(method === 'floosak') name = 'بوابة فلوسك';
+                                if(method === 'jawali') name = 'بوابة جوالي';
+                                if(method === 'credit_card') name = 'بطاقة ائتمانية';
+                                breakdownBody.innerHTML += `<tr><td>${name}</td><td style="font-weight:bold">${data.total.toLocaleString()} ر.ي</td><td>${data.count}</td></tr>`;
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        app.init();
+    </script>
+</body>
+</html>

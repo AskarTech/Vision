@@ -1,0 +1,114 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans:
+        "Cairo", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+        "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+:root {
+    --vision-bg-900: #07111f;
+    --vision-panel: rgba(10, 18, 31, 0.78);
+    --vision-border: rgba(255, 255, 255, 0.08);
+    --vision-text: #e5edf7;
+    --vision-muted: #91a4bd;
+    --vision-teal: #18c6b7;
+    --vision-blue: #63a7ff;
+    --vision-amber: #f5b942;
+    --vision-rose: #f2687c;
+}
+
+/* Small utility used by dashboard layout */
+.max-w-375 {
+    max-width: 63rem;
+}
+
+/* Soft radial accents used by dashboard layout */
+.vision-accent-1 {
+    position: absolute;
+    right: 0;
+    top: -6rem;
+    height: 24rem;
+    width: 24rem;
+    border-radius: 9999px;
+    background: radial-gradient(
+        circle at center,
+        rgba(24, 198, 183, 0.14),
+        transparent 45%
+    );
+    filter: blur(40px);
+}
+.vision-accent-2 {
+    position: absolute;
+    left: 0;
+    top: 30%;
+    height: 24rem;
+    width: 24rem;
+    border-radius: 9999px;
+    background: radial-gradient(
+        circle at center,
+        rgba(99, 167, 255, 0.12),
+        transparent 42%
+    );
+    filter: blur(40px);
+}
+
+/* DaisyUI theme support: ensure contrast on dark theme */
+:root[data-theme="vision-dark"] {
+    --rounded-box: 1.25rem;
+}
+
+/* Tone utility classes used by components */
+.tone-teal {
+    background: linear-gradient(
+        135deg,
+        rgba(24, 198, 183, 0.16),
+        rgba(10, 18, 31, 0.86)
+    );
+    border: 1px solid var(--vision-border);
+}
+.tone-blue {
+    background: linear-gradient(
+        135deg,
+        rgba(99, 167, 255, 0.16),
+        rgba(10, 18, 31, 0.86)
+    );
+    border: 1px solid var(--vision-border);
+}
+.tone-amber {
+    background: linear-gradient(
+        135deg,
+        rgba(245, 185, 66, 0.16),
+        rgba(10, 18, 31, 0.86)
+    );
+    border: 1px solid var(--vision-border);
+}
+.tone-rose {
+    background: linear-gradient(
+        135deg,
+        rgba(242, 104, 124, 0.16),
+        rgba(10, 18, 31, 0.86)
+    );
+    border: 1px solid var(--vision-border);
+}
+.tone-slate {
+    background: linear-gradient(
+        135deg,
+        rgba(30, 41, 59, 0.18),
+        rgba(10, 18, 31, 0.86)
+    );
+    border: 1px solid var(--vision-border);
+}
+
+/* Metric card base to keep consistent padding and radius */
+.metric-card-base {
+    padding: 1.25rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 20px 55px rgba(0, 0, 0, 0.34);
+}
