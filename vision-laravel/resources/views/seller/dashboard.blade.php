@@ -1,5 +1,6 @@
 <x-layouts.dashboard title="لوحة البائع"
-    description="إدارة الشبكات والباقات والمخزون من مكان واحد مع عرض واضح للبيانات التشغيلية الأساسية.">
+    description="إدارة الشبكات والباقات والمخزون من مكان واحد مع عرض واضح للبيانات التشغيلية الأساسية."
+    dashboardType="seller">
     <x-slot name="badge">
         <x-ui.badge tone="active">Seller Inventory Sprint</x-ui.badge>
     </x-slot>
