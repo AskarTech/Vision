@@ -1,0 +1,548 @@
+/**
+ * YemenWi-Fi Hub - Modern Theme CSS Variables
+ * 
+ * This file injects modern theme colors as CSS custom properties
+ * for consistent styling across all dashboard components.
+ */
+
+/* ==========================================================================
+   Root Theme Variables (Light Mode)
+   ========================================================================== */
+
+:root {
+    /* Primary Colors - Professional Blue */
+    --color-primary-50: #eff6ff;
+    --color-primary-100: #dbeafe;
+    --color-primary-200: #bfdbfe;
+    --color-primary-300: #93c5fd;
+    --color-primary-400: #60a5fa;
+    --color-primary-500: #3b82f6;
+    --color-primary-600: #2563eb;
+    --color-primary-700: #1d4ed8;
+    --color-primary-800: #1e40af;
+    --color-primary-900: #1e3a8a;
+    --color-primary-950: #172554;
+
+    /* Secondary Colors - Modern Purple */
+    --color-secondary-50: #f5f3ff;
+    --color-secondary-100: #ede9fe;
+    --color-secondary-200: #ddd6fe;
+    --color-secondary-300: #c4b5fd;
+    --color-secondary-400: #a78bfa;
+    --color-secondary-500: #8b5cf6;
+    --color-secondary-600: #7c3aed;
+    --color-secondary-700: #6d28d9;
+    --color-secondary-800: #5b21b6;
+    --color-secondary-900: #4c1d95;
+    --color-secondary-950: #2e1065;
+
+    /* Success Colors - Fresh Green */
+    --color-success-50: #f0fdf4;
+    --color-success-100: #dcfce7;
+    --color-success-200: #bbf7d0;
+    --color-success-300: #86efac;
+    --color-success-400: #4ade80;
+    --color-success-500: #22c55e;
+    --color-success-600: #16a34a;
+    --color-success-700: #15803d;
+    --color-success-800: #166534;
+    --color-success-900: #14532d;
+    --color-success-950: #052e16;
+
+    /* Warning Colors - Warm Amber */
+    --color-warning-50: #fffbeb;
+    --color-warning-100: #fef3c7;
+    --color-warning-200: #fde68a;
+    --color-warning-300: #fcd34d;
+    --color-warning-400: #fbbf24;
+    --color-warning-500: #f59e0b;
+    --color-warning-600: #d97706;
+    --color-warning-700: #b45309;
+    --color-warning-800: #92400e;
+    --color-warning-900: #78350f;
+    --color-warning-950: #451a03;
+
+    /* Danger Colors - Bold Red */
+    --color-danger-50: #fef2f2;
+    --color-danger-100: #fee2e2;
+    --color-danger-200: #fecaca;
+    --color-danger-300: #fca5a5;
+    --color-danger-400: #f87171;
+    --color-danger-500: #ef4444;
+    --color-danger-600: #dc2626;
+    --color-danger-700: #b91c1c;
+    --color-danger-800: #991b1b;
+    --color-danger-900: #7f1d1d;
+    --color-danger-950: #450a0a;
+
+    /* Info Colors - Bright Cyan */
+    --color-info-50: #ecfeff;
+    --color-info-100: #cffafe;
+    --color-info-200: #a5f3fc;
+    --color-info-300: #67e8f9;
+    --color-info-400: #22d3ee;
+    --color-info-500: #06b6d4;
+    --color-info-600: #0891b2;
+    --color-info-700: #0e7490;
+    --color-info-800: #155e75;
+    --color-info-900: #164e63;
+    --color-info-950: #083344;
+
+    /* Neutral Grays */
+    --color-gray-50: #f9fafb;
+    --color-gray-100: #f3f4f6;
+    --color-gray-200: #e5e7eb;
+    --color-gray-300: #d1d5db;
+    --color-gray-400: #9ca3af;
+    --color-gray-500: #6b7280;
+    --color-gray-600: #4b5563;
+    --color-gray-700: #374151;
+    --color-gray-800: #1f2937;
+    --color-gray-900: #111827;
+    --color-gray-950: #030712;
+
+    /* Slate (Cool Grays) */
+    --color-slate-50: #f8fafc;
+    --color-slate-100: #f1f5f9;
+    --color-slate-200: #e2e8f0;
+    --color-slate-300: #cbd5e1;
+    --color-slate-400: #94a3b8;
+    --color-slate-500: #64748b;
+    --color-slate-600: #475569;
+    --color-slate-700: #334155;
+    --color-slate-800: #1e293b;
+    --color-slate-900: #0f172a;
+    --color-slate-950: #020617;
+
+    /* Dashboard Specific */
+    --dashboard-bg-primary: #ffffff;
+    --dashboard-bg-secondary: #f8fafc;
+    --dashboard-bg-sidebar: #0f172a;
+    --dashboard-bg-card: #ffffff;
+    --dashboard-border-light: #e2e8f0;
+    --dashboard-text-primary: #0f172a;
+    --dashboard-text-secondary: #475569;
+    --dashboard-text-muted: #94a3b8;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-default: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    --shadow-colored: 0 4px 6px -1px rgb(59 130 246 / 0.2), 0 2px 4px -2px rgb(59 130 246 / 0.1);
+
+    /* Border Radius */
+    --radius-sm: 0.125rem;
+    --radius-default: 0.25rem;
+    --radius-md: 0.375rem;
+    --radius-lg: 0.5rem;
+    --radius-xl: 0.75rem;
+    --radius-2xl: 1rem;
+    --radius-3xl: 1.5rem;
+    --radius-full: 9999px;
+
+    /* Animation */
+    --transition-fast: 150ms;
+    --transition-normal: 300ms;
+    --transition-slow: 500ms;
+    --transition-slide: cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fade: ease-in-out;
+}
+
+/* ==========================================================================
+   Dark Mode Support
+   ========================================================================== */
+
+.dark {
+    --dashboard-bg-primary: #0f172a;
+    --dashboard-bg-secondary: #1e293b;
+    --dashboard-bg-sidebar: #020617;
+    --dashboard-bg-card: #1e293b;
+    --dashboard-border-light: #334155;
+    --dashboard-text-primary: #f1f5f9;
+    --dashboard-text-secondary: #cbd5e1;
+    --dashboard-text-muted: #64748b;
+}
+
+/* ==========================================================================
+   Gradient Utilities
+   ========================================================================== */
+
+.gradient-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.gradient-secondary {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.gradient-success {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
+.gradient-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.gradient-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.gradient-ocean {
+    background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+}
+
+.gradient-sunset {
+    background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+}
+
+.gradient-purple {
+    background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+}
+
+/* ==========================================================================
+   Component-Specific Styles
+   ========================================================================== */
+
+/* Modern Card Style */
+.modern-card {
+    background: var(--dashboard-bg-card);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--dashboard-border-light);
+    transition: all var(--transition-normal) var(--transition-fade);
+}
+
+.modern-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+/* Modern Button Base */
+.modern-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    font-weight: 500;
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-fast) var(--transition-fade);
+    cursor: pointer;
+    border: none;
+    outline: none;
+}
+
+.modern-btn-primary {
+    background: var(--color-primary-500);
+    color: white;
+    box-shadow: var(--shadow-colored);
+}
+
+.modern-btn-primary:hover {
+    background: var(--color-primary-600);
+    box-shadow: 0 6px 8px -1px rgb(59 130 246 / 0.3);
+}
+
+.modern-btn-secondary {
+    background: var(--color-secondary-500);
+    color: white;
+}
+
+.modern-btn-secondary:hover {
+    background: var(--color-secondary-600);
+}
+
+.modern-btn-success {
+    background: var(--color-success-500);
+    color: white;
+}
+
+.modern-btn-success:hover {
+    background: var(--color-success-600);
+}
+
+.modern-btn-danger {
+    background: var(--color-danger-500);
+    color: white;
+}
+
+.modern-btn-danger:hover {
+    background: var(--color-danger-600);
+}
+
+.modern-btn-outline {
+    background: transparent;
+    border: 1px solid var(--color-gray-300);
+    color: var(--color-gray-700);
+}
+
+.modern-btn-outline:hover {
+    background: var(--color-gray-50);
+    border-color: var(--color-gray-400);
+}
+
+/* Modern Input Style */
+.modern-input {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.9375rem;
+    border: 1px solid var(--color-gray-300);
+    border-radius: var(--radius-lg);
+    background: white;
+    color: var(--color-gray-900);
+    transition: all var(--transition-fast) var(--transition-fade);
+}
+
+.modern-input:focus {
+    outline: none;
+    border-color: var(--color-primary-500);
+    box-shadow: 0 0 0 3px var(--color-primary-100);
+}
+
+.modern-input::placeholder {
+    color: var(--color-gray-400);
+}
+
+/* Modern Badge Style */
+.modern-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.badge-success {
+    background: var(--color-success-100);
+    color: var(--color-success-700);
+}
+
+.badge-warning {
+    background: var(--color-warning-100);
+    color: var(--color-warning-700);
+}
+
+.badge-danger {
+    background: var(--color-danger-100);
+    color: var(--color-danger-700);
+}
+
+.badge-info {
+    background: var(--color-info-100);
+    color: var(--color-info-700);
+}
+
+.badge-primary {
+    background: var(--color-primary-100);
+    color: var(--color-primary-700);
+}
+
+.badge-secondary {
+    background: var(--color-secondary-100);
+    color: var(--color-secondary-700);
+}
+
+/* Modern Table Style */
+.modern-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.modern-table thead th {
+    background: var(--color-gray-50);
+    padding: 0.875rem 1rem;
+    text-align: right;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    color: var(--color-gray-600);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid var(--color-gray-200);
+}
+
+.modern-table tbody td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-gray-100);
+    color: var(--color-gray-700);
+    font-size: 0.9375rem;
+}
+
+.modern-table tbody tr:hover {
+    background: var(--color-gray-50);
+}
+
+.modern-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Metric Card Style */
+.metric-card {
+    background: var(--dashboard-bg-card);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--dashboard-border-light);
+    transition: all var(--transition-normal) var(--transition-fade);
+}
+
+.metric-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.metric-card-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.metric-card-icon-primary {
+    background: var(--color-primary-100);
+    color: var(--color-primary-600);
+}
+
+.metric-card-icon-success {
+    background: var(--color-success-100);
+    color: var(--color-success-600);
+}
+
+.metric-card-icon-warning {
+    background: var(--color-warning-100);
+    color: var(--color-warning-600);
+}
+
+.metric-card-icon-danger {
+    background: var(--color-danger-100);
+    color: var(--color-danger-600);
+}
+
+/* Sidebar Navigation */
+.sidebar-modern {
+    background: var(--dashboard-bg-sidebar);
+    color: var(--color-gray-300);
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-lg);
+    color: var(--color-gray-400);
+    transition: all var(--transition-fast) var(--transition-fade);
+    text-decoration: none;
+}
+
+.sidebar-link:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.sidebar-link.active {
+    background: var(--color-primary-600);
+    color: white;
+    box-shadow: var(--shadow-colored);
+}
+
+/* Loading Skeleton */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--color-gray-200) 25%,
+        var(--color-gray-100) 50%,
+        var(--color-gray-200) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: var(--radius-md);
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Toast Notifications */
+.toast {
+    background: var(--dashboard-bg-card);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+    box-shadow: var(--shadow-xl);
+    border-right: 4px solid;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 300px;
+    animation: slideInLeft 0.3s var(--transition-slide);
+}
+
+.toast-success {
+    border-color: var(--color-success-500);
+}
+
+.toast-success .toast-icon {
+    color: var(--color-success-500);
+}
+
+.toast-error {
+    border-color: var(--color-danger-500);
+}
+
+.toast-error .toast-icon {
+    color: var(--color-danger-500);
+}
+
+.toast-warning {
+    border-color: var(--color-warning-500);
+}
+
+.toast-warning .toast-icon {
+    color: var(--color-warning-500);
+}
+
+.toast-info {
+    border-color: var(--color-info-500);
+}
+
+.toast-info .toast-icon {
+    color: var(--color-info-500);
+}
+
+@keyframes slideInLeft {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* RTL Support */
+[dir="rtl"] {
+    .toast {
+        border-right: none;
+        border-left: 4px solid;
+    }
+    
+    .modern-table thead th {
+        text-align: right;
+    }
+}
