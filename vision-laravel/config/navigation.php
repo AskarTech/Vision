@@ -9,105 +9,81 @@ return [
     'admin' => [
         [
             'label' => 'الرئيسية',
-            'items' => [
-                [
-                    'id' => 'view-dashboard',
-                    'label' => 'لوحة الإدارة',
-                    'icon' => '📊',
-                    'url' => '#view-dashboard',
-                ],
-            ],
+            'route' => 'admin.dashboard',
+            'icon' => 'home',
+            'permission' => 'view_dashboard',
         ],
         [
-            'label' => 'العمليات',
-            'items' => [
-                [
-                    'id' => 'view-deposits',
-                    'label' => 'الإيداعات',
-                    'icon' => '💰',
-                    'url' => '#view-deposits',
-                ],
-                [
-                    'id' => 'view-withdrawals',
-                    'label' => 'السحوبات',
-                    'icon' => '💸',
-                    'url' => '#view-withdrawals',
-                ],
-                [
-                    'id' => 'view-orders',
-                    'label' => 'الطلبات',
-                    'icon' => '🛒',
-                    'url' => '#view-orders',
-                ],
-            ],
+            'label' => 'الإيداعات',
+            'route' => 'admin.topups.index',
+            'icon' => 'banknotes',
+            'permission' => 'manage_topups',
         ],
         [
             'label' => 'المستخدمون',
-            'items' => [
-                [
-                    'id' => 'view-customers',
-                    'label' => 'المستخدمون',
-                    'icon' => '👥',
-                    'url' => '#view-customers',
-                ],
-                [
-                    'id' => 'view-partners',
-                    'label' => 'الشركاء',
-                    'icon' => '🤝',
-                    'url' => '#view-partners',
-                ],
-                [
-                    'id' => 'view-managers',
-                    'label' => 'المدراء',
-                    'icon' => '👨‍💼',
-                    'url' => '#view-managers',
-                ],
-            ],
+            'route' => 'admin.customers.index',
+            'icon' => 'users',
+            'permission' => 'manage_customers',
         ],
         [
-            'label' => 'المخزون والمنتجات',
-            'items' => [
-                [
-                    'id' => 'view-products',
-                    'label' => 'المنتجات',
-                    'icon' => '📦',
-                    'url' => '#view-products',
-                ],
-                [
-                    'id' => 'view-inventory',
-                    'label' => 'المخزون',
-                    'icon' => '📋',
-                    'url' => '#view-inventory',
-                ],
-            ],
+            'label' => 'البائعون',
+            'route' => 'admin.sellers.index',
+            'icon' => 'store',
+            'permission' => 'manage_sellers',
         ],
         [
-            'label' => 'المالية والتقارير',
-            'items' => [
-                [
-                    'id' => 'view-finance',
-                    'label' => 'المالية',
-                    'icon' => '📈',
-                    'url' => '#view-finance',
-                ],
-                [
-                    'id' => 'view-audit',
-                    'label' => 'المراجعات المالية',
-                    'icon' => '🔍',
-                    'url' => '#view-audit',
-                ],
-            ],
+            'label' => 'الشبكات',
+            'route' => 'admin.networks.index',
+            'icon' => 'wifi',
+            'permission' => 'manage_sellers',
         ],
         [
-            'label' => 'الدعم',
-            'items' => [
-                [
-                    'id' => 'view-disputes',
-                    'label' => 'النزاعات',
-                    'icon' => '⚠️',
-                    'url' => '#view-disputes',
-                ],
-            ],
+            'label' => 'الباقات',
+            'route' => 'admin.packages.index',
+            'icon' => 'cube',
+            'permission' => 'manage_packages',
+        ],
+        [
+            'label' => 'المخزون',
+            'route' => 'admin.inventory.index',
+            'icon' => 'inbox',
+            'permission' => 'manage_inventory',
+        ],
+        [
+            'label' => 'الطلبات',
+            'route' => 'admin.orders.index',
+            'icon' => 'shopping-cart',
+            'permission' => 'manage_orders',
+        ],
+        [
+            'label' => 'السحوبات',
+            'route' => 'admin.withdrawals.index',
+            'icon' => 'arrow-down-tray',
+            'permission' => 'manage_withdrawals',
+        ],
+        [
+            'label' => 'النزاعات',
+            'route' => 'admin.disputes.index',
+            'icon' => 'exclamation-triangle',
+            'permission' => 'manage_disputes',
+        ],
+        [
+            'label' => 'التقارير',
+            'route' => 'admin.reports.index',
+            'icon' => 'chart-bar',
+            'permission' => 'view_reports',
+        ],
+        [
+            'label' => 'سجل التدقيق',
+            'route' => 'admin.audit.index',
+            'icon' => 'document-text',
+            'permission' => 'view_audit_logs',
+        ],
+        [
+            'label' => 'الإعدادات',
+            'route' => 'admin.settings.index',
+            'icon' => 'cog-6-tooth',
+            'permission' => 'manage_settings',
         ],
     ],
 
@@ -118,83 +94,58 @@ return [
     */
     'seller' => [
         [
-            'label' => 'الرئيسية',
-            'items' => [
-                [
-                    'id' => 'seller-overview',
-                    'label' => 'نظرة عامة',
-                    'icon' => '📊',
-                    'url' => '#seller-overview',
-                ],
-            ],
+            'label' => 'نظرة عامة',
+            'route' => 'seller.dashboard',
+            'icon' => 'home',
+            'permission' => 'view_dashboard',
         ],
         [
-            'label' => 'إدارة المخزون',
-            'items' => [
-                [
-                    'id' => 'seller-networks',
-                    'label' => 'الشبكات',
-                    'icon' => '📡',
-                    'url' => '#seller-networks',
-                ],
-                [
-                    'id' => 'seller-packages',
-                    'label' => 'الباقات',
-                    'icon' => '📦',
-                    'url' => '#seller-packages',
-                ],
-                [
-                    'id' => 'seller-inventory',
-                    'label' => 'المخزون',
-                    'icon' => '📋',
-                    'url' => '#seller-inventory',
-                ],
-            ],
+            'label' => 'الشبكات',
+            'route' => 'seller.networks.index',
+            'icon' => 'wifi',
+            'permission' => 'manage_networks',
+        ],
+        [
+            'label' => 'الباقات',
+            'route' => 'seller.packages.index',
+            'icon' => 'cube',
+            'permission' => 'manage_packages',
+        ],
+        [
+            'label' => 'المخزون',
+            'route' => 'seller.inventory.index',
+            'icon' => 'inbox',
+            'permission' => 'manage_inventory',
+        ],
+        [
+            'label' => 'الطلبات',
+            'route' => 'seller.orders.index',
+            'icon' => 'shopping-cart',
+            'permission' => 'view_orders',
         ],
         [
             'label' => 'المبيعات',
-            'items' => [
-                [
-                    'id' => 'seller-orders',
-                    'label' => 'الطلبات',
-                    'icon' => '🛒',
-                    'url' => '#seller-orders',
-                ],
-                [
-                    'id' => 'seller-sales',
-                    'label' => 'المبيعات',
-                    'icon' => '💰',
-                    'url' => '#seller-sales',
-                ],
-            ],
+            'route' => 'seller.sales.index',
+            'icon' => 'chart-pie',
+            'permission' => 'view_sales',
         ],
         [
-            'label' => 'المالية',
-            'items' => [
-                [
-                    'id' => 'seller-wallet',
-                    'label' => 'المحفظة',
-                    'icon' => '💳',
-                    'url' => '#seller-wallet',
-                ],
-                [
-                    'id' => 'seller-withdrawals',
-                    'label' => 'السحوبات',
-                    'icon' => '💸',
-                    'url' => '#seller-withdrawals',
-                ],
-            ],
+            'label' => 'السحوبات',
+            'route' => 'seller.withdrawals.index',
+            'icon' => 'arrow-down-tray',
+            'permission' => 'request_withdrawal',
+        ],
+        [
+            'label' => 'المحفظة',
+            'route' => 'seller.wallet.index',
+            'icon' => 'wallet',
+            'permission' => 'view_wallet',
         ],
         [
             'label' => 'الإعدادات',
-            'items' => [
-                [
-                    'id' => 'seller-settings',
-                    'label' => 'الإعدادات',
-                    'icon' => '⚙️',
-                    'url' => '#seller-settings',
-                ],
-            ],
+            'route' => 'seller.settings.index',
+            'icon' => 'cog-6-tooth',
+            'permission' => 'view_dashboard',
         ],
     ],
 ];

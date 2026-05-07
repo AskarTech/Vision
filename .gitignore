@@ -1,39 +1,24 @@
 ```
-# Dependencies
+# Laravel-specific ignores
 vendor/
-
-# Build artifacts
-public/build/
-storage/framework/cache/
-storage/framework/sessions/
-storage/framework/views/
+node_modules/
+public/storage
 bootstrap/cache/
-
-# Environment
+storage/logs/
+storage/framework/
+.npm
+.yarn
 .env
 .env.local
 .env.*
-!.env.example
-
-# Logs
-storage/logs/
+.DS_Store
+Thumbs.db
 *.log
-
-# Editor/IDE
+*.tmp
+*.swp
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
-.DS_Store
-Thumbs.db
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+coverage/
+htmlcov/
+.coverage
 ```
