@@ -17,6 +17,7 @@ class CardOrder extends Model
         'total_amount',
         'payment_channel',
         'status',
+        'reserved_at',
         'external_reference',
         'meta',
         'paid_at',
@@ -28,6 +29,7 @@ class CardOrder extends Model
             'total_amount' => 'decimal:2',
             'meta' => 'array',
             'paid_at' => 'datetime',
+            'reserved_at' => 'datetime',
         ];
     }
 
