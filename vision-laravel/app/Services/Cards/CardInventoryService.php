@@ -23,7 +23,7 @@ class CardInventoryService
         return $card;
     }
 
-    public function reserveNextActiveCard(int $packageId, User $user): Card
+    public function reserveNextActiveCard(int $packageId, User $user, ?int $expiresInMinutes = 15): Card
     {
         $card = $this->lockNextActiveCard($packageId);
 
@@ -31,7 +31,7 @@ class CardInventoryService
             'status' => 'reserved',
             'reserved_by_user_id' => $user->id,
             'reserved_at' => now(),
-            'reservation_expires_at' => null,
+            'reservation_expires_at' => now()->addMinutes($expiresInMinutes),
         ]);
 
         return $card->refresh();
@@ -66,5 +66,32 @@ class CardInventoryService
         ]);
 
         return $card->refresh();
+    }
+
+    public function releaseExpiredReservations(): int
+    {
+        $expiredCards = Card::query()
+            ->where('status', 'reserved')
+            ->where('reservation_expires_at', '<', now())
+            ->lockForUpdate()
+            ->get();
+
+        $releasedCount = 0;
+
+        foreach ($expiredCards as $card) {
+            $this->releaseReservedCard($card);
+            $releasedCount++;
+        }
+
+        return $releasedCount;
+    }
+
+    public function isReservationExpired(Card $card): bool
+    {
+        if ($card->status !== 'reserved' || !$card->reservation_expires_at) {
+            return false;
+        }
+
+        return $card->reservation_expires_at->isPast();
     }
 }
