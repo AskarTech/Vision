@@ -1,4 +1,4 @@
-<x-layouts.dashboard title="لوحة الإدارة" description="مركز تشغيل لمراجعة الطلبات، السحوبات والتنبيهات المالية">
+<x-layouts.dashboard title="لوحة الإدارة" description="مركز تشغيل لمراجعة الطلبات، السحوبات والتنبيهات المالية" dashboardType="admin">
     <x-slot name="badge">
         <x-ui.badge tone="info">عمليات المشرف</x-ui.badge>
     </x-slot>
