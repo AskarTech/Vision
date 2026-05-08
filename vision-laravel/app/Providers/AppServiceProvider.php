@@ -72,7 +72,7 @@ class AppServiceProvider extends ServiceProvider
     protected function getPolicyMethodForPermission(string $permission): ?string
     {
         $mapping = [
-            'view_dashboard' => 'viewAdmin',
+            'view_dashboard' => 'viewDashboard',
             'manage_topups' => 'manageTopups',
             'manage_customers' => 'manageCustomers',
             'manage_sellers' => 'manageSellers',
@@ -88,9 +88,9 @@ class AppServiceProvider extends ServiceProvider
             'view_sales' => 'viewSales',
             'request_withdrawal' => 'requestWithdrawal',
             'view_wallet' => 'viewWallet',
-            'purchase_cards' => null,
-            'view_orders' => null,
-            'request_topup' => null,
+            'purchase_cards' => 'purchaseCards',
+            'view_orders' => 'viewOrders',
+            'request_topup' => 'requestTopup',
         ];
 
         return $mapping[$permission] ?? null;

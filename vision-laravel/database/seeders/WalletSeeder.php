@@ -13,8 +13,6 @@ class WalletSeeder extends Seeder
         User::query()->whereDoesntHave('wallet')->each(function (User $user) {
             Wallet::query()->create([
                 'user_id' => $user->id,
-                'balance' => 0,
-                'points_balance' => 0,
                 'status' => 'active',
                 'last_activity_at' => null,
             ]);

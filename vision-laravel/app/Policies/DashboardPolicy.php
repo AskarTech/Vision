@@ -15,6 +15,14 @@ class DashboardPolicy
     }
 
     /**
+     * Gate for navigation permission `view_dashboard` (admin, seller, or customer home).
+     */
+    public function viewDashboard(User $user): bool
+    {
+        return $this->hasPermission($user, 'view_dashboard');
+    }
+
+    /**
      * Determine if the user can view the seller dashboard.
      */
     public function viewSeller(User $user): bool
@@ -173,5 +181,29 @@ class DashboardPolicy
     public function viewWallet(User $user): bool
     {
         return $this->hasPermission($user, 'view_wallet');
+    }
+
+    /**
+     * View own orders (seller portal + customer portal).
+     */
+    public function viewOrders(User $user): bool
+    {
+        return $this->hasPermission($user, 'view_orders');
+    }
+
+    /**
+     * Marketplace purchase flow (customer).
+     */
+    public function purchaseCards(User $user): bool
+    {
+        return $this->hasPermission($user, 'purchase_cards');
+    }
+
+    /**
+     * Wallet top-up request (customer).
+     */
+    public function requestTopup(User $user): bool
+    {
+        return $this->hasPermission($user, 'request_topup');
     }
 }
