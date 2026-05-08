@@ -35,9 +35,9 @@
                 <div class="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
                     <h4 class="font-bold text-white">تقارير سريعة</h4>
                     <p class="text-sm text-slate-400 mt-2">استخراج CSV، فلترة زمنية وتصدير سريع.</p>
-                    <div class="mt-4 flex gap-2">
-                        <button class="btn btn-outline btn-sm">تصدير CSV</button>
-                        <button class="btn btn-outline btn-sm">تصدير PDF</button>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <a href="{{ route('admin.inventory.export') }}" class="btn btn-outline btn-sm border-white/20 text-slate-100">تصدير مخزون CSV</a>
+                        <a href="{{ route('admin.audit.index') }}" class="btn btn-outline btn-sm border-white/20 text-slate-100">سجل التدقيق</a>
                     </div>
                 </div>
             </div>
