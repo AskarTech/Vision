@@ -22,6 +22,19 @@ The system includes:
 - inventory reservation
 - financial consistency
 - operational dashboards
+- dual payment support
+- points-based checkout logic
+- voucher imports with auditability
+
+Platform standards:
+- Laravel 13
+- PHP 8.4+
+- Action Pattern
+- Service Layer
+- Blade + Tailwind CSS + DaisyUI + Alpine.js
+- zero external CDNs
+- local assets only
+- high-end minimalist RTL UI
 
 Always think in:
 Product → Domain → Feature → Task

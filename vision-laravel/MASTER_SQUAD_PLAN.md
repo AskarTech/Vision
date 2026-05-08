@@ -198,13 +198,15 @@ _Delivery notes: [docs/STAGE_14_ADMIN_VERIFICATION_SUMMARY.md](docs/STAGE_14_ADM
 
 ## Stage 15 - Seller Dashboard: Deep Verification & QA
 
-- [ ] **Asset Check:** Verify all Seller views exist (Overview, Networks Management, Packages, Bulk Upload, Orders, Wallet, Withdrawals).
-- [ ] **Micro-Level UI QA:** Inspect the UI for adding networks and requesting payouts. Ensure the design matches the "Modern SaaS" aesthetic.
-- [ ] **Bulk Upload Stress Test:** Deeply verify the CSV/Excel upload interface. Test it with correct data, partial errors, and completely invalid files to ensure the UI reports row-by-row errors clearly.
-- [ ] **Business Logic Alignment:** Ensure a Seller ONLY sees their own networks, cards, and transactions (Data Scoping).
-- [ ] **Financial Accuracy:** Verify that the Seller's Wallet balance correctly reflects their completed sales minus platform commissions.
+- [x] **Asset Check:** Verify all Seller views exist (Overview, Networks Management, Packages, Bulk Upload, Orders, Wallet, Withdrawals).
+- [x] **Micro-Level UI QA:** Inspect the UI for adding networks and requesting payouts. Ensure the design matches the "Modern SaaS" aesthetic.
+- [x] **Bulk Upload Stress Test:** Deeply verify the CSV/Excel upload interface. Test it with correct data, partial errors, and completely invalid files to ensure the UI reports row-by-row errors clearly.
+- [x] **Business Logic Alignment:** Ensure a Seller ONLY sees their own networks, cards, and transactions (Data Scoping).
+- [x] **Financial Accuracy:** Verify that the Seller's Wallet balance correctly reflects their completed sales minus platform commissions.
 
 *Focus: The Seller must have a frictionless, bug-free experience managing their inventory and tracking their money.*
+
+_Delivery notes: [docs/STAGE_15_SELLER_PORTAL_SUMMARY.md](docs/STAGE_15_SELLER_PORTAL_SUMMARY.md) — CSV-only bulk import; wallet page includes estimated net vs ledger honesty._
 
 ## Stage 16 - Customer Portal: Deep Verification & QA
 
@@ -235,3 +237,4 @@ _Delivery notes: [docs/STAGE_14_ADMIN_VERIFICATION_SUMMARY.md](docs/STAGE_14_ADM
 - For Stages 5–10, treat **[docs/STAGES_5_THROUGH_10_SUMMARY.md](docs/STAGES_5_THROUGH_10_SUMMARY.md)** as the honesty layer: stubs/deferred scope must stay documented there whenever a box is checked.
 - For Stages 11–13, treat **[docs/STAGES_11_THROUGH_13_SUMMARY.md](docs/STAGES_11_THROUGH_13_SUMMARY.md)** the same way for auth, portal wiring, and localization.
 - For Stage 14, treat **[docs/STAGE_14_ADMIN_VERIFICATION_SUMMARY.md](docs/STAGE_14_ADMIN_VERIFICATION_SUMMARY.md)** as the honesty layer for admin QA scope and placeholders.
+- For Stage 15, treat **[docs/STAGE_15_SELLER_PORTAL_SUMMARY.md](docs/STAGE_15_SELLER_PORTAL_SUMMARY.md)** as the honesty layer for seller portal bulk-import format and wallet estimates vs ledger.
