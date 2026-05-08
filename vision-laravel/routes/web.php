@@ -126,7 +126,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/settings/security', [SettingsController::class, 'security'])->name('settings.security');
     Route::post('/settings/security', [SettingsController::class, 'updateSecurity'])->name('settings.update-security');
 });
-});
 
 /*
 |--------------------------------------------------------------------------
