@@ -1,17 +1,46 @@
-<x-layouts.dashboard dashboard-type="seller">
-    <x-slot name="title">@yield('title')</x-slot>
+<x-layouts.dashboard title="إعدادات البائع" dashboardType="seller">
+    <x-ui.page-header title="الإعدادات" description="حساب المدير وبيانات النشاط التجاري." />
 
-    <div class="space-y-6">
-        <div class="flex items-center justify-between">
-            <h1 class="text-2xl font-bold text-base-content">{{ $title ?? 'الوحدة' }}</h1>
-        </div>
+    @if (session('success'))
+        <x-ui.alert tone="success" class="mb-4">{{ session('success') }}</x-ui.alert>
+    @endif
 
-        <x-ui.panel>
-            <div class="text-center py-12">
-                <div class="text-6xl mb-4">🚧</div>
-                <h3 class="text-lg font-semibold text-base-content mb-2">قيد التطوير</h3>
-                <p class="text-base-content/60">هذه الوحدة ستكون متاحة قريباً</p>
-            </div>
+    <div class="grid gap-6 lg:grid-cols-2">
+        <x-ui.panel title="حساب المدير" class="rounded-[1.5rem]">
+            <form method="POST" action="{{ route('seller.settings.profile') }}" class="space-y-4">
+                @csrf
+                @method('PATCH')
+                <label class="form-control">
+                    <span class="label-text">الاسم</span>
+                    <input name="name" value="{{ old('name', $user->name) }}" class="input input-bordered rounded-xl" required />
+                </label>
+                <label class="form-control">
+                    <span class="label-text">الهاتف</span>
+                    <input name="phone" value="{{ old('phone', $user->phone) }}" class="input input-bordered rounded-xl" required />
+                </label>
+                <label class="form-control">
+                    <span class="label-text">البريد (اختياري)</span>
+                    <input type="email" name="email" value="{{ old('email', $user->email) }}" class="input input-bordered rounded-xl" />
+                </label>
+                <button type="submit" class="btn btn-primary rounded-xl">حفظ الحساب</button>
+            </form>
+        </x-ui.panel>
+
+        <x-ui.panel title="النشاط التجاري" class="rounded-[1.5rem]">
+            <form method="POST" action="{{ route('seller.settings.business') }}" class="space-y-4">
+                @csrf
+                @method('PATCH')
+                <label class="form-control">
+                    <span class="label-text">اسم المتجر / الشركة</span>
+                    <input name="business_name" value="{{ old('business_name', $seller->name) }}" class="input input-bordered rounded-xl" required />
+                </label>
+                <label class="form-control">
+                    <span class="label-text">هاتف النشاط</span>
+                    <input name="business_phone" value="{{ old('business_phone', $seller->phone) }}" class="input input-bordered rounded-xl" />
+                </label>
+                <p class="text-xs text-slate-500">نسبة العمولة الحالية: <strong>{{ $seller->commission_rate }}٪</strong> — تعديلها من قبل الإدارة فقط.</p>
+                <button type="submit" class="btn btn-secondary rounded-xl">حفظ النشاط</button>
+            </form>
         </x-ui.panel>
     </div>
 </x-layouts.dashboard>
