@@ -250,6 +250,8 @@ Frontend direction:
 - TailwindCSS
 - Flowbite or DaisyUI
 - Alpine.js for lightweight interactivity
+- Local assets only, no external CDNs
+- High-end minimalist RTL styling aligned with `theme-style.json`
 - mobile-first UX
 - lightweight performance for weak internet conditions
 

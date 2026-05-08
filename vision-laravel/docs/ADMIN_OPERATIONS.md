@@ -15,7 +15,7 @@ Defines operational and governance flows for platform administration.
 
 1. Request submitted as pending.
 2. Admin validates receipt/reference.
-3. Approve or reject with reason.
+3. Approve or reject with reason; persist **`reviewed_by`** and **`reviewed_at`** on every terminal transition.
 4. On approval, ledger credit is recorded atomically.
 
 ## Withdrawal Review Flow

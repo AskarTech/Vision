@@ -5,6 +5,7 @@ This platform includes:
 - inventory reservation
 - checkout flows
 - financial transactions
+- direct payment providers
 
 Always prioritize:
 - consistency
@@ -18,14 +19,23 @@ Wallet rules:
 - use DB transactions
 - avoid duplicate charging
 
+Payment rules:
+- internal wallet checkout and direct external wallet checkout are both first-class flows
+- supported direct providers are Kuraimi, OneCash, Floosak, and Cash
+- provider selection must be explicit and testable
+- external callbacks and retries must be idempotent
+- direct payment flows must still preserve order/inventory atomicity
+
 Inventory rules:
 - prevent overselling
 - support reservation lifecycle
 - handle concurrency carefully
+- use `lockForUpdate()` when allocating stock
 
 Checkout rules:
 - payment success finalizes order
 - failed payment releases reservation
 - operations should be idempotent
+- compute the final payable amount server-side
 
 Avoid unsafe shortcuts in financial or inventory logic.

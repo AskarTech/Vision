@@ -39,6 +39,7 @@ Defines seller-side entities and responsibilities.
 - Request must include amount and payout details.
 - Status transitions: pending -> approved/rejected -> paid.
 - All status changes must include reviewer and timestamp where applicable.
+- **Settlement balance:** Seller-facing balance for payouts uses the **seller_manager user wallet** (see [STAGE_2_DOMAIN_RULES_FREEZE.md](STAGE_2_DOMAIN_RULES_FREEZE.md)); there is no `wallets.seller_id` column today.
 
 ## Reporting Requirements
 

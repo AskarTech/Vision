@@ -14,6 +14,14 @@
 - [docs/CHECKOUT_FLOW.md](CHECKOUT_FLOW.md): checkout orchestration and retry behavior.
 - [docs/SELLER_DOMAIN.md](SELLER_DOMAIN.md): seller-scoped capabilities and reporting.
 - [docs/ADMIN_OPERATIONS.md](ADMIN_OPERATIONS.md): review, dispute, and audit flows.
+- [docs/STAGE_1_ARCHITECTURE_AUDIT.md](STAGE_1_ARCHITECTURE_AUDIT.md): Stage 1 migration/model/route/action/service audit and doc-vs-app conflicts.
+- [docs/STAGE_2_DOMAIN_RULES_FREEZE.md](STAGE_2_DOMAIN_RULES_FREEZE.md): Stage 2 frozen domain rules, enums, idempotency, auditability, validation boundaries.
+- [docs/STAGE_3_DATABASE_MODEL_ALIGNMENT.md](STAGE_3_DATABASE_MODEL_ALIGNMENT.md): Stage 3 model/migration alignment, queue indexes, casts, relations.
+- [docs/STAGE_4_WALLET_LEDGER_ENGINE.md](STAGE_4_WALLET_LEDGER_ENGINE.md): Stage 4 wallet service, ledger idempotency, refunds, reconciliation helper.
+- [docs/STAGES_5_THROUGH_10_SUMMARY.md](STAGES_5_THROUGH_10_SUMMARY.md): Stages 5–10 delivery vs stubs/deferred work.
+- [docs/STAGES_11_THROUGH_13_SUMMARY.md](STAGES_11_THROUGH_13_SUMMARY.md): Stages 11–13 auth, seller onboarding, portal wiring, Arabic / UI polish vs backlog.
+- [docs/STAGE_14_ADMIN_VERIFICATION_SUMMARY.md](STAGE_14_ADMIN_VERIFICATION_SUMMARY.md): Stage 14 admin route/policy fixes, paid-order refund + CSV export, verification tests.
+- [docs/RUNBOOK_RELEASE.md](RUNBOOK_RELEASE.md): Release checklist, points env, scheduling, incidents.
 
 ## Scope
 
@@ -21,9 +29,9 @@ This file is the living project summary. Detailed domain rules and phased implem
 
 ## Strategy Alignment Note
 
-- `PROJECT_STRATEGY.md` is now a referenced planning document.
-- It currently states PHP 8.4+, while the application composer constraint is still PHP 8.3.
-- This is a real alignment decision and should be resolved deliberately before any environment upgrade work.
+- `PROJECT_STRATEGY.md` is the canonical planning document.
+- The project standard is PHP 8.4+ across docs and Composer.
+- The platform uses Laravel 13, Action/Service architecture, zero-CDN assets, and dual-payment checkout.
 
 ## Product Idea
 
@@ -31,6 +39,8 @@ This file is the living project summary. Detailed domain rules and phased implem
 - Two payment flows:
     - Direct external wallet APIs (for instant checkout).
     - Internal platform wallet + points (for smooth in-app purchases).
+- Direct providers are explicitly modeled for Kuraimi, OneCash, Floosak, and Cash.
+- Points are core checkout logic, not a future extension.
 
 ## Legacy to New Mapping
 
@@ -75,6 +85,7 @@ This file is the living project summary. Detailed domain rules and phased implem
     - index review for read paths
 3. Wallet-related writes must be transaction-safe and append-only at ledger level.
 4. Card sale flow must lock stock row(s) during allocation to prevent duplicate sales.
+5. Payment and checkout flows must remain aligned with the active strategy and never reintroduce CDN-based frontend dependencies.
 
 ## Next Architecture Layer
 
@@ -90,7 +101,7 @@ This file is the living project summary. Detailed domain rules and phased implem
 - `CheckoutWithWalletAction` implemented.
 - Supporting services:
     - `CardInventoryService` (row-level locking for available card allocation).
-    - `WalletService` (wallet debit + ledger write).
+    - `WalletService` (locked debit/credit/refund, ledger rows, `external_reference` idempotency, `ledgerChainMatchesBalance` reconciliation helper; cash balance not mass-assignable on `Wallet`).
 - API endpoint available:
     - `POST /api/v1/checkout/wallet`
     - Requires `idempotency_key` to prevent duplicate order/debit on client retries.
@@ -104,7 +115,9 @@ This file is the living project summary. Detailed domain rules and phased implem
     - `GET /login`
     - `POST /login`
     - `POST /logout`
+    - `GET|POST /register` (customer) and `GET|POST /register/seller` (seller onboarding wizard)
     - role-aware session login for `admin`, `customer`, and `seller_manager`
     - admin dashboard protected by `auth` + `role:admin`
     - seller dashboard protected by `auth` + `role:seller_manager`
     - seller managers are routed to `GET /seller`
+    - default application locale `ar` with Arabic validation/auth strings; shared layouts load Tajawal/Cairo for typography

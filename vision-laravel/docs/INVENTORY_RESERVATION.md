@@ -17,24 +17,25 @@ Defines card inventory lifecycle to prevent oversell and race conditions.
 
 ## Reservation Principles
 
-- Allocation must use row-level locking.
+- Allocation must use row-level locking via `lockForUpdate()`.
 - Reservation has explicit owner and expiration time.
 - Expired reservations must be released back to active.
 - Final sale transition must happen only from reserved/active under lock.
 
-## Recommended Reservation Data
+## Reservation Columns (implemented)
 
-- reservation_token
 - reserved_by_user_id
 - reserved_at
 - reservation_expires_at
+
+Optional future: `reservation_token` if external gateways require an opaque hold reference (not present in current schema).
 
 ## Checkout Interaction
 
 1. Request arrives with idempotency key.
 2. Validate packages and quantities.
-3. Reserve required cards using lock strategy.
-4. Execute payment (wallet/gateway).
+3. Reserve required cards using `lockForUpdate()` inside an atomic DB transaction.
+4. Execute payment (wallet, points, or gateway) without leaving the transaction boundary undefined.
 5. Confirm reservation to sold on success.
 6. Release reservations on failure.
 

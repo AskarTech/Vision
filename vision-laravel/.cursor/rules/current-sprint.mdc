@@ -6,6 +6,8 @@ Current focus:
 - Reusable dashboard UI system
 - Admin users module
 - Seller dashboard foundation
+- Payment gateway foundation
+- Points checkout integration
 
 Current priorities:
 1. Dashboard shell
@@ -16,7 +18,6 @@ Current priorities:
 
 Do NOT work on:
 - mobile apps
-- advanced payment integrations
 - notification engine
 - reporting engine
 - AI features

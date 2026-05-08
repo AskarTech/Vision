@@ -7,6 +7,9 @@ Dashboard UI must feel:
 - scalable
 - lightweight
 - mobile-first
+- professional
+- high-end
+- minimalist
 
 Frontend stack:
 - Blade
@@ -14,12 +17,17 @@ Frontend stack:
 - DaisyUI or Flowbite
 - Alpine.js
 
+Use DaisyUI as the default component layer unless a module explicitly needs a custom primitive.
+Use theme-style.json as the source for radius, accent, and shadow values.
+No external CDNs; all assets must be bundled locally.
+
 Always:
 - build reusable Blade components
 - centralize layouts
 - centralize tables/forms/modals
 - use consistent spacing and typography
 - support responsive behavior
+- avoid layout shift by reserving space for loading and empty states
 
 Avoid:
 - duplicated UI structures

@@ -9,6 +9,9 @@ The customer flow must feel:
 - lightweight
 - visually clear
 - low-friction
+- professional
+- high-end
+- minimalist
 
 The customer should reach purchase completion in the fewest possible steps.
 
@@ -29,6 +32,9 @@ Frontend stack:
 - Blade
 - TailwindCSS
 - Alpine.js
+
+UI must follow the project theme tokens, including the 1.5rem border radius and vibrant accent palette.
+Avoid external CDNs and preserve stable layout boxes to prevent layout shift.
 
 Always prioritize:
 - speed

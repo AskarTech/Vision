@@ -1,0 +1,20 @@
+# Voucher Import Rules
+
+Voucher imports are a core seller workflow.
+
+Supported formats:
+- CSV
+- Excel
+
+Import requirements:
+- Validate every row before committing any stock changes.
+- Reject malformed, duplicate, or incomplete rows with clear reasons.
+- Support partial-failure handling so valid rows can succeed while invalid rows are reported.
+- Write an audit trail for every import batch and every row outcome.
+- Record who imported the file, when it was imported, and which seller scope it belonged to.
+
+Operational rules:
+- Imports must preserve card uniqueness and provenance.
+- Imports must run inside an atomic transaction boundary for the rows that are committed.
+- Failed rows must never silently disappear from the final report.
+- A successful batch must be reproducible from audit logs.

@@ -6,6 +6,9 @@ Customer UI should feel:
 - smooth
 - visually appealing
 - easy to scan
+- professional
+- high-end
+- minimalist
 
 Use:
 - clear visual hierarchy
@@ -14,6 +17,8 @@ Use:
 - clean spacing
 - readable typography
 
+Align spacing, radius, and accent colors with theme-style.json.
+
 Prefer:
 - responsive grids
 - package cards
@@ -21,11 +26,14 @@ Prefer:
 - simple filtering
 - minimal steps
 
+Use stable shells, skeletons, and reserved space so the UI does not shift during load.
+
 Avoid:
 - dashboard-heavy interfaces
 - enterprise-style complexity
 - cluttered tables for customers
 - excessive text blocks
+- CDN-hosted assets
 
 Focus on:
 - discoverability
