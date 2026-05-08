@@ -8,107 +8,155 @@
 
 @theme {
     --font-sans:
-        "Cairo", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+        "Inter", "Tajawal", "Cairo", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
         "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 :root {
-    --vision-bg-900: #07111f;
-    --vision-panel: rgba(10, 18, 31, 0.78);
-    --vision-border: rgba(255, 255, 255, 0.08);
-    --vision-text: #e5edf7;
-    --vision-muted: #91a4bd;
-    --vision-teal: #18c6b7;
-    --vision-blue: #63a7ff;
-    --vision-amber: #f5b942;
-    --vision-rose: #f2687c;
+    --saas-primary: #4f6ef7;
+    --saas-primary-hover: #3d58d3;
+    --saas-bg: #f5f7ff;
+    --saas-surface: #ffffff;
+    --saas-text: #1e293b;
+    --saas-muted: #64748b;
+    --saas-success: #7ee081;
+    --saas-info: #93c5fd;
+    --saas-neutral: #a5b4fc;
+    --saas-warning: #fbbf24;
+    --saas-danger: #f87171;
+    --saas-card-radius: 1.5rem;
+    --saas-card-shadow:
+        0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
 }
 
-/* Small utility used by dashboard layout */
-.max-w-375 {
-    max-width: 63rem;
+body {
+    background-color: var(--saas-bg);
+    color: var(--saas-text);
 }
 
-/* Soft radial accents used by dashboard layout */
-.vision-accent-1 {
+.saas-layout-main {
+    background-color: var(--saas-bg);
+}
+
+.saas-surface {
+    background-color: var(--saas-surface);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: var(--saas-card-radius);
+    box-shadow: var(--saas-card-shadow);
+}
+
+.saas-soft-card {
+    border-radius: var(--saas-card-radius);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    background-color: var(--saas-surface);
+    box-shadow: var(--saas-card-shadow);
+}
+
+.tech-oriental-hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(79, 110, 247, 0.06), rgba(147, 197, 253, 0.16));
+}
+
+.tech-oriental-hero::before {
+    content: "";
     position: absolute;
-    right: 0;
-    top: -6rem;
-    height: 24rem;
-    width: 24rem;
-    border-radius: 9999px;
-    background: radial-gradient(
-        circle at center,
-        rgba(24, 198, 183, 0.14),
-        transparent 45%
-    );
-    filter: blur(40px);
-}
-.vision-accent-2 {
-    position: absolute;
-    left: 0;
-    top: 30%;
-    height: 24rem;
-    width: 24rem;
-    border-radius: 9999px;
-    background: radial-gradient(
-        circle at center,
-        rgba(99, 167, 255, 0.12),
-        transparent 42%
-    );
-    filter: blur(40px);
+    inset: 0;
+    background-image:
+        radial-gradient(circle at 1px 1px, rgba(148, 163, 184, 0.2) 1px, transparent 0),
+        linear-gradient(125deg, rgba(165, 180, 252, 0.06), rgba(241, 245, 249, 0));
+    background-size: 20px 20px, 100% 100%;
+    opacity: 0.35;
+    pointer-events: none;
 }
 
-/* DaisyUI theme support: ensure contrast on dark theme */
-:root[data-theme="vision-dark"] {
-    --rounded-box: 1.25rem;
+.tech-oriental-hero > * {
+    position: relative;
+    z-index: 1;
 }
 
-/* Tone utility classes used by components */
+/* Tone utility classes used by metric cards */
 .tone-teal {
-    background: linear-gradient(
-        135deg,
-        rgba(24, 198, 183, 0.16),
-        rgba(10, 18, 31, 0.86)
-    );
-    border: 1px solid var(--vision-border);
+    background: linear-gradient(140deg, rgba(126, 224, 129, 0.28), #ffffff 70%);
+    border: 1px solid rgba(126, 224, 129, 0.35);
 }
 .tone-blue {
-    background: linear-gradient(
-        135deg,
-        rgba(99, 167, 255, 0.16),
-        rgba(10, 18, 31, 0.86)
-    );
-    border: 1px solid var(--vision-border);
+    background: linear-gradient(140deg, rgba(147, 197, 253, 0.32), #ffffff 72%);
+    border: 1px solid rgba(147, 197, 253, 0.4);
 }
 .tone-amber {
-    background: linear-gradient(
-        135deg,
-        rgba(245, 185, 66, 0.16),
-        rgba(10, 18, 31, 0.86)
-    );
-    border: 1px solid var(--vision-border);
+    background: linear-gradient(140deg, rgba(251, 191, 36, 0.25), #ffffff 72%);
+    border: 1px solid rgba(251, 191, 36, 0.35);
 }
 .tone-rose {
-    background: linear-gradient(
-        135deg,
-        rgba(242, 104, 124, 0.16),
-        rgba(10, 18, 31, 0.86)
-    );
-    border: 1px solid var(--vision-border);
+    background: linear-gradient(140deg, rgba(248, 113, 113, 0.24), #ffffff 72%);
+    border: 1px solid rgba(248, 113, 113, 0.35);
 }
 .tone-slate {
-    background: linear-gradient(
-        135deg,
-        rgba(30, 41, 59, 0.18),
-        rgba(10, 18, 31, 0.86)
-    );
-    border: 1px solid var(--vision-border);
+    background: linear-gradient(140deg, rgba(165, 180, 252, 0.28), #ffffff 72%);
+    border: 1px solid rgba(165, 180, 252, 0.35);
 }
 
-/* Metric card base to keep consistent padding and radius */
 .metric-card-base {
     padding: 1.25rem;
-    border-radius: 1.5rem;
-    box-shadow: 0 20px 55px rgba(0, 0, 0, 0.34);
+    border-radius: var(--saas-card-radius);
+    box-shadow: var(--saas-card-shadow);
+}
+
+/* SaaS override layer for existing dark utility usage in customer/seller pages */
+.saas-content .text-white {
+    color: var(--saas-text) !important;
+}
+
+.saas-content .text-slate-400,
+.saas-content .text-slate-300,
+.saas-content .text-slate-500 {
+    color: var(--saas-muted) !important;
+}
+
+.saas-content .bg-white\/5,
+.saas-content .bg-slate-950\/40 {
+    background-color: var(--saas-surface) !important;
+}
+
+.saas-content .border-white\/10,
+.saas-content .border-white\/20 {
+    border-color: rgba(148, 163, 184, 0.25) !important;
+}
+
+.saas-content .shadow-2xl {
+    box-shadow: var(--saas-card-shadow) !important;
+}
+
+.saas-content .hover\:bg-white\/5:hover,
+.saas-content .hover\:bg-white\/10:hover {
+    background-color: #f8faff !important;
+}
+
+.btn-primary,
+.btn.btn-primary {
+    background-color: var(--saas-primary);
+    border-color: var(--saas-primary);
+    color: #fff;
+    border-radius: 9999px;
+}
+
+.btn-primary:hover,
+.btn.btn-primary:hover {
+    background-color: var(--saas-primary-hover);
+    border-color: var(--saas-primary-hover);
+}
+
+.btn,
+.input,
+.select,
+.textarea {
+    border-radius: 0.9rem;
+}
+
+.saas-modal-panel {
+    border-radius: var(--saas-card-radius);
+    background: var(--saas-surface);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    box-shadow: var(--saas-card-shadow);
 }
