@@ -48,9 +48,10 @@ class CheckoutWithWalletTest extends TestCase
             'password' => 'secret123',
         ]);
 
-        Wallet::query()->create([
+        Wallet::forceCreate([
             'user_id' => $user->id,
             'balance' => 5000,
+            'points_balance' => 0,
             'status' => 'active',
         ]);
 
@@ -136,9 +137,10 @@ class CheckoutWithWalletTest extends TestCase
             'password' => 'secret123',
         ]);
 
-        Wallet::query()->create([
+        Wallet::forceCreate([
             'user_id' => $user->id,
             'balance' => 5000,
+            'points_balance' => 0,
             'status' => 'active',
         ]);
 
