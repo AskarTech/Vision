@@ -25,13 +25,15 @@ class NetworksController extends Controller
         $stats = [
             'total' => Network::count(),
             'active' => Network::where('status', 'active')->count(),
-            'inactive' => Network::where('status', 'inactive')->count(),
+            'inactive' => Network::where('status', 'disabled')->count(),
             'by_seller' => Network::selectRaw('seller_id, COUNT(*) as count')
                 ->groupBy('seller_id')
                 ->count(),
         ];
 
-        return view('admin.networks.index', compact('networks', 'stats'));
+        $sellers = \App\Models\Seller::query()->orderBy('name')->get(['id', 'name']);
+
+        return view('admin.networks.index', compact('networks', 'stats', 'sellers'));
     }
 
     public function show(Network $network)
@@ -59,10 +61,10 @@ class NetworksController extends Controller
         $validated = $request->validate([
             'seller_id' => 'required|exists:sellers,id',
             'name' => 'required|string|max:255',
-            'code' => 'required|string|unique:networks,code|max:50',
-            'description' => 'nullable|string|max:1000',
-            'status' => 'required|in:active,inactive',
-            'config' => 'nullable|array',
+            'slug' => 'required|string|unique:networks,slug|max:100',
+            'provider_code' => 'nullable|string|max:60',
+            'status' => 'required|in:active,disabled',
+            'meta' => 'nullable|array',
         ]);
 
         Network::create($validated);
@@ -87,10 +89,10 @@ class NetworksController extends Controller
         $validated = $request->validate([
             'seller_id' => 'required|exists:sellers,id',
             'name' => 'required|string|max:255',
-            'code' => 'required|string|unique:networks,code,' . $network->id . '|max:50',
-            'description' => 'nullable|string|max:1000',
-            'status' => 'required|in:active,inactive',
-            'config' => 'nullable|array',
+            'slug' => 'required|string|unique:networks,slug,' . $network->id . '|max:100',
+            'provider_code' => 'nullable|string|max:60',
+            'status' => 'required|in:active,disabled',
+            'meta' => 'nullable|array',
         ]);
 
         $network->update($validated);

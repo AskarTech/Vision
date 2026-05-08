@@ -19,7 +19,7 @@ class ReportsController extends Controller
 
         // Revenue metrics
         $totalRevenue = CardOrder::whereBetween('created_at', [$dateFrom, $dateTo])
-            ->where('status', 'completed')
+            ->where('status', 'paid')
             ->sum('total_amount');
 
         $totalTopups = TopupRequest::whereBetween('created_at', [$dateFrom, $dateTo])
@@ -40,7 +40,7 @@ class ReportsController extends Controller
         // Order metrics
         $totalOrders = CardOrder::whereBetween('created_at', [$dateFrom, $dateTo])->count();
         $completedOrders = CardOrder::whereBetween('created_at', [$dateFrom, $dateTo])
-            ->where('status', 'completed')
+            ->where('status', 'paid')
             ->count();
 
         $stats = [
@@ -56,7 +56,7 @@ class ReportsController extends Controller
 
         // Daily revenue chart data
         $dailyRevenue = CardOrder::whereBetween('created_at', [$dateFrom, $dateTo])
-            ->where('status', 'completed')
+            ->where('status', 'paid')
             ->selectRaw('DATE(created_at) as date, SUM(total_amount) as amount')
             ->groupBy('date')
             ->orderBy('date')

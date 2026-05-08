@@ -21,7 +21,7 @@ class PackagesController extends Controller
         }
 
         if ($request->filled('type')) {
-            $query->where('type', $request->type);
+            $query->where('period_type', $request->type);
         }
 
         $packages = $query->paginate(20);
@@ -29,14 +29,16 @@ class PackagesController extends Controller
         $stats = [
             'total' => Package::count(),
             'active' => Package::where('status', 'active')->count(),
-            'inactive' => Package::where('status', 'inactive')->count(),
-            'by_type' => Package::selectRaw('type, COUNT(*) as count')
-                ->groupBy('type')
+            'inactive' => Package::where('status', 'disabled')->count(),
+            'by_type' => Package::selectRaw('period_type, COUNT(*) as count')
+                ->groupBy('period_type')
                 ->get()
-                ->pluck('count', 'type'),
+                ->pluck('count', 'period_type'),
         ];
 
-        return view('admin.packages.index', compact('packages', 'stats'));
+        $networks = \App\Models\Network::query()->orderBy('name')->get(['id', 'name']);
+
+        return view('admin.packages.index', compact('packages', 'stats', 'networks'));
     }
 
     public function show(Package $package)
@@ -66,13 +68,14 @@ class PackagesController extends Controller
             'seller_id' => 'required|exists:sellers,id',
             'network_id' => 'required|exists:networks,id',
             'name' => 'required|string|max:255',
-            'code' => 'required|string|unique:packages,code|max:50',
-            'type' => 'required|in:physical,virtual',
+            'amount' => 'nullable|integer|min:1',
+            'unit' => 'nullable|string|max:20',
+            'period_type' => 'required|in:daily,weekly,monthly',
+            'category' => 'required|string|max:40',
             'price' => 'required|numeric|min:0',
-            'validity_days' => 'nullable|integer|min:1',
-            'description' => 'nullable|string|max:1000',
-            'features' => 'nullable|array',
-            'status' => 'required|in:active,inactive',
+            'gradient' => 'nullable|string|max:80',
+            'status' => 'required|in:active,disabled',
+            'meta' => 'nullable|array',
         ]);
 
         Package::create($validated);
@@ -99,13 +102,14 @@ class PackagesController extends Controller
             'seller_id' => 'required|exists:sellers,id',
             'network_id' => 'required|exists:networks,id',
             'name' => 'required|string|max:255',
-            'code' => 'required|string|unique:packages,code,' . $package->id . '|max:50',
-            'type' => 'required|in:physical,virtual',
+            'amount' => 'nullable|integer|min:1',
+            'unit' => 'nullable|string|max:20',
+            'period_type' => 'required|in:daily,weekly,monthly',
+            'category' => 'required|string|max:40',
             'price' => 'required|numeric|min:0',
-            'validity_days' => 'nullable|integer|min:1',
-            'description' => 'nullable|string|max:1000',
-            'features' => 'nullable|array',
-            'status' => 'required|in:active,inactive',
+            'gradient' => 'nullable|string|max:80',
+            'status' => 'required|in:active,disabled',
+            'meta' => 'nullable|array',
         ]);
 
         $package->update($validated);

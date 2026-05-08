@@ -64,7 +64,7 @@ class SettingsController extends Controller
     public function email()
     {
         $settings = [
-            'mail_mailer' => config('mail.mailers.smtp.driver ??'),
+            'mail_mailer' => config('mail.default'),
             'mail_host' => config('mail.mailers.smtp.host'),
             'mail_port' => config('mail.mailers.smtp.port'),
             'mail_from_address' => config('mail.from.address'),

@@ -44,4 +44,9 @@ class Package extends Model
     {
         return $this->hasMany(Card::class);
     }
+
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(CardOrderItem::class);
+    }
 }

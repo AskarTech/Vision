@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -52,5 +53,25 @@ class Seller extends Model
     public function managers(): HasMany
     {
         return $this->hasMany(SellerManager::class);
+    }
+
+    public function withdrawals(): HasMany
+    {
+        return $this->hasMany(Withdrawal::class);
+    }
+
+    /**
+     * Settlement wallet for payouts: first seller_manager user's wallet (deterministic by user id).
+     */
+    protected function wallet(): Attribute
+    {
+        return Attribute::get(function (): ?Wallet {
+            $manager = $this->users()
+                ->where('role', 'seller_manager')
+                ->orderBy('id')
+                ->first();
+
+            return $manager?->wallet;
+        });
     }
 }

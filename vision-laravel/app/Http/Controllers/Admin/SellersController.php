@@ -68,7 +68,7 @@ class SellersController extends Controller
         Seller::create($validated);
 
         return redirect()->route('admin.sellers.index')
-            ->with('success', 'Seller created successfully');
+            ->with('success', __('admin.seller_created'));
     }
 
     public function edit(Seller $seller)
@@ -94,7 +94,7 @@ class SellersController extends Controller
         $seller->update($validated);
 
         return redirect()->route('admin.sellers.show', $seller)
-            ->with('success', 'Seller updated successfully');
+            ->with('success', __('admin.seller_updated'));
     }
 
     public function approve(Seller $seller)
@@ -103,7 +103,7 @@ class SellersController extends Controller
 
         $seller->update(['status' => 'active']);
 
-        return redirect()->back()->with('success', 'Seller approved successfully');
+        return redirect()->back()->with('success', __('admin.seller_approved'));
     }
 
     public function suspend(Seller $seller)
@@ -112,6 +112,6 @@ class SellersController extends Controller
 
         $seller->update(['status' => 'suspended']);
 
-        return redirect()->back()->with('success', 'Seller suspended successfully');
+        return redirect()->back()->with('success', __('admin.seller_suspended'));
     }
 }

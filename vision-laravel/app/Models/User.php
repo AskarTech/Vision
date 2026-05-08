@@ -57,4 +57,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(CardOrder::class);
     }
+
+    public function reviewedTopupRequests(): HasMany
+    {
+        return $this->hasMany(TopupRequest::class, 'reviewed_by');
+    }
+
+    public function reviewedWithdrawals(): HasMany
+    {
+        return $this->hasMany(Withdrawal::class, 'reviewed_by');
+    }
 }
