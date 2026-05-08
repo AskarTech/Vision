@@ -38,22 +38,22 @@ Route::post('/logout', [SessionController::class, 'destroy'])
 */
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function (): void {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     // Topups
     Route::get('/topups', [TopupsController::class, 'index'])->name('topups.index');
     Route::post('/topups/{topup}/approve', [TopupsController::class, 'approve'])->name('topups.approve');
     Route::post('/topups/{topup}/reject', [TopupsController::class, 'reject'])->name('topups.reject');
-    
+
     // Withdrawals
     Route::get('/withdrawals', [WithdrawalsController::class, 'index'])->name('withdrawals.index');
     Route::post('/withdrawals/{withdrawal}/approve', [WithdrawalsController::class, 'approve'])->name('withdrawals.approve');
     Route::post('/withdrawals/{withdrawal}/reject', [WithdrawalsController::class, 'reject'])->name('withdrawals.reject');
-    
+
     // Disputes
     Route::get('/disputes', [DisputesController::class, 'index'])->name('disputes.index');
     Route::post('/disputes/{order}/refund', [DisputesController::class, 'refund'])->name('disputes.refund');
     Route::post('/disputes/{order}/reject', [DisputesController::class, 'reject'])->name('disputes.reject');
-    
+
     // Customers
     Route::get('/customers', [CustomersController::class, 'index'])->name('customers.index');
     Route::get('/customers/{customer}', [CustomersController::class, 'show'])->name('customers.show');
@@ -126,7 +126,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/settings/security', [SettingsController::class, 'security'])->name('settings.security');
     Route::post('/settings/security', [SettingsController::class, 'updateSecurity'])->name('settings.update-security');
 });
-});
 
 /*
 |--------------------------------------------------------------------------
@@ -135,20 +134,20 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 */
 Route::middleware(['auth', 'role:seller_manager'])->prefix('seller')->name('seller.')->group(function (): void {
     Route::get('/', [\App\Http\Controllers\Seller\DashboardController::class, 'index'])->name('dashboard');
-    
+
     // Inventory
     Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
     Route::get('/inventory/create', [InventoryController::class, 'create'])->name('inventory.create');
     Route::post('/inventory', [InventoryController::class, 'store'])->name('inventory.store');
     Route::patch('/inventory/{card}/status', [InventoryController::class, 'updateStatus'])->name('inventory.update-status');
     Route::delete('/inventory/{card}', [InventoryController::class, 'destroy'])->name('inventory.destroy');
-    
+
     // Withdrawals
     Route::get('/withdrawals', [SellerWithdrawalsController::class, 'index'])->name('withdrawals.index');
     Route::get('/withdrawals/create', [SellerWithdrawalsController::class, 'create'])->name('withdrawals.create');
     Route::post('/withdrawals', [SellerWithdrawalsController::class, 'store'])->name('withdrawals.store');
     Route::get('/withdrawals/{withdrawal}', [SellerWithdrawalsController::class, 'show'])->name('withdrawals.show');
-    
+
     // Placeholder routes for other seller modules (to be implemented)
     Route::get('/networks', fn() => view('seller.networks.index'))->name('networks.index');
     Route::get('/packages', fn() => view('seller.packages.index'))->name('packages.index');
