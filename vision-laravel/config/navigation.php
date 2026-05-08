@@ -85,6 +85,24 @@ return [
             'icon' => 'cog-6-tooth',
             'permission' => 'manage_settings',
         ],
+        [
+            'label' => 'الإشعارات',
+            'route' => 'admin.notifications.index',
+            'icon' => 'banknotes',
+            'permission' => 'view_dashboard',
+        ],
+        [
+            'label' => 'الأدوار والصلاحيات',
+            'route' => 'admin.roles.index',
+            'icon' => 'users',
+            'permission' => 'manage_settings',
+        ],
+        [
+            'label' => 'مراقبة النشاط',
+            'route' => 'admin.activity.index',
+            'icon' => 'chart-bar',
+            'permission' => 'view_audit_logs',
+        ],
     ],
 
     /*
@@ -128,6 +146,12 @@ return [
             'route' => 'seller.sales.index',
             'icon' => 'chart-pie',
             'permission' => 'view_sales',
+        ],
+        [
+            'label' => 'رفع البطاقات',
+            'route' => 'seller.inventory.create',
+            'icon' => 'inbox',
+            'permission' => 'manage_inventory',
         ],
         [
             'label' => 'السحوبات',

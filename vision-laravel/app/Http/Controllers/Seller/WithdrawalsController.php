@@ -27,7 +27,7 @@ class WithdrawalsController extends Controller
             $query->whereDate('created_at', '<=', $request->date_to);
         }
 
-        $withdrawals = $query->latest()->paginate(20);
+        $withdrawals = $query->with(['requester'])->latest()->paginate(20);
 
         $stats = [
             'pending' => Withdrawal::where('seller_id', $seller->id)->where('status', 'pending')->count(),
@@ -55,7 +55,7 @@ class WithdrawalsController extends Controller
             'amount' => 'required|numeric|min:1',
             'bank_id' => 'required|exists:banks,id',
             'account_number' => 'required|string|max:50',
-            'account_name' => 'required|string|max:100',
+            'receiver_name' => 'required|string|max:100',
         ]);
 
         // Check wallet balance
@@ -74,11 +74,11 @@ class WithdrawalsController extends Controller
 
         Withdrawal::create([
             'seller_id' => $seller->id,
+            'requested_by' => $request->user()->id,
             'amount' => $validated['amount'],
-            'bank_id' => $validated['bank_id'],
             'bank_name' => Bank::find($validated['bank_id'])->name,
             'account_number' => $validated['account_number'],
-            'account_name' => $validated['account_name'],
+            'receiver_name' => $validated['receiver_name'],
             'status' => 'pending',
         ]);
 

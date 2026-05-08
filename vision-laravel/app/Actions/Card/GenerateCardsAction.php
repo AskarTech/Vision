@@ -21,12 +21,15 @@ class GenerateCardsAction
             $generatedCodes[] = $code;
 
             $card = Card::create([
+                'seller_id' => $package->seller_id,
+                'network_id' => $package->network_id,
                 'package_id' => $package->id,
                 'code' => $code,
-                'pin' => $options['pin'] ?? $this->generatePin(),
                 'price' => $options['price'] ?? $package->price,
-                'status' => 'available',
-                'expires_at' => $options['expires_at'] ?? null,
+                'status' => 'active',
+                'meta' => [
+                    'expires_at' => $options['expires_at'] ?? null,
+                ],
             ]);
 
             $cards[] = $card;
@@ -44,8 +47,4 @@ class GenerateCardsAction
         return $code;
     }
 
-    private function generatePin(): string
-    {
-        return str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-    }
 }

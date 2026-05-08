@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Card;
 use App\Models\Package;
 use App\Actions\Card\GenerateCardsAction;
+use App\Actions\Card\ImportCardsFromCsvAction;
 use Illuminate\Http\Request;
 
 class InventoryController extends Controller
@@ -32,7 +33,7 @@ class InventoryController extends Controller
             'total' => $cards->total(),
             'available' => Card::whereHas('package', function ($q) use ($seller) {
                 $q->where('seller_id', $seller->id);
-            })->where('status', 'available')->count(),
+            })->where('status', 'active')->count(),
             'sold' => Card::whereHas('package', function ($q) use ($seller) {
                 $q->where('seller_id', $seller->id);
             })->where('status', 'sold')->count(),
@@ -85,12 +86,36 @@ class InventoryController extends Controller
         }
     }
 
+    public function importCsv(Request $request, ImportCardsFromCsvAction $importCardsFromCsvAction)
+    {
+        $seller = $request->user()->seller;
+
+        $validated = $request->validate([
+            'package_id' => 'required|exists:packages,id',
+            'file' => ['required', 'file', 'max:4096', 'mimes:csv,txt'],
+        ]);
+
+        $package = Package::query()->where('seller_id', $seller->id)->findOrFail($validated['package_id']);
+
+        $body = (string) file_get_contents($validated['file']->getRealPath());
+        $result = $importCardsFromCsvAction->execute($package, $body);
+
+        $message = "Imported {$result['created']} voucher row(s).";
+        if ($result['errors'] !== []) {
+            $message .= ' '.count($result['errors']).' row(s) skipped.';
+        }
+
+        return redirect()->route('seller.inventory.index')
+            ->with($result['errors'] === [] ? 'success' : 'warning', $message)
+            ->with('import_errors', $result['errors']);
+    }
+
     public function updateStatus(Card $card, Request $request)
     {
         $this->authorize('update', $card);
 
         $validated = $request->validate([
-            'status' => 'required|in:available,sold,reserved,expired',
+            'status' => 'required|in:active,sold,reserved,disabled',
         ]);
 
         $card->update($validated);
@@ -102,8 +127,8 @@ class InventoryController extends Controller
     {
         $this->authorize('delete', $card);
 
-        if ($card->status !== 'available') {
-            return redirect()->back()->with('error', 'Can only delete available cards');
+        if ($card->status !== 'active') {
+            return redirect()->back()->with('error', 'Can only delete active cards');
         }
 
         $card->delete();

@@ -10,7 +10,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-use RuntimeException;
+use Illuminate\Validation\ValidationException;
 
 class SessionController extends Controller
 {
@@ -38,7 +38,9 @@ class SessionController extends Controller
             ->first();
 
         if (! $user || ! Hash::check($validated['password'], $user->password)) {
-            throw new RuntimeException('بيانات الدخول غير صحيحة.');
+            throw ValidationException::withMessages([
+                'identifier' => [__('auth.failed')],
+            ]);
         }
 
         Auth::login($user, (bool) ($validated['remember'] ?? false));
@@ -62,7 +64,7 @@ class SessionController extends Controller
         return match ($role) {
             'admin' => route('admin.dashboard'),
             'seller_manager' => route('seller.dashboard'),
-            default => url('/'),
+            default => route('customer.marketplace.index'),
         };
     }
 }

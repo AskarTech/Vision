@@ -2,10 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\CardOrder;
-use App\Services\CardInventoryService;
+use App\Services\Cards\CardInventoryService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class ReleaseExpiredReservations extends Command
 {
@@ -31,46 +29,20 @@ class ReleaseExpiredReservations extends Command
     public function handle(CardInventoryService $inventoryService): int
     {
         $this->inventoryService = $inventoryService;
-
         $this->info('Starting expired reservation release process...');
 
-        $expiredReservations = CardOrder::where('status', 'reserved')
-            ->where('reserved_at', '<', now()->subMinutes(config('yemenwifi.reservation_timeout_minutes', 15)))
-            ->lockForUpdate()
-            ->get();
+        try {
+            $releasedCount = $this->inventoryService->releaseExpiredReservations();
+            $this->info("Process completed: {$releasedCount} reservations released.");
+        } catch (\Throwable $e) {
+            $this->error("Failed to release reservations: {$e->getMessage()}");
 
-        if ($expiredReservations->isEmpty()) {
-            $this->info('No expired reservations found.');
-            return self::SUCCESS;
+            \Log::error('Failed to release expired reservations', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return self::FAILURE;
         }
-
-        $this->info("Found {$expiredReservations->count()} expired reservations to release.");
-
-        $releasedCount = 0;
-        $failedCount = 0;
-
-        foreach ($expiredReservations as $order) {
-            try {
-                DB::transaction(function () use ($order) {
-                    $this->inventoryService->releaseReservation($order);
-                });
-
-                $releasedCount++;
-                $this->line("✓ Released reservation #{$order->id} for card {$order->card_id}");
-            } catch (\Exception $e) {
-                $failedCount++;
-                $this->error("✗ Failed to release reservation #{$order->id}: {$e->getMessage()}");
-                
-                // Log the error for monitoring
-                \Log::error('Failed to release expired reservation', [
-                    'order_id' => $order->id,
-                    'card_id' => $order->card_id,
-                    'error' => $e->getMessage(),
-                ]);
-            }
-        }
-
-        $this->info("Process completed: {$releasedCount} released, {$failedCount} failed.");
 
         return self::SUCCESS;
     }

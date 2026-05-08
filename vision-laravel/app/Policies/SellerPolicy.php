@@ -19,7 +19,13 @@ class SellerPolicy
 
     public function update(User $user, Seller $seller): bool
     {
-        return $user->role === 'admin';
+        if ($user->role === 'admin') {
+            return true;
+        }
+
+        return $user->role === 'seller_manager'
+            && $user->seller_id !== null
+            && (int) $user->seller_id === (int) $seller->id;
     }
 
     public function delete(User $user, Seller $seller): bool

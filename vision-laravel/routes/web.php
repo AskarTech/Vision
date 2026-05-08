@@ -13,8 +13,25 @@ use App\Http\Controllers\Admin\OrdersController;
 use App\Http\Controllers\Admin\ReportsController;
 use App\Http\Controllers\Admin\AuditController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\NotificationsHubController;
+use App\Http\Controllers\Admin\ActivityMonitoringController;
 use App\Http\Controllers\Auth\SessionController;
+use App\Http\Controllers\Auth\RegistrationController;
+use App\Http\Controllers\Auth\SellerRegistrationController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Customer\DashboardController as CustomerDashboardController;
+use App\Http\Controllers\Customer\MarketplaceController as CustomerMarketplaceController;
+use App\Http\Controllers\Customer\OrdersController as CustomerOrdersController;
+use App\Http\Controllers\Customer\ProfileController as CustomerProfileController;
+use App\Http\Controllers\Customer\WalletController as CustomerWalletController;
 use App\Http\Controllers\Seller\InventoryController;
+use App\Http\Controllers\Seller\NetworksController as SellerNetworksController;
+use App\Http\Controllers\Seller\OrdersController as SellerOrdersController;
+use App\Http\Controllers\Seller\PackagesController as SellerPackagesController;
+use App\Http\Controllers\Seller\SalesController as SellerSalesController;
+use App\Http\Controllers\Seller\SettingsController as SellerSettingsController;
+use App\Http\Controllers\Seller\WalletController as SellerWalletController;
 use App\Http\Controllers\Seller\WithdrawalsController as SellerWithdrawalsController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,11 +42,37 @@ Route::get('/', function () {
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', [SessionController::class, 'create'])->name('login');
     Route::post('/login', [SessionController::class, 'store'])->name('login.store');
+    Route::get('/register', [RegistrationController::class, 'create'])->name('register');
+    Route::post('/register', [RegistrationController::class, 'store'])->name('register.store');
+    Route::get('/register/seller', [SellerRegistrationController::class, 'create'])->name('register.seller.create');
+    Route::post('/register/seller', [SellerRegistrationController::class, 'store'])->name('register.seller.store');
+    Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
+    Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email');
+    Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
+    Route::post('/reset-password', [NewPasswordController::class, 'store'])->name('password.update');
 });
 
 Route::post('/logout', [SessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
+
+/*
+|--------------------------------------------------------------------------
+| Customer Routes
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:customer'])->prefix('customer')->name('customer.')->group(function (): void {
+    Route::get('/', [CustomerDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/marketplace', [CustomerMarketplaceController::class, 'index'])->name('marketplace.index');
+    Route::get('/marketplace/packages/{package}', [CustomerMarketplaceController::class, 'show'])->name('marketplace.show');
+    Route::post('/marketplace/packages/{package}/buy', [CustomerMarketplaceController::class, 'buy'])->name('marketplace.buy');
+    Route::get('/orders', [CustomerOrdersController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [CustomerOrdersController::class, 'show'])->name('orders.show');
+    Route::get('/wallet', [CustomerWalletController::class, 'index'])->name('wallet.index');
+    Route::get('/profile', [CustomerProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [CustomerProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/password', [CustomerProfileController::class, 'updatePassword'])->name('profile.password');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -62,40 +105,40 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('/customers/{customer}/suspend', [CustomersController::class, 'suspend'])->name('customers.suspend');
     Route::patch('/customers/{customer}/activate', [CustomersController::class, 'activate'])->name('customers.activate');
 
-    // Sellers
+    // Sellers (static paths before {seller})
     Route::get('/sellers', [SellersController::class, 'index'])->name('sellers.index');
-    Route::get('/sellers/{seller}', [SellersController::class, 'show'])->name('sellers.show');
     Route::get('/sellers/create', [SellersController::class, 'create'])->name('sellers.create');
     Route::post('/sellers', [SellersController::class, 'store'])->name('sellers.store');
+    Route::get('/sellers/{seller}', [SellersController::class, 'show'])->name('sellers.show');
     Route::get('/sellers/{seller}/edit', [SellersController::class, 'edit'])->name('sellers.edit');
     Route::patch('/sellers/{seller}', [SellersController::class, 'update'])->name('sellers.update');
     Route::post('/sellers/{seller}/approve', [SellersController::class, 'approve'])->name('sellers.approve');
     Route::post('/sellers/{seller}/suspend', [SellersController::class, 'suspend'])->name('sellers.suspend');
 
-    // Networks
+    // Networks (static paths before {network})
     Route::get('/networks', [NetworksController::class, 'index'])->name('networks.index');
-    Route::get('/networks/{network}', [NetworksController::class, 'show'])->name('networks.show');
     Route::get('/networks/create', [NetworksController::class, 'create'])->name('networks.create');
     Route::post('/networks', [NetworksController::class, 'store'])->name('networks.store');
+    Route::get('/networks/{network}', [NetworksController::class, 'show'])->name('networks.show');
     Route::get('/networks/{network}/edit', [NetworksController::class, 'edit'])->name('networks.edit');
     Route::patch('/networks/{network}', [NetworksController::class, 'update'])->name('networks.update');
     Route::delete('/networks/{network}', [NetworksController::class, 'destroy'])->name('networks.destroy');
 
-    // Packages
+    // Packages (static paths before {package})
     Route::get('/packages', [PackagesController::class, 'index'])->name('packages.index');
-    Route::get('/packages/{package}', [PackagesController::class, 'show'])->name('packages.show');
     Route::get('/packages/create', [PackagesController::class, 'create'])->name('packages.create');
     Route::post('/packages', [PackagesController::class, 'store'])->name('packages.store');
+    Route::get('/packages/{package}', [PackagesController::class, 'show'])->name('packages.show');
     Route::get('/packages/{package}/edit', [PackagesController::class, 'edit'])->name('packages.edit');
     Route::patch('/packages/{package}', [PackagesController::class, 'update'])->name('packages.update');
     Route::delete('/packages/{package}', [PackagesController::class, 'destroy'])->name('packages.destroy');
 
-    // Inventory (Admin)
+    // Inventory (Admin) — export & bulk before {card}
     Route::get('/inventory', [AdminInventoryController::class, 'index'])->name('inventory.index');
+    Route::get('/inventory/export', [AdminInventoryController::class, 'export'])->name('inventory.export');
+    Route::post('/inventory/bulk-update', [AdminInventoryController::class, 'bulkUpdate'])->name('inventory.bulk-update');
     Route::get('/inventory/{card}', [AdminInventoryController::class, 'show'])->name('inventory.show');
     Route::patch('/inventory/{card}/status', [AdminInventoryController::class, 'updateStatus'])->name('inventory.update-status');
-    Route::post('/inventory/bulk-update', [AdminInventoryController::class, 'bulkUpdate'])->name('inventory.bulk-update');
-    Route::get('/inventory/export', [AdminInventoryController::class, 'export'])->name('inventory.export');
 
     // Orders
     Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
@@ -125,6 +168,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/settings/email', [SettingsController::class, 'updateEmail'])->name('settings.update-email');
     Route::get('/settings/security', [SettingsController::class, 'security'])->name('settings.security');
     Route::post('/settings/security', [SettingsController::class, 'updateSecurity'])->name('settings.update-security');
+
+    // Additional admin modules
+    Route::get('/notifications', [NotificationsHubController::class, 'index'])->name('notifications.index');
+    Route::view('/roles-permissions', 'admin.roles.index')->name('roles.index');
+    Route::get('/activity-monitoring', [ActivityMonitoringController::class, 'index'])->name('activity.index');
 });
 
 /*
@@ -139,6 +187,7 @@ Route::middleware(['auth', 'role:seller_manager'])->prefix('seller')->name('sell
     Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
     Route::get('/inventory/create', [InventoryController::class, 'create'])->name('inventory.create');
     Route::post('/inventory', [InventoryController::class, 'store'])->name('inventory.store');
+    Route::post('/inventory/import-csv', [InventoryController::class, 'importCsv'])->name('inventory.import-csv');
     Route::patch('/inventory/{card}/status', [InventoryController::class, 'updateStatus'])->name('inventory.update-status');
     Route::delete('/inventory/{card}', [InventoryController::class, 'destroy'])->name('inventory.destroy');
 
@@ -148,11 +197,26 @@ Route::middleware(['auth', 'role:seller_manager'])->prefix('seller')->name('sell
     Route::post('/withdrawals', [SellerWithdrawalsController::class, 'store'])->name('withdrawals.store');
     Route::get('/withdrawals/{withdrawal}', [SellerWithdrawalsController::class, 'show'])->name('withdrawals.show');
 
-    // Placeholder routes for other seller modules (to be implemented)
-    Route::get('/networks', fn() => view('seller.networks.index'))->name('networks.index');
-    Route::get('/packages', fn() => view('seller.packages.index'))->name('packages.index');
-    Route::get('/orders', fn() => view('seller.orders.index'))->name('orders.index');
-    Route::get('/sales', fn() => view('seller.sales.index'))->name('sales.index');
-    Route::get('/wallet', fn() => view('seller.wallet.index'))->name('wallet.index');
-    Route::get('/settings', fn() => view('seller.settings.index'))->name('settings.index');
+    Route::get('/networks', [SellerNetworksController::class, 'index'])->name('networks.index');
+    Route::get('/networks/create', [SellerNetworksController::class, 'create'])->name('networks.create');
+    Route::post('/networks', [SellerNetworksController::class, 'store'])->name('networks.store');
+    Route::get('/networks/{network}/edit', [SellerNetworksController::class, 'edit'])->name('networks.edit');
+    Route::patch('/networks/{network}', [SellerNetworksController::class, 'update'])->name('networks.update');
+    Route::delete('/networks/{network}', [SellerNetworksController::class, 'destroy'])->name('networks.destroy');
+
+    Route::get('/packages', [SellerPackagesController::class, 'index'])->name('packages.index');
+    Route::get('/packages/create', [SellerPackagesController::class, 'create'])->name('packages.create');
+    Route::post('/packages', [SellerPackagesController::class, 'store'])->name('packages.store');
+    Route::get('/packages/{package}/edit', [SellerPackagesController::class, 'edit'])->name('packages.edit');
+    Route::patch('/packages/{package}', [SellerPackagesController::class, 'update'])->name('packages.update');
+    Route::delete('/packages/{package}', [SellerPackagesController::class, 'destroy'])->name('packages.destroy');
+
+    Route::get('/orders', [SellerOrdersController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [SellerOrdersController::class, 'show'])->name('orders.show');
+    Route::get('/sales', [SellerSalesController::class, 'index'])->name('sales.index');
+    Route::get('/wallet', [SellerWalletController::class, 'index'])->name('wallet.index');
+
+    Route::get('/settings', [SellerSettingsController::class, 'index'])->name('settings.index');
+    Route::patch('/settings/profile', [SellerSettingsController::class, 'updateProfile'])->name('settings.profile');
+    Route::patch('/settings/business', [SellerSettingsController::class, 'updateBusiness'])->name('settings.business');
 });
