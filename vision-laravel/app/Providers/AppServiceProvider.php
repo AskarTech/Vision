@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\User;
+use App\Models\WalletTransaction;
+use App\Policies\AuditPolicy;
 use App\Policies\DashboardPolicy;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Gate;
@@ -23,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::policy(WalletTransaction::class, AuditPolicy::class);
+
         // Register Gates for permissions
         $this->registerPermissionGates();
 

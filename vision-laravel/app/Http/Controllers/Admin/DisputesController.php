@@ -11,7 +11,7 @@ class DisputesController extends Controller
 {
     public function index(Request $request)
     {
-        $query = CardOrder::with(['customer', 'card.package'])->where('status', 'disputed');
+        $query = CardOrder::with(['user', 'items.card.package'])->where('status', 'failed');
 
         if ($request->filled('date_from')) {
             $query->whereDate('created_at', '>=', $request->date_from);
@@ -24,10 +24,10 @@ class DisputesController extends Controller
         $disputes = $query->latest()->paginate(20);
 
         $stats = [
-            'pending' => CardOrder::where('status', 'disputed')->count(),
-            'today' => CardOrder::where('status', 'disputed')->whereDate('created_at', today())->count(),
-            'total_resolved' => CardOrder::whereIn('status', ['refunded', 'completed'])->whereNotNull('resolved_at')->count(),
-            'refunded' => CardOrder::where('status', 'refunded')->count(),
+            'pending' => CardOrder::where('status', 'failed')->count(),
+            'today' => CardOrder::where('status', 'failed')->whereDate('created_at', today())->count(),
+            'total_resolved' => CardOrder::whereIn('status', ['paid', 'cancelled'])->count(),
+            'refunded' => CardOrder::where('status', 'cancelled')->count(),
         ];
 
         return view('admin.disputes.index', compact('disputes', 'stats'));
@@ -41,7 +41,7 @@ class DisputesController extends Controller
 
         try {
             $action->refund($order, $request->reason);
-            return redirect()->back()->with('success', 'Dispute resolved with refund');
+            return redirect()->back()->with('success', __('admin.dispute_refunded'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -55,7 +55,7 @@ class DisputesController extends Controller
 
         try {
             $action->reject($order, $request->reason);
-            return redirect()->back()->with('success', 'Dispute rejected, order marked as completed');
+            return redirect()->back()->with('success', __('admin.dispute_rejected'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }

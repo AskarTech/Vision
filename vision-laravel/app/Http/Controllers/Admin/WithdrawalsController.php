@@ -12,7 +12,7 @@ class WithdrawalsController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Withdrawal::with('seller')->latest();
+        $query = Withdrawal::with(['seller', 'requester'])->latest();
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -43,8 +43,8 @@ class WithdrawalsController extends Controller
         $this->authorize('approve', $withdrawal);
 
         try {
-            $action->execute($withdrawal);
-            return redirect()->back()->with('success', 'Withdrawal request approved successfully');
+            $action->execute($withdrawal, auth()->user());
+            return redirect()->back()->with('success', __('admin.withdrawal_approved'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -59,8 +59,8 @@ class WithdrawalsController extends Controller
         ]);
 
         try {
-            $action->execute($withdrawal, $request->reason);
-            return redirect()->back()->with('success', 'Withdrawal request rejected');
+            $action->execute($withdrawal, $request->user(), $request->reason);
+            return redirect()->back()->with('success', __('admin.withdrawal_rejected'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }

@@ -32,7 +32,8 @@ class CheckoutController extends Controller
             $order = $this->checkoutWithWalletAction->execute(
                 user: $user,
                 items: $validated['items'],
-                idempotencyKey: $validated['idempotency_key']
+                idempotencyKey: $validated['idempotency_key'],
+                pointsToRedeem: (int) ($validated['points_to_redeem'] ?? 0),
             );
         } catch (RuntimeException $exception) {
             return response()->json([

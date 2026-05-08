@@ -7,6 +7,7 @@ use App\Models\Package;
 use App\Models\User;
 use App\Services\Cards\CardInventoryService;
 use App\Services\Wallet\WalletService;
+use App\Support\MarketplacePoints;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
@@ -22,11 +23,11 @@ class CheckoutWithWalletAction
     /**
      * @param  array<int, array{package_id:int, quantity:int}>  $items
      */
-    public function execute(User $user, array $items, string $idempotencyKey): CardOrder
+    public function execute(User $user, array $items, string $idempotencyKey, int $pointsToRedeem = 0): CardOrder
     {
         $externalReference = $this->buildExternalReference($user->id, $idempotencyKey);
 
-        return DB::transaction(function () use ($user, $items, $externalReference): CardOrder {
+        return DB::transaction(function () use ($user, $items, $externalReference, $pointsToRedeem): CardOrder {
             $existingOrder = CardOrder::query()
                 ->where('external_reference', $externalReference)
                 ->first();
@@ -64,8 +65,16 @@ class CheckoutWithWalletAction
                 ];
             }
 
-            if ((float) $wallet->balance < $grandTotal) {
+            $allocation = MarketplacePoints::allocateTowardsOrder($pointsToRedeem, $grandTotal);
+            $cashPortion = $allocation['cash_portion'];
+            $pointsPortion = $allocation['points_portion'];
+
+            if ((float) $wallet->balance < $cashPortion) {
                 throw new RuntimeException('Insufficient wallet balance.');
+            }
+
+            if ((int) $wallet->points_balance < $pointsPortion) {
+                throw new RuntimeException('Insufficient points balance.');
             }
 
             try {
@@ -111,12 +120,18 @@ class CheckoutWithWalletAction
                 }
             }
 
-            $walletTransaction = $this->walletService->debit(
+            $walletTransaction = $this->walletService->debitForPurchase(
                 wallet: $wallet,
-                amount: $grandTotal,
+                cashPortion: $cashPortion,
+                pointsPortion: $pointsPortion,
                 description: "Card checkout order #{$order->id}",
                 referenceType: CardOrder::class,
-                referenceId: $order->id
+                referenceId: $order->id,
+                externalReference: sprintf('wallet_debit:card_order:%d', $order->id),
+                meta: [
+                    'points_redeemed' => $pointsPortion,
+                    'order_total' => $grandTotal,
+                ],
             );
 
             $order->update(['wallet_transaction_id' => $walletTransaction->id]);

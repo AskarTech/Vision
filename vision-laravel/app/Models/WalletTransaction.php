@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class WalletTransaction extends Model
@@ -35,6 +36,7 @@ class WalletTransaction extends Model
             'amount' => 'decimal:2',
             'balance_before' => 'decimal:2',
             'balance_after' => 'decimal:2',
+            'points_amount' => 'integer',
             'meta' => 'array',
             'processed_at' => 'datetime',
         ];
@@ -53,5 +55,10 @@ class WalletTransaction extends Model
     public function reference(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function cardOrder(): HasOne
+    {
+        return $this->hasOne(CardOrder::class, 'wallet_transaction_id');
     }
 }

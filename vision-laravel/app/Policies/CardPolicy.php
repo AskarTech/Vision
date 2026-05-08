@@ -68,4 +68,14 @@ class CardPolicy
 
         return false;
     }
+
+    public function updateBulk(User $user): bool
+    {
+        return $user->role === 'admin';
+    }
+
+    public function export(User $user): bool
+    {
+        return $user->role === 'admin';
+    }
 }

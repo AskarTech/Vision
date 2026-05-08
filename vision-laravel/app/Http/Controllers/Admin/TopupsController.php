@@ -43,8 +43,8 @@ class TopupsController extends Controller
         $this->authorize('approve', $topup);
 
         try {
-            $action->execute($topup);
-            return redirect()->back()->with('success', 'Topup request approved successfully');
+            $action->execute($topup, auth()->user());
+            return redirect()->back()->with('success', __('admin.topup_approved'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -59,8 +59,8 @@ class TopupsController extends Controller
         ]);
 
         try {
-            $action->execute($topup, $request->reason);
-            return redirect()->back()->with('success', 'Topup request rejected');
+            $action->execute($topup, $request->user(), $request->reason);
+            return redirect()->back()->with('success', __('admin.topup_rejected'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }

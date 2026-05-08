@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Admin\RefundPaidOrderAction;
 use App\Http\Controllers\Controller;
 use App\Models\CardOrder;
 use Illuminate\Http\Request;
+use Throwable;
 
 class OrdersController extends Controller
 {
@@ -33,9 +35,9 @@ class OrdersController extends Controller
         $stats = [
             'total' => CardOrder::count(),
             'pending' => CardOrder::where('status', 'pending')->count(),
-            'completed' => CardOrder::where('status', 'completed')->count(),
+            'completed' => CardOrder::where('status', 'paid')->count(),
             'cancelled' => CardOrder::where('status', 'cancelled')->count(),
-            'revenue' => CardOrder::where('status', 'completed')->sum('total_amount'),
+            'revenue' => CardOrder::where('status', 'paid')->sum('total_amount'),
         ];
 
         return view('admin.orders.index', compact('orders', 'stats'));
@@ -55,25 +57,24 @@ class OrdersController extends Controller
         $this->authorize('cancel', $order);
 
         if ($order->status !== 'pending') {
-            return redirect()->back()->with('error', 'Only pending orders can be cancelled');
+            return redirect()->back()->with('error', __('admin.order_cancel_only_pending'));
         }
 
         $order->update(['status' => 'cancelled']);
 
-        return redirect()->back()->with('success', 'Order cancelled successfully');
+        return redirect()->back()->with('success', __('admin.order_cancelled'));
     }
 
-    public function refund(CardOrder $order)
+    public function refund(CardOrder $order, RefundPaidOrderAction $action)
     {
         $this->authorize('refund', $order);
 
-        if ($order->status !== 'completed') {
-            return redirect()->back()->with('error', 'Only completed orders can be refunded');
+        try {
+            $action->execute($order);
+
+            return redirect()->back()->with('success', __('admin.order_refunded'));
+        } catch (Throwable $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         }
-
-        // TODO: Implement refund logic with wallet transaction reversal
-        $order->update(['status' => 'refunded']);
-
-        return redirect()->back()->with('success', 'Order refunded successfully');
     }
 }

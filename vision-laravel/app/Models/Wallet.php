@@ -11,17 +11,24 @@ class Wallet extends Model
 {
     use HasFactory;
 
+    /**
+     * Balance fields are not mass-assignable — mutate only via WalletService inside transactions.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
         'user_id',
-        'balance',
-        'points_balance',
         'status',
         'last_activity_at',
     ];
 
     protected function casts(): array
     {
-        return ['balance' => 'decimal:2', 'last_activity_at' => 'datetime'];
+        return [
+            'balance' => 'decimal:2',
+            'points_balance' => 'integer',
+            'last_activity_at' => 'datetime',
+        ];
     }
 
     public function user(): BelongsTo

@@ -2,6 +2,7 @@
 
 namespace App\Actions\Withdrawal;
 
+use App\Models\User;
 use App\Models\Withdrawal;
 use App\Services\Wallet\WalletService;
 use Illuminate\Support\Facades\DB;
@@ -12,31 +13,38 @@ class ApproveWithdrawalAction
         private WalletService $walletService
     ) {}
 
-    public function execute(Withdrawal $withdrawal): Withdrawal
+    public function execute(Withdrawal $withdrawal, User $reviewer): Withdrawal
     {
-        return DB::transaction(function () use ($withdrawal) {
+        return DB::transaction(function () use ($withdrawal, $reviewer) {
             if ($withdrawal->status !== 'pending') {
                 throw new \Exception('Withdrawal request is not pending');
             }
 
             // Verify seller has sufficient balance
             $seller = $withdrawal->seller;
-            if ($seller->wallet->balance < $withdrawal->amount) {
+            $wallet = $seller->wallet;
+            if (! $wallet) {
+                throw new \Exception('Seller has no settlement wallet configured.');
+            }
+
+            if ($wallet->balance < $withdrawal->amount) {
                 throw new \Exception('Insufficient wallet balance');
             }
 
-            $withdrawal->update(['status' => 'approved']);
+            $withdrawal->update([
+                'status' => 'approved',
+                'reviewed_by' => $reviewer->id,
+                'reviewed_at' => now(),
+            ]);
 
             // Debit seller wallet
             $this->walletService->debit(
-                $seller->wallet,
-                $withdrawal->amount,
-                'withdrawal_approved',
-                [
-                    'withdrawal_id' => $withdrawal->id,
-                    'bank_name' => $withdrawal->bank_name,
-                    'account_number' => $withdrawal->account_number,
-                ]
+                wallet: $wallet,
+                amount: (float) $withdrawal->amount,
+                description: 'Withdrawal request approved',
+                referenceType: Withdrawal::class,
+                referenceId: $withdrawal->id,
+                externalReference: 'withdrawal_debit:'.$withdrawal->id,
             );
 
             return $withdrawal->fresh();
