@@ -1,0 +1,43 @@
+# Dashboard UI Rules
+
+Dashboard UI must feel:
+- modern
+- clean
+- operational
+- scalable
+- lightweight
+- mobile-first
+
+Frontend stack:
+- Blade
+- TailwindCSS
+- DaisyUI or Flowbite
+- Alpine.js
+
+Always:
+- build reusable Blade components
+- centralize layouts
+- centralize tables/forms/modals
+- use consistent spacing and typography
+- support responsive behavior
+
+Avoid:
+- duplicated UI structures
+- inconsistent layouts
+- patch-style fixes
+- hardcoded repeated markup
+- random colors/styles
+
+Dashboard should include:
+- sidebar
+- navbar
+- stat cards
+- tables
+- filters
+- action dropdowns
+- loading states
+- empty states
+- confirmation dialogs
+
+Think in:
+Dashboard System → Module → Reusable Components

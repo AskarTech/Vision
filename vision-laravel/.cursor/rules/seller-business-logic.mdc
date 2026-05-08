@@ -1,0 +1,31 @@
+# Seller Business Logic Rules
+
+Seller domain includes:
+- networks
+- inventory/cards
+- sales
+- withdrawals
+- analytics
+
+Inventory rules:
+- cards/packages must maintain consistent state
+- prevent duplicate selling
+- support reservation lifecycle
+
+Withdrawal rules:
+- support request lifecycle
+- support status tracking
+- maintain transaction traceability
+
+Analytics should include:
+- sales totals
+- inventory counts
+- order statistics
+- earnings overview
+
+Avoid:
+- mixing seller and admin responsibilities
+- bypassing transaction logic
+- duplicated financial calculations
+
+Seller logic should remain domain-oriented and reusable.

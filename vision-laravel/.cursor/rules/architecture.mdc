@@ -1,0 +1,30 @@
+# Architecture Rules
+
+Preferred architecture:
+- Laravel 13
+- Domain-oriented structure
+- Service Layer
+- Action Pattern
+- Small focused classes
+- Reusable UI systems
+
+Prefer structure like:
+
+app/Domains/
+  Wallet/
+  Inventory/
+  Orders/
+  Seller/
+  Admin/
+
+Avoid:
+- fat controllers
+- duplicated logic
+- giant Blade files
+- random helper logic
+- mixed responsibilities
+
+Always:
+- inspect related files first
+- preserve existing correct code
+- explain architectural impact before changing behavior

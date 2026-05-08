@@ -1,0 +1,31 @@
+# Backend Business Logic Rules
+
+This platform includes:
+- wallet operations
+- inventory reservation
+- checkout flows
+- financial transactions
+
+Always prioritize:
+- consistency
+- traceability
+- transactional integrity
+- scalability
+
+Wallet rules:
+- every balance change must be traceable
+- prefer ledger/transaction logic
+- use DB transactions
+- avoid duplicate charging
+
+Inventory rules:
+- prevent overselling
+- support reservation lifecycle
+- handle concurrency carefully
+
+Checkout rules:
+- payment success finalizes order
+- failed payment releases reservation
+- operations should be idempotent
+
+Avoid unsafe shortcuts in financial or inventory logic.

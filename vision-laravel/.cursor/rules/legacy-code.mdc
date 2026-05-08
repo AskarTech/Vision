@@ -1,0 +1,21 @@
+# Legacy Code Rules
+
+The project contains a `legacy_code/` directory.
+
+IMPORTANT:
+- legacy_code is READ-ONLY
+- NEVER modify files inside legacy_code
+- NEVER refactor legacy_code
+- NEVER treat legacy_code as final architecture
+
+Use legacy_code ONLY for:
+- understanding old workflows
+- understanding UI ideas
+- understanding navigation structure
+- extracting business flow ideas
+
+If useful logic exists:
+- extract the IDEA only
+- re-implement cleanly inside the current Laravel architecture
+
+Never blindly copy legacy code.

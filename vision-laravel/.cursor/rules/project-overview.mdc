@@ -1,0 +1,30 @@
+# YemenWi-Fi Hub Project Overview
+
+YemenWi-Fi Hub is a Laravel 13 marketplace platform for selling Wi-Fi/internet cards and packages in Yemen.
+
+Core domains:
+- Auth & Roles
+- Users
+- Sellers
+- Networks
+- Inventory/Cards
+- Orders
+- Wallets & Ledger
+- Withdrawals
+- Payments
+- Admin Operations
+- Notifications
+
+This is NOT a simple CRUD dashboard.
+The system includes:
+- transactional flows
+- internal wallet system
+- inventory reservation
+- financial consistency
+- operational dashboards
+
+Always think in:
+Product → Domain → Feature → Task
+
+Never attempt giant uncontrolled rewrites.
+Work incrementally and preserve architecture consistency.

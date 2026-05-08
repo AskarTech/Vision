@@ -1,0 +1,55 @@
+# Customer Experience Rules
+
+Customer experience is a core business priority.
+
+The customer flow must feel:
+- extremely simple
+- fast
+- mobile-first
+- lightweight
+- visually clear
+- low-friction
+
+The customer should reach purchase completion in the fewest possible steps.
+
+Preferred purchase flow:
+1. Select network
+2. Select package/card
+3. Checkout
+4. Receive card/package
+
+Avoid:
+- complicated navigation
+- cluttered pages
+- too many modal chains
+- excessive forms
+- overloaded UI
+
+Frontend stack:
+- Blade
+- TailwindCSS
+- Alpine.js
+
+Always prioritize:
+- speed
+- clarity
+- readability
+- mobile usability
+- weak-network performance
+
+Customer pages should support:
+- browsing networks
+- package discovery
+- quick checkout
+- wallet usage
+- order history
+- notifications
+- profile/settings
+
+Use:
+- reusable product/package cards
+- reusable checkout UI
+- reusable wallet components
+- clean status displays
+
+The customer experience should feel modern and frictionless.

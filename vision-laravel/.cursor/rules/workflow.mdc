@@ -1,0 +1,29 @@
+# Workflow Rules
+
+Always work incrementally.
+
+Before implementation:
+1. inspect related files
+2. inspect architecture patterns already used
+3. inspect docs and prompts
+4. summarize understanding first
+
+After implementation:
+- summarize changes
+- summarize risks
+- summarize next logical step
+
+Never implement huge features in one uncontrolled step.
+
+Preferred workflow:
+Domain → Feature → Small Task
+
+Examples:
+GOOD:
+- implement wallet deposit flow
+- implement reservation expiration logic
+- implement reusable dashboard table component
+
+BAD:
+- build the whole dashboard
+- rewrite the whole wallet system

@@ -1,0 +1,42 @@
+# Admin Dashboard Modules
+
+Expected admin modules:
+- Dashboard Overview
+- Users
+- Sellers
+- Networks
+- Inventory/Cards
+- Orders
+- Wallets
+- Transactions
+- Withdrawals
+- Reports
+- Audit Logs
+- Notifications
+- Settings
+- Roles & Permissions
+
+Expected seller modules:
+- Seller Dashboard
+- Networks
+- Inventory
+- Cards Upload
+- Orders
+- Wallet
+- Withdrawals
+- Analytics
+- Settings
+
+Every module should support where appropriate:
+- create
+- read
+- update
+- delete
+- search
+- filtering
+- pagination
+- validation
+- action menus
+- status management
+
+Prefer reusable implementations.

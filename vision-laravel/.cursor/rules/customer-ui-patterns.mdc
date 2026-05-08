@@ -1,0 +1,37 @@
+# Customer UI Patterns
+
+Customer UI should feel:
+- modern
+- minimal
+- smooth
+- visually appealing
+- easy to scan
+
+Use:
+- clear visual hierarchy
+- strong CTA buttons
+- modern cards
+- clean spacing
+- readable typography
+
+Prefer:
+- responsive grids
+- package cards
+- lightweight transitions
+- simple filtering
+- minimal steps
+
+Avoid:
+- dashboard-heavy interfaces
+- enterprise-style complexity
+- cluttered tables for customers
+- excessive text blocks
+
+Focus on:
+- discoverability
+- fast actions
+- easy checkout
+- trust
+- simplicity
+
+Pages should load fast even on slow internet connections.

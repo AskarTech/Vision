@@ -1,0 +1,24 @@
+# Current Sprint
+
+Current focus:
+- Admin dashboard foundation
+- Sidebar/navigation architecture
+- Reusable dashboard UI system
+- Admin users module
+- Seller dashboard foundation
+
+Current priorities:
+1. Dashboard shell
+2. Sidebar/navbar
+3. Reusable UI components
+4. Responsive layout system
+5. Users management module
+
+Do NOT work on:
+- mobile apps
+- advanced payment integrations
+- notification engine
+- reporting engine
+- AI features
+
+Always work incrementally.

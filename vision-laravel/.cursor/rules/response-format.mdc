@@ -1,0 +1,22 @@
+# Response Format Rules
+
+Before implementation always provide:
+- current understanding
+- current scope
+- files involved
+- dependencies
+- risks
+- verification strategy
+
+After implementation provide:
+- what changed
+- reusable components added
+- backend logic added
+- architectural impact
+- remaining gaps
+- next recommended step
+
+Always separate:
+- facts
+- assumptions
+- recommendations

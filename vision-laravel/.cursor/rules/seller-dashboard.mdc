@@ -1,0 +1,50 @@
+# Seller Dashboard Rules
+
+Seller dashboard is an operational/business interface.
+
+Seller experience should feel:
+- productive
+- operational
+- easy to manage inventory
+- analytics-oriented
+- scalable
+
+Seller modules include:
+- Dashboard Overview
+- Networks
+- Inventory
+- Cards Upload
+- Orders
+- Wallet
+- Withdrawals
+- Analytics
+- Settings
+
+Seller workflows should prioritize:
+- inventory visibility
+- upload simplicity
+- sales tracking
+- financial clarity
+- operational efficiency
+
+Always support:
+- filtering
+- search
+- pagination
+- bulk actions where useful
+- status management
+- upload workflows
+
+Use reusable:
+- dashboard tables
+- stats cards
+- forms
+- upload components
+- analytics widgets
+
+Avoid:
+- admin-level complexity
+- cluttered navigation
+- duplicated layouts
+
+Seller dashboard should be responsive and mobile-usable.

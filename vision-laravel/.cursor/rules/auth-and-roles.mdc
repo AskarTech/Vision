@@ -1,0 +1,30 @@
+# Auth & Roles Rules
+
+The platform contains multiple roles:
+- Admin
+- Seller
+- Customer
+
+Always separate:
+- routes
+- layouts
+- permissions
+- navigation
+- dashboards
+
+Avoid:
+- mixed responsibilities
+- leaking admin capabilities
+- duplicated permission logic
+
+Use:
+- policies
+- middleware
+- role-aware navigation
+- role-aware actions
+
+Each role should have:
+- dedicated UX
+- dedicated flows
+- dedicated dashboard/layouts where appropriate
+- deffirent login and signup page
