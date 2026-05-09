@@ -23,8 +23,8 @@ class DashboardNavigation extends Component
      */
     public function getNavigationItems(): array
     {
-        $config = config('navigation.' . $this->dashboardType, []);
-        
+        $config = config('navigation.'.$this->dashboardType, []);
+
         // Filter items based on user permissions
         return $this->filterByPermissions($config);
     }
@@ -35,8 +35,8 @@ class DashboardNavigation extends Component
     protected function filterByPermissions(array $items): array
     {
         $user = auth()->user();
-        
-        if (!$user) {
+
+        if (! $user) {
             return [];
         }
 
@@ -46,7 +46,7 @@ class DashboardNavigation extends Component
             // If item has sub-items, filter them recursively
             if (isset($item['sub']) && is_array($item['sub'])) {
                 $item['sub'] = $this->filterByPermissions($item['sub']);
-                
+
                 // Only include parent if it has visible sub-items
                 if (empty($item['sub'])) {
                     continue;
@@ -55,13 +55,13 @@ class DashboardNavigation extends Component
 
             // Check permission if required
             if (isset($item['permission'])) {
-                if (!$user->can($item['permission'])) {
+                if (! $user->can($item['permission'])) {
                     continue;
                 }
             }
 
             // Check role if specified
-            if (isset($item['roles']) && !in_array($user->role, $item['roles'])) {
+            if (isset($item['roles']) && ! in_array($user->role, $item['roles'])) {
                 continue;
             }
 
@@ -85,14 +85,14 @@ class DashboardNavigation extends Component
     public function isActive(string $routeName): bool
     {
         $currentRoute = $this->getActiveRoute();
-        
+
         // Exact match
         if ($currentRoute === $routeName) {
             return true;
         }
 
         // Prefix match for grouped routes
-        if (str_starts_with($currentRoute, $routeName . '.')) {
+        if (str_starts_with($currentRoute, $routeName.'.')) {
             return true;
         }
 

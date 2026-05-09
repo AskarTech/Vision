@@ -14,19 +14,19 @@ return [
             'permission' => 'view_dashboard',
         ],
         [
-            'label' => 'الإيداعات',
+            'label' => 'إدارة الإيداعات',
             'route' => 'admin.topups.index',
             'icon' => 'banknotes',
             'permission' => 'manage_topups',
         ],
         [
-            'label' => 'المستخدمون',
+            'label' => 'إدارة العملاء',
             'route' => 'admin.customers.index',
             'icon' => 'users',
             'permission' => 'manage_customers',
         ],
         [
-            'label' => 'البائعون',
+            'label' => 'الشركاء (التجار)',
             'route' => 'admin.sellers.index',
             'icon' => 'store',
             'permission' => 'manage_sellers',
@@ -38,13 +38,13 @@ return [
             'permission' => 'manage_sellers',
         ],
         [
-            'label' => 'الباقات',
+            'label' => 'إدارة الباقات',
             'route' => 'admin.packages.index',
             'icon' => 'cube',
             'permission' => 'manage_packages',
         ],
         [
-            'label' => 'المخزون',
+            'label' => 'أكواد المخزون',
             'route' => 'admin.inventory.index',
             'icon' => 'inbox',
             'permission' => 'manage_inventory',
@@ -62,19 +62,19 @@ return [
             'permission' => 'manage_withdrawals',
         ],
         [
-            'label' => 'النزاعات',
+            'label' => 'البلاغات',
             'route' => 'admin.disputes.index',
             'icon' => 'exclamation-triangle',
             'permission' => 'manage_disputes',
         ],
         [
-            'label' => 'التقارير',
+            'label' => 'التقارير المالية',
             'route' => 'admin.reports.index',
             'icon' => 'chart-bar',
             'permission' => 'view_reports',
         ],
         [
-            'label' => 'سجل التدقيق',
+            'label' => 'الجرد والمحاسبة',
             'route' => 'admin.audit.index',
             'icon' => 'document-text',
             'permission' => 'view_audit_logs',
@@ -169,6 +169,39 @@ return [
             'label' => 'الإعدادات',
             'route' => 'seller.settings.index',
             'icon' => 'cog-6-tooth',
+            'permission' => 'view_dashboard',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Customer portal navigation (Blade header + mobile drawer)
+    |--------------------------------------------------------------------------
+    */
+    'customer' => [
+        [
+            'label' => 'الرئيسية',
+            'route' => 'customer.dashboard',
+            'permission' => 'view_dashboard',
+        ],
+        [
+            'label' => 'المتجر',
+            'route' => 'customer.marketplace.index',
+            'permission' => 'purchase_cards',
+        ],
+        [
+            'label' => 'طلباتي',
+            'route' => 'customer.orders.index',
+            'permission' => 'view_orders',
+        ],
+        [
+            'label' => 'المحفظة',
+            'route' => 'customer.wallet.index',
+            'permission' => 'view_wallet',
+        ],
+        [
+            'label' => 'الحساب',
+            'route' => 'customer.profile.edit',
             'permission' => 'view_dashboard',
         ],
     ],
