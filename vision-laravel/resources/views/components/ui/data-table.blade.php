@@ -6,21 +6,21 @@
 
 <div class="overflow-x-auto">
     @if(count($headers) > 0 && count($rows) > 0)
-    <table class="min-w-full divide-y divide-white/10">
+    <table class="admin-table">
         <thead>
             <tr>
                 @foreach($headers as $header)
-                <th scope="col" class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <th scope="col">
                     {{ $header }}
                 </th>
                 @endforeach
             </tr>
         </thead>
-        <tbody class="divide-y divide-white/5">
+        <tbody>
             @foreach($rows as $row)
-            <tr class="hover:bg-white/5 transition-colors">
+            <tr>
                 @foreach($row as $cell)
-                <td class="px-4 py-3 text-sm text-slate-200 whitespace-nowrap">
+                <td class="whitespace-nowrap">
                     {!! $cell !!}
                 </td>
                 @endforeach
@@ -29,7 +29,7 @@
         </tbody>
     </table>
     @else
-    <div class="flex items-center justify-center py-8 text-sm text-slate-400">
+    <div class="flex items-center justify-center py-8 text-sm text-slate-500">
         {{ $emptyMessage }}
     </div>
     @endif
