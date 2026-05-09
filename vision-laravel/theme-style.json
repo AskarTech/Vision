@@ -1,34 +1,43 @@
 {
-    "theme_name": "YemenWi-Fi Modern SaaS",
-    "visual_identity": {
-      "colors": {
-        "primary": "#4F6EF7",
-        "primary_hover": "#3D58D3",
-        "background": "#F5F7FF",
-        "surface": "#FFFFFF",
-        "text_main": "#1E293B",
-        "text_muted": "#64748B",
-        "accents": {
-          "success_green": "#7EE081",
-          "info_blue": "#93C5FD",
-          "neutral_sky": "#A5B4FC",
-          "warning_orange": "#FBBF24",
-          "danger_pink": "#F87171"
-        }
-      },
-      "typography": {
-        "font_family": "'Inter', 'Tajawal', sans-serif",
-        "headings_weight": "700",
-        "is_rounded": true
-      },
-      "components_style": {
-        "border_radius": "1.5rem",
-        "card_shadow": "0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)",
-        "button_padding": "0.75rem 1.5rem",
-        "glassmorphism": {
-          "opacity": "0.8",
-          "blur": "10px"
-        }
+  "theme_name": "Vision Platform",
+  "visual_identity": {
+    "colors": {
+      "primary": "#00bdae",
+      "primary_dark": "#00968a",
+      "primary_mid": "#07a79a",
+      "secondary": "#7338a2",
+      "accent": "#f94f51",
+      "background": "#f8fafc",
+      "surface": "#ffffff",
+      "text_main": "#0f172a",
+      "text_muted": "#475569",
+      "text_soft": "#94a3b8",
+      "border": "#e2e8f0",
+      "ink_legacy": "#0b1220",
+      "accents": {
+        "success_green": "#059669",
+        "success_soft": "#d1fae5",
+        "info_blue": "#3b82f6",
+        "warning_orange": "#f59e0b",
+        "danger_red": "#ef4444"
+      }
+    },
+    "typography": {
+      "font_family": "'Cairo', ui-sans-serif, system-ui, sans-serif",
+      "headings_weight": "800",
+      "is_rounded": true
+    },
+    "components_style": {
+      "border_radius_card": "16px",
+      "border_radius_field": "10px",
+      "sidebar_width": "280px",
+      "card_shadow": "0 1px 3px rgba(0, 0, 0, 0.05)",
+      "card_shadow_elevated": "0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04)",
+      "button_gradient": "linear-gradient(135deg, #00bdae 0%, #7338a2 100%)",
+      "glassmorphism": {
+        "opacity": "0.9",
+        "blur": "12px"
       }
     }
   }
+}

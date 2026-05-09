@@ -8,31 +8,31 @@ export default {
     theme: {
         extend: {
             colors: {
-                brand: {
-                    DEFAULT: "#4F6EF7",
-                    hover: "#3D58D3",
-                },
-                saas: {
-                    bg: "#F5F7FF",
-                    surface: "#FFFFFF",
-                    text: "#1E293B",
-                    muted: "#64748B",
-                    success: "#7EE081",
-                    info: "#93C5FD",
-                    neutral: "#A5B4FC",
-                    warning: "#FBBF24",
-                    danger: "#F87171",
+                vision: {
+                    teal: "#00bdae",
+                    "teal-dark": "#00968a",
+                    "teal-mid": "#07a79a",
+                    purple: "#7338a2",
+                    accent: "#f94f51",
+                    ink: "#0b1220",
+                    border: "#e2e8f0",
+                    bg: "#f8fafc",
                 },
             },
             borderRadius: {
-                "saas-card": "1.5rem",
+                "saas-card": "1rem",
             },
             boxShadow: {
                 "saas-card":
-                    "0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)",
+                    "0 1px 3px rgba(15, 23, 42, 0.06), 0 4px 6px -2px rgba(15, 23, 42, 0.04)",
             },
             fontFamily: {
-                sans: ["Inter", "Tajawal", "Cairo", "ui-sans-serif", "system-ui", "sans-serif"],
+                sans: [
+                    "Cairo",
+                    "ui-sans-serif",
+                    "system-ui",
+                    "sans-serif",
+                ],
             },
         },
     },

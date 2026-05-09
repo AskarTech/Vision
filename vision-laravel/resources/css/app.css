@@ -1,3 +1,9 @@
+@import "@fontsource/cairo/400.css";
+@import "@fontsource/cairo/500.css";
+@import "@fontsource/cairo/600.css";
+@import "@fontsource/cairo/700.css";
+@import "@fontsource/cairo/800.css";
+
 @import "tailwindcss";
 @plugin "daisyui";
 
@@ -6,32 +12,97 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+/* Vision design tokens (legacy-aligned). DaisyUI semantic colors overridden below. */
 @theme {
     --font-sans:
-        "Inter", "Tajawal", "Cairo", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+        "Cairo", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
         "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+    --color-vision-teal: #00bdae;
+    --color-vision-teal-dark: #00968a;
+    --color-vision-teal-mid: #07a79a;
+    --color-vision-purple: #7338a2;
+    --color-vision-accent: #f94f51;
+    --color-vision-ink: #0b1220;
+    --color-vision-border: #e2e8f0;
+    --color-vision-bg: #f8fafc;
+
+    --color-thread-bg: var(--color-vision-bg);
+    --color-thread-surface: #ffffff;
+    --color-thread-primary: var(--color-vision-teal);
+    --color-thread-primary-hover: var(--color-vision-teal-dark);
+    --color-thread-primary-soft: rgba(0, 189, 174, 0.12);
+    --color-thread-heading: #0f172a;
+    --color-thread-body: #475569;
+    --color-thread-muted: #64748b;
+    --color-thread-danger: #ef4444;
+    --color-thread-border: var(--color-vision-border);
+    --color-thread-score-bg: var(--color-vision-bg);
 }
 
 :root {
-    --saas-primary: #4f6ef7;
-    --saas-primary-hover: #3d58d3;
-    --saas-bg: #f5f7ff;
+    --vision-teal: #00bdae;
+    --vision-teal-dark: #00968a;
+    --vision-purple: #7338a2;
+    --vision-accent: #f94f51;
+
+    --saas-primary: var(--vision-teal);
+    --saas-primary-hover: var(--vision-teal-dark);
+    --saas-bg: #f8fafc;
     --saas-surface: #ffffff;
-    --saas-text: #1e293b;
-    --saas-muted: #64748b;
-    --saas-success: #7ee081;
-    --saas-info: #93c5fd;
-    --saas-neutral: #a5b4fc;
-    --saas-warning: #fbbf24;
-    --saas-danger: #f87171;
-    --saas-card-radius: 1.5rem;
+    --saas-text: #0f172a;
+    --saas-muted: #475569;
+    --saas-success: #059669;
+    --saas-info: #3b82f6;
+    --saas-neutral: rgba(115, 56, 162, 0.15);
+    --saas-warning: #f59e0b;
+    --saas-danger: #ef4444;
+    --saas-card-radius: 1rem;
     --saas-card-shadow:
-        0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        0 1px 3px rgba(15, 23, 42, 0.06),
+        0 4px 6px -2px rgba(15, 23, 42, 0.04);
+}
+
+/* DaisyUI light theme — Vision teal primary, purple secondary */
+@layer base {
+    :root,
+    [data-theme="light"] {
+        color-scheme: light;
+        --color-base-100: oklch(99% 0.003 220);
+        --color-base-200: oklch(96% 0.006 220);
+        --color-base-300: oklch(92% 0.01 220);
+        --color-base-content: oklch(22% 0.03 250);
+        --color-primary: oklch(72% 0.11 181);
+        --color-primary-content: oklch(98% 0.02 181);
+        --color-secondary: oklch(46% 0.17 306);
+        --color-secondary-content: oklch(96% 0.03 306);
+        --color-accent: oklch(66% 0.19 25);
+        --color-accent-content: oklch(98% 0.02 25);
+        --color-neutral: oklch(26% 0.03 250);
+        --color-neutral-content: oklch(96% 0.01 250);
+        --color-info: oklch(62% 0.18 250);
+        --color-info-content: oklch(98% 0.01 250);
+        --color-success: oklch(55% 0.14 163);
+        --color-success-content: oklch(98% 0.02 163);
+        --color-warning: oklch(78% 0.14 75);
+        --color-warning-content: oklch(22% 0.05 75);
+        --color-error: oklch(63% 0.2 25);
+        --color-error-content: oklch(98% 0.01 25);
+        --radius-selector: 0.625rem;
+        --radius-field: 0.625rem;
+        --radius-box: 1rem;
+    }
 }
 
 body {
     background-color: var(--saas-bg);
     color: var(--saas-text);
+    line-height: 1.65;
+    text-rendering: optimizeLegibility;
+}
+
+html[dir="rtl"] body {
+    font-feature-settings: "kern" 1, "liga" 1;
 }
 
 .saas-layout-main {
@@ -40,22 +111,48 @@ body {
 
 .saas-surface {
     background-color: var(--saas-surface);
-    border: 1px solid rgba(148, 163, 184, 0.18);
+    border: 1px solid rgba(148, 163, 184, 0.22);
     border-radius: var(--saas-card-radius);
     box-shadow: var(--saas-card-shadow);
 }
 
 .saas-soft-card {
     border-radius: var(--saas-card-radius);
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    border: 1px solid var(--color-thread-border);
     background-color: var(--saas-surface);
     box-shadow: var(--saas-card-shadow);
+}
+
+.thread-card {
+    border-radius: var(--saas-card-radius);
+    background: var(--color-thread-surface);
+    border: 1px solid var(--color-thread-border);
+    box-shadow: var(--saas-card-shadow);
+}
+
+.thread-mention {
+    color: var(--vision-purple);
+    font-weight: 700;
+}
+
+.thread-action {
+    color: var(--vision-teal-dark);
+    font-weight: 600;
+}
+
+.thread-action-danger {
+    color: var(--color-thread-danger);
+    font-weight: 600;
 }
 
 .tech-oriental-hero {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, rgba(79, 110, 247, 0.06), rgba(147, 197, 253, 0.16));
+    background: linear-gradient(
+        135deg,
+        rgba(0, 189, 174, 0.07),
+        rgba(115, 56, 162, 0.09)
+    );
 }
 
 .tech-oriental-hero::before {
@@ -63,10 +160,14 @@ body {
     position: absolute;
     inset: 0;
     background-image:
-        radial-gradient(circle at 1px 1px, rgba(148, 163, 184, 0.2) 1px, transparent 0),
-        linear-gradient(125deg, rgba(165, 180, 252, 0.06), rgba(241, 245, 249, 0));
+        radial-gradient(circle at 1px 1px, rgba(148, 163, 184, 0.18) 1px, transparent 0),
+        linear-gradient(
+            125deg,
+            rgba(0, 189, 174, 0.05),
+            rgba(241, 245, 249, 0)
+        );
     background-size: 20px 20px, 100% 100%;
-    opacity: 0.35;
+    opacity: 0.45;
     pointer-events: none;
 }
 
@@ -75,35 +176,57 @@ body {
     z-index: 1;
 }
 
-/* Tone utility classes used by metric cards */
-.tone-teal {
-    background: linear-gradient(140deg, rgba(126, 224, 129, 0.28), #ffffff 70%);
-    border: 1px solid rgba(126, 224, 129, 0.35);
-}
-.tone-blue {
-    background: linear-gradient(140deg, rgba(147, 197, 253, 0.32), #ffffff 72%);
-    border: 1px solid rgba(147, 197, 253, 0.4);
-}
-.tone-amber {
-    background: linear-gradient(140deg, rgba(251, 191, 36, 0.25), #ffffff 72%);
-    border: 1px solid rgba(251, 191, 36, 0.35);
-}
-.tone-rose {
-    background: linear-gradient(140deg, rgba(248, 113, 113, 0.24), #ffffff 72%);
-    border: 1px solid rgba(248, 113, 113, 0.35);
-}
-.tone-slate {
-    background: linear-gradient(140deg, rgba(165, 180, 252, 0.28), #ffffff 72%);
-    border: 1px solid rgba(165, 180, 252, 0.35);
-}
-
+/* Legacy dashboard stat cards: white surface + pastel icon box (.card / .card-icon), not full-card gradients */
 .metric-card-base {
-    padding: 1.25rem;
-    border-radius: var(--saas-card-radius);
-    box-shadow: var(--saas-card-shadow);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-/* SaaS override layer for existing dark utility usage in customer/seller pages */
+.metric-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 16px;
+}
+
+.metric-card-icon--teal {
+    background-color: #ccfbf1;
+    color: #0f7668;
+}
+
+.metric-card-icon--blue {
+    background-color: #e0f2fe;
+    color: #0369a1;
+}
+
+.metric-card-icon--amber {
+    background-color: #fef3c7;
+    color: #b45309;
+}
+
+.metric-card-icon--rose {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.metric-card-icon--slate {
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+.metric-card-icon--emerald {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
 .saas-content .text-white {
     color: var(--saas-text) !important;
 }
@@ -121,7 +244,7 @@ body {
 
 .saas-content .border-white\/10,
 .saas-content .border-white\/20 {
-    border-color: rgba(148, 163, 184, 0.25) !important;
+    border-color: rgba(148, 163, 184, 0.28) !important;
 }
 
 .saas-content .shadow-2xl {
@@ -130,28 +253,36 @@ body {
 
 .saas-content .hover\:bg-white\/5:hover,
 .saas-content .hover\:bg-white\/10:hover {
-    background-color: #f8faff !important;
+    background-color: #f1f5f9 !important;
 }
 
 .btn-primary,
 .btn.btn-primary {
-    background-color: var(--saas-primary);
-    border-color: var(--saas-primary);
+    background-image: linear-gradient(
+        135deg,
+        var(--vision-teal) 0%,
+        var(--vision-purple) 100%
+    );
+    background-color: transparent;
+    border-color: transparent;
     color: #fff;
-    border-radius: 9999px;
+    border-radius: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    box-shadow: 0 4px 14px rgba(0, 189, 174, 0.28);
 }
 
 .btn-primary:hover,
 .btn.btn-primary:hover {
-    background-color: var(--saas-primary-hover);
-    border-color: var(--saas-primary-hover);
+    filter: brightness(1.05);
+    border-color: transparent;
 }
 
 .btn,
 .input,
 .select,
 .textarea {
-    border-radius: 0.9rem;
+    border-radius: 0.625rem;
 }
 
 .saas-modal-panel {
@@ -159,4 +290,156 @@ body {
     background: var(--saas-surface);
     border: 1px solid rgba(148, 163, 184, 0.25);
     box-shadow: var(--saas-card-shadow);
+}
+
+/* Dashboard shell: legacy sidebar active tint */
+.vision-nav-active {
+    border-radius: 10px;
+    background-color: rgba(0, 189, 174, 0.08);
+    color: var(--vision-teal-dark);
+    font-weight: 700;
+}
+
+.vision-nav-active svg {
+    stroke: var(--vision-teal);
+}
+
+/* Lists & forms — legacy dashboard (8).html (admin + seller shells) */
+@layer components {
+    .admin-filter-field,
+    .vision-filter-field {
+        @apply min-h-10 rounded-[10px] border border-[#e2e8f0] bg-[#f8fafc] px-3 py-2 text-sm text-slate-800 transition-[border-color,box-shadow];
+        @apply focus:border-[var(--vision-teal)] focus:outline-none focus:ring-0;
+    }
+
+    .admin-filter-field:focus,
+    .vision-filter-field:focus {
+        box-shadow: 0 0 0 3px rgba(0, 189, 174, 0.1);
+    }
+
+    select.admin-filter-field,
+    select.vision-filter-field {
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: left 0.75rem center;
+        background-size: 1em;
+        padding-inline-end: 2.25rem;
+    }
+
+    /* Legacy .form-input — override DaisyUI base tint on dashboard forms */
+    .admin-form-input,
+    .vision-form-input {
+        @apply w-full rounded-[10px] border border-[#e2e8f0] py-3 px-4 text-sm leading-normal text-slate-800 transition-[border-color,box-shadow];
+        background-color: #ffffff !important;
+        box-shadow: none;
+        @apply focus:border-[var(--vision-teal)] focus:outline-none focus:ring-0;
+    }
+
+    .admin-form-input:focus,
+    .vision-form-input:focus {
+        box-shadow: 0 0 0 3px rgba(0, 189, 174, 0.1);
+    }
+
+    select.admin-form-input,
+    select.vision-form-input {
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: left 1rem center;
+        background-size: 1em;
+        padding-inline-end: 2.75rem;
+    }
+
+    .admin-textarea,
+    .vision-textarea {
+        @apply min-h-[5rem] w-full rounded-[10px] border border-[#e2e8f0] py-3 px-4 text-sm text-slate-800 transition-[border-color,box-shadow];
+        background-color: #ffffff !important;
+        @apply focus:border-[var(--vision-teal)] focus:outline-none focus:ring-0;
+    }
+
+    .admin-textarea:focus,
+    .vision-textarea:focus {
+        box-shadow: 0 0 0 3px rgba(0, 189, 174, 0.1);
+    }
+
+    /* Inline / table cell inputs — same focus ring as legacy .form-input */
+    .admin-form-input-xs,
+    .vision-form-input-xs {
+        @apply w-full rounded-[10px] border border-[#e2e8f0] px-2 py-1.5 text-xs text-slate-800 transition-[border-color,box-shadow];
+        background-color: #ffffff !important;
+        @apply focus:border-[var(--vision-teal)] focus:outline-none focus:ring-0;
+    }
+
+    .admin-form-input-xs:focus,
+    .vision-form-input-xs:focus {
+        box-shadow: 0 0 0 3px rgba(0, 189, 174, 0.1);
+    }
+
+    .admin-table,
+    .vision-table {
+        @apply min-w-full border-collapse text-sm;
+    }
+
+    .admin-table thead th,
+    .vision-table thead th {
+        @apply border-b border-[#e2e8f0] bg-[#f8fafc] px-6 py-4 text-right text-xs font-bold uppercase tracking-wide text-slate-600;
+    }
+
+    .admin-table tbody td,
+    .vision-table tbody td {
+        @apply border-b border-[#e2e8f0] px-6 py-[18px] align-middle text-sm font-semibold text-slate-800;
+    }
+
+    .admin-table tbody tr:last-child td,
+    .vision-table tbody tr:last-child td {
+        @apply border-b-0;
+    }
+
+    .admin-table tbody tr:hover td,
+    .vision-table tbody tr:hover td {
+        background-color: #fbfcfd;
+    }
+
+    /* legacy .grid-stats: gap 24px, min card width ~240px */
+    .admin-grid-stats,
+    .vision-grid-stats {
+        @apply mb-8 grid gap-6;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+
+    .admin-list-card,
+    .vision-list-card {
+        @apply rounded-2xl border border-[#e2e8f0] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.05)];
+    }
+
+    .admin-outline-btn,
+    .vision-outline-btn {
+        @apply btn btn-outline btn-sm border-[#e2e8f0] text-slate-600 hover:border-slate-400 hover:bg-slate-50 hover:text-slate-800;
+    }
+
+    /* legacy .form-label */
+    .admin-form-label,
+    .vision-form-label {
+        @apply mb-2 block text-sm font-bold text-slate-800;
+    }
+
+    /* legacy .search-box input / header search */
+    .dashboard-search-field:focus {
+        outline: none;
+        border-color: var(--vision-teal);
+        box-shadow: 0 0 0 3px rgba(0, 189, 174, 0.1);
+    }
+
+    /* legacy .file-upload-box */
+    .admin-file-upload-box,
+    .vision-file-upload-box {
+        @apply cursor-pointer rounded-[10px] border-2 border-dashed border-[#e2e8f0] bg-transparent px-5 py-5 text-center text-sm text-slate-600 transition-colors;
+    }
+
+    .admin-file-upload-box:hover,
+    .vision-file-upload-box:hover {
+        border-color: var(--vision-teal);
+        background-color: #f8fafc;
+    }
 }
