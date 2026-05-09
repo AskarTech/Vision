@@ -24,7 +24,6 @@ class StageAuthOnboardingTest extends TestCase
         $response = $this->post('/login', [
             'identifier' => $user->phone,
             'password' => 'secret123',
-            'role' => 'customer',
         ]);
 
         $response->assertRedirect(route('customer.marketplace.index'));

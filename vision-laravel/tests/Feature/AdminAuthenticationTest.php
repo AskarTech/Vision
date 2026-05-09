@@ -31,17 +31,17 @@ class AdminAuthenticationTest extends TestCase
         $loginResponse = $this->post('/login', [
             'identifier' => $admin->phone,
             'password' => 'secret123',
-            'role' => 'admin',
         ]);
 
-        $loginResponse->assertRedirect('/admin');
+        $loginResponse->assertRedirect(route('admin.dashboard'));
 
         $this->assertAuthenticatedAs($admin);
 
         $dashboardResponse = $this->get('/admin');
         $dashboardResponse->assertOk();
         $dashboardResponse->assertSee('لوحة الإدارة');
-        $dashboardResponse->assertSee('مركز تشغيل لمراجعة الطلبات');
+        $dashboardResponse->assertSee('لوحة المعلومات');
+        $dashboardResponse->assertSee('مرحباً بك، إليك ملخص لأداء المنصة والشركاء اليوم.');
     }
 
     public function test_customer_cannot_access_admin_dashboard(): void

@@ -24,7 +24,7 @@ class SellerDashboardTest extends TestCase
 
     public function test_seller_manager_can_login_and_access_seller_dashboard(): void
     {
-        $seller = \App\Models\Seller::query()->create([
+        $seller = Seller::query()->create([
             'name' => 'Vision Seller',
             'slug' => 'vision-seller',
             'status' => 'active',
@@ -39,7 +39,7 @@ class SellerDashboardTest extends TestCase
             'password' => 'secret123',
         ]);
 
-        \App\Models\SellerManager::query()->create([
+        SellerManager::query()->create([
             'seller_id' => $seller->id,
             'user_id' => $user->id,
             'username' => 'seller.manager',
@@ -77,10 +77,9 @@ class SellerDashboardTest extends TestCase
         $loginResponse = $this->post('/login', [
             'identifier' => $user->phone,
             'password' => 'secret123',
-            'role' => 'seller_manager',
         ]);
 
-        $loginResponse->assertRedirect('/seller');
+        $loginResponse->assertRedirect(route('seller.dashboard'));
 
         $this->assertAuthenticatedAs($user);
 
