@@ -1,25 +1,25 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityMonitoringController;
+use App\Http\Controllers\Admin\AuditController;
+use App\Http\Controllers\Admin\CustomersController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DisputesController;
+use App\Http\Controllers\Admin\InventoryController as AdminInventoryController;
+use App\Http\Controllers\Admin\NetworksController;
+use App\Http\Controllers\Admin\NotificationsHubController;
+use App\Http\Controllers\Admin\OrdersController;
+use App\Http\Controllers\Admin\PackagesController;
+use App\Http\Controllers\Admin\ReportsController;
+use App\Http\Controllers\Admin\SellersController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TopupsController;
 use App\Http\Controllers\Admin\WithdrawalsController;
-use App\Http\Controllers\Admin\DisputesController;
-use App\Http\Controllers\Admin\CustomersController;
-use App\Http\Controllers\Admin\SellersController;
-use App\Http\Controllers\Admin\NetworksController;
-use App\Http\Controllers\Admin\PackagesController;
-use App\Http\Controllers\Admin\InventoryController as AdminInventoryController;
-use App\Http\Controllers\Admin\OrdersController;
-use App\Http\Controllers\Admin\ReportsController;
-use App\Http\Controllers\Admin\AuditController;
-use App\Http\Controllers\Admin\SettingsController;
-use App\Http\Controllers\Admin\NotificationsHubController;
-use App\Http\Controllers\Admin\ActivityMonitoringController;
-use App\Http\Controllers\Auth\SessionController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegistrationController;
 use App\Http\Controllers\Auth\SellerRegistrationController;
-use App\Http\Controllers\Auth\PasswordResetLinkController;
-use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\SessionController;
 use App\Http\Controllers\Customer\DashboardController as CustomerDashboardController;
 use App\Http\Controllers\Customer\MarketplaceController as CustomerMarketplaceController;
 use App\Http\Controllers\Customer\OrdersController as CustomerOrdersController;
@@ -180,8 +180,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 | Seller Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role:seller_manager'])->prefix('seller')->name('seller.')->group(function (): void {
-    Route::get('/', [\App\Http\Controllers\Seller\DashboardController::class, 'index'])->name('dashboard');
+Route::middleware(['auth', 'role:seller_manager', 'seller.linked'])->prefix('seller')->name('seller.')->group(function (): void {
+    Route::get('/', [App\Http\Controllers\Seller\DashboardController::class, 'index'])->name('dashboard');
 
     // Inventory
     Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
