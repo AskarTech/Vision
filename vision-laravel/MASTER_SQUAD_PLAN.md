@@ -170,7 +170,7 @@ _Delivery notes: [docs/STAGES_11_THROUGH_13_SUMMARY.md](docs/STAGES_11_THROUGH_1
 
 *Focus: Functional completeness. The UI must be a true reflection of the underlying backend architecture.*
 
-_Delivery notes: [docs/STAGES_11_THROUGH_13_SUMMARY.md](docs/STAGES_11_THROUGH_13_SUMMARY.md) Stage 12 — seller `networks` / `packages` / `settings` routes remain documented stubs._
+_Delivery notes: [docs/STAGES_11_THROUGH_13_SUMMARY.md](docs/STAGES_11_THROUGH_13_SUMMARY.md) Stage 12 — seller CRUD for networks/packages/settings is implemented; see Stage 15 seller summary for current scope._
 
 ## Stage 13 - Total Arabic Localization & Final UI/UX Polish
 
@@ -210,13 +210,15 @@ _Delivery notes: [docs/STAGE_15_SELLER_PORTAL_SUMMARY.md](docs/STAGE_15_SELLER_P
 
 ## Stage 16 - Customer Portal: Deep Verification & QA
 
-- [ ] **Asset Check:** Verify all Customer views exist (Home/Marketplace, Network Selection, Package Selection, Checkout Modal, My Wallet, Order History).
-- [ ] **Mobile-First QA:** Strictly test all interfaces on mobile viewport sizes. Check the ergonomics of buttons, dropdowns, and navigation in RTL layout.
-- [ ] **End-to-End Purchase Flow:** Walk through the entire One-Click Checkout process. Ensure the UI updates instantly (optimistic UI) without full page reloads where possible via Alpine.js.
-- [ ] **Wallet & Points Sync:** Verify that purchasing a card immediately deducts the correct balance and awards points visually on the dashboard.
-- [ ] **Business Logic Alignment:** Ensure out-of-stock packages are clearly marked and impossible to purchase.
+- [x] **Asset Check:** Verify all Customer views exist (Home/Marketplace, Network Selection, Package Selection, Checkout Modal, My Wallet, Order History).
+- [x] **Mobile-First QA:** Strictly test all interfaces on mobile viewport sizes. Check the ergonomics of buttons, dropdowns, and navigation in RTL layout.
+- [x] **End-to-End Purchase Flow:** Walk through the entire One-Click Checkout process. Ensure the UI updates instantly (optimistic UI) without full page reloads where possible via Alpine.js.
+- [x] **Wallet & Points Sync:** Verify that purchasing a card immediately deducts the correct balance and awards points visually on the dashboard.
+- [x] **Business Logic Alignment:** Ensure out-of-stock packages are clearly marked and impossible to purchase.
 
 *Focus: Speed, simplicity, and absolute visual clarity on mobile devices for the end-user.*
+
+_Delivery notes: [docs/STAGE_16_CUSTOMER_PORTAL_SUMMARY.md](docs/STAGE_16_CUSTOMER_PORTAL_SUMMARY.md) — stock gates + navigation gates; points **balance** on dashboard; loyalty **earning** on purchase remains backlog unless specified._
 
 ## Stage 17 - Data Seeding & System Simulation (Fake Data)
 
@@ -238,3 +240,4 @@ _Delivery notes: [docs/STAGE_15_SELLER_PORTAL_SUMMARY.md](docs/STAGE_15_SELLER_P
 - For Stages 11–13, treat **[docs/STAGES_11_THROUGH_13_SUMMARY.md](docs/STAGES_11_THROUGH_13_SUMMARY.md)** the same way for auth, portal wiring, and localization.
 - For Stage 14, treat **[docs/STAGE_14_ADMIN_VERIFICATION_SUMMARY.md](docs/STAGE_14_ADMIN_VERIFICATION_SUMMARY.md)** as the honesty layer for admin QA scope and placeholders.
 - For Stage 15, treat **[docs/STAGE_15_SELLER_PORTAL_SUMMARY.md](docs/STAGE_15_SELLER_PORTAL_SUMMARY.md)** as the honesty layer for seller portal bulk-import format and wallet estimates vs ledger.
+- For Stage 16, treat **[docs/STAGE_16_CUSTOMER_PORTAL_SUMMARY.md](docs/STAGE_16_CUSTOMER_PORTAL_SUMMARY.md)** as the honesty layer for customer portal stock UX, mobile nav, and points earn vs balance display.

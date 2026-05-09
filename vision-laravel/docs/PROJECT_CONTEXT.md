@@ -22,6 +22,7 @@
 - [docs/STAGES_11_THROUGH_13_SUMMARY.md](STAGES_11_THROUGH_13_SUMMARY.md): Stages 11–13 auth, seller onboarding, portal wiring, Arabic / UI polish vs backlog.
 - [docs/STAGE_14_ADMIN_VERIFICATION_SUMMARY.md](STAGE_14_ADMIN_VERIFICATION_SUMMARY.md): Stage 14 admin route/policy fixes, paid-order refund + CSV export, verification tests.
 - [docs/STAGE_15_SELLER_PORTAL_SUMMARY.md](STAGE_15_SELLER_PORTAL_SUMMARY.md): Stage 15 seller portal assets, scoping policies, navigation, wallet estimates vs ledger, CSV bulk import scope.
+- [docs/STAGE_16_CUSTOMER_PORTAL_SUMMARY.md](STAGE_16_CUSTOMER_PORTAL_SUMMARY.md): Stage 16 customer marketplace stock UX, checkout guards, mobile RTL nav, dashboard points display vs earn backlog.
 - [docs/RUNBOOK_RELEASE.md](RUNBOOK_RELEASE.md): Release checklist, points env, scheduling, incidents.
 
 ## Scope
