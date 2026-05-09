@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Customer;
 
 use App\Actions\Checkout\CheckoutWithWalletAction;
 use App\Http\Controllers\Controller;
+use App\Models\Card;
 use App\Models\Network;
 use App\Models\Package;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -15,13 +16,13 @@ class MarketplaceController extends Controller
 {
     public function __construct(
         private readonly CheckoutWithWalletAction $checkoutWithWalletAction
-    ) {
-    }
+    ) {}
 
     public function index(Request $request): View
     {
         $query = Package::query()
             ->with(['network', 'seller'])
+            ->withCount(['cards as active_stock_count' => fn ($q) => $q->where('status', 'active')])
             ->where('status', 'active')
             ->whereHas('network', fn ($q) => $q->where('status', 'active'))
             ->latest();
@@ -53,19 +54,33 @@ class MarketplaceController extends Controller
         abort_unless($package->status === 'active', 404);
 
         $package->load(['network', 'seller']);
+        $package->loadCount(['cards as active_stock_count' => fn ($q) => $q->where('status', 'active')]);
+
         $relatedPackages = Package::query()
             ->where('status', 'active')
             ->where('network_id', $package->network_id)
             ->whereKeyNot($package->id)
+            ->withCount(['cards as active_stock_count' => fn ($q) => $q->where('status', 'active')])
             ->take(6)
             ->get();
 
-        return view('customer.marketplace.show', compact('package', 'relatedPackages'));
+        $inStock = ((int) ($package->active_stock_count ?? 0)) > 0;
+
+        return view('customer.marketplace.show', compact('package', 'relatedPackages', 'inStock'));
     }
 
     public function buy(Request $request, Package $package): RedirectResponse
     {
         abort_unless($package->status === 'active', 404);
+
+        $stock = Card::query()
+            ->where('package_id', $package->id)
+            ->where('status', 'active')
+            ->count();
+
+        if ($stock < 1) {
+            return back()->with('error', 'هذه الباقة غير متوفرة حالياً (نفد المخزون).');
+        }
 
         try {
             $order = $this->checkoutWithWalletAction->execute(

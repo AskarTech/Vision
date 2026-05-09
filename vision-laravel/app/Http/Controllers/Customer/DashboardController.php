@@ -17,6 +17,7 @@ class DashboardController extends Controller
             'orders' => CardOrder::query()->where('user_id', $user->id)->count(),
             'paid_orders' => CardOrder::query()->where('user_id', $user->id)->where('status', 'paid')->count(),
             'wallet_balance' => (float) ($user->wallet?->balance ?? 0),
+            'points_balance' => (int) ($user->wallet?->points_balance ?? 0),
             'spent_total' => (float) CardOrder::query()->where('user_id', $user->id)->where('status', 'paid')->sum('total_amount'),
         ];
 

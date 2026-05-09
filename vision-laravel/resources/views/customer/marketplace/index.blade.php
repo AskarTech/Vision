@@ -19,8 +19,17 @@
 
     <section class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         @forelse($packages as $package)
-            <a href="{{ route('customer.marketplace.show', $package) }}" class="rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:-translate-y-0.5 hover:bg-white/10">
-                <p class="text-sm text-slate-400">{{ $package->network?->name }}</p>
+            @php $stock = (int) ($package->active_stock_count ?? 0); @endphp
+            <a href="{{ route('customer.marketplace.show', $package) }}"
+                class="rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:-translate-y-0.5 hover:bg-white/10 {{ $stock === 0 ? 'opacity-75' : '' }}">
+                <div class="flex items-start justify-between gap-2">
+                    <p class="text-sm text-slate-400">{{ $package->network?->name }}</p>
+                    @if ($stock === 0)
+                        <span class="shrink-0 rounded-full bg-rose-500/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-rose-200">نفد المخزون</span>
+                    @elseif ($stock <= 3)
+                        <span class="shrink-0 rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold text-amber-100">متبقي {{ $stock }}</span>
+                    @endif
+                </div>
                 <h3 class="mt-1 font-semibold text-white">{{ $package->name }}</h3>
                 <p class="mt-1 text-xs text-slate-400">{{ $package->category }} - {{ $package->period_type }}</p>
                 <p class="mt-4 text-lg font-bold text-emerald-300">{{ number_format((float)$package->price, 2) }}</p>

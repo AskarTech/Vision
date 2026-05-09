@@ -1,8 +1,9 @@
 <x-layouts.customer title="لوحة العميل" description="ملخص نشاطك الشرائي وحالة المحفظة.">
-    <section class="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <section class="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <x-ui.metric-card label="الطلبات" :value="$stats['orders']" tone="slate" />
         <x-ui.metric-card label="طلبات مدفوعة" :value="$stats['paid_orders']" tone="emerald" />
         <x-ui.metric-card label="رصيد المحفظة" :value="number_format($stats['wallet_balance'], 2)" tone="blue" />
+        <x-ui.metric-card label="النقاط" :value="number_format($stats['points_balance'])" tone="teal" />
         <x-ui.metric-card label="إجمالي الإنفاق" :value="number_format($stats['spent_total'], 2)" tone="amber" />
     </section>
 
