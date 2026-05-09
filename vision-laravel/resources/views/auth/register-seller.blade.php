@@ -1,4 +1,4 @@
-<x-layouts.auth title="تسجيل شريك بيع | YemenWi-Fi Hub"
+<x-layouts.auth title="تسجيل شريك بيع | Vision"
     description="إنشاء حساب مدير شبكة مع شبكتك الأولى ومعلومات المحفظة المحلية.">
     <div class="overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/5 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.25)] backdrop-blur"
         x-data="{ step: 1 }">

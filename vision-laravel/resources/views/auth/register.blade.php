@@ -1,4 +1,4 @@
-<x-layouts.auth title="إنشاء حساب عميل | YemenWi-Fi Hub"
+<x-layouts.auth title="إنشاء حساب عميل | Vision"
     description="تسجيل سريع بيانات الحساب — الاسم والهاتف وكلمة المرور — ثم الانتقال مباشرة إلى سوق البطاقات.">
     <div
         class="overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/5 p-6 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.25)] backdrop-blur sm:p-8">

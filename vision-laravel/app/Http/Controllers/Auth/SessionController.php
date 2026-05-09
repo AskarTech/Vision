@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\Auth\RedirectAfterLoginAction;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class SessionController extends Controller
@@ -19,21 +19,28 @@ class SessionController extends Controller
         return view('auth.login');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, RedirectAfterLoginAction $redirectAfterLogin): RedirectResponse
     {
         $validated = $request->validate([
             'identifier' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:6'],
-            'role' => ['required', Rule::in(['admin', 'customer', 'seller_manager'])],
             'remember' => ['nullable', 'boolean'],
         ]);
 
+        $identifier = trim($validated['identifier']);
+
         $user = User::query()
-            ->where('role', $validated['role'])
             ->where('status', 'active')
-            ->where(function ($query) use ($validated): void {
-                $query->where('phone', $validated['identifier'])
-                    ->orWhere('email', $validated['identifier']);
+            ->where(function ($query) use ($identifier): void {
+                $query->where('email', $identifier);
+
+                if (! str_contains($identifier, '@')) {
+                    $digitsOnly = preg_replace('/\D+/', '', $identifier) ?? '';
+                    $query->orWhere('phone', $identifier);
+                    if ($digitsOnly !== '' && $digitsOnly !== $identifier) {
+                        $query->orWhere('phone', $digitsOnly);
+                    }
+                }
             })
             ->first();
 
@@ -46,7 +53,7 @@ class SessionController extends Controller
         Auth::login($user, (bool) ($validated['remember'] ?? false));
         $request->session()->regenerate();
 
-        return redirect()->intended($this->redirectPathForRole($user->role));
+        return redirect()->intended($redirectAfterLogin->execute($user));
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -57,14 +64,5 @@ class SessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('login');
-    }
-
-    private function redirectPathForRole(string $role): string
-    {
-        return match ($role) {
-            'admin' => route('admin.dashboard'),
-            'seller_manager' => route('seller.dashboard'),
-            default => route('customer.marketplace.index'),
-        };
     }
 }
