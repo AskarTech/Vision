@@ -44,9 +44,9 @@
             {{-- Navigation group with sub-items --}}
             <div class="mb-2">
                 <button type="button" @click="expanded[{{ $index }}] = !expanded[{{ $index }}]"
-                    class="w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors
+                    class="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold rounded-[10px] transition-colors
                         {{ $navigation->isActive($item['route'] ?? '')
-                            ? 'bg-primary/10 text-primary'
+                            ? 'vision-nav-active'
                             : 'text-base-content/70 hover:bg-base-200 hover:text-base-content' }}">
                     <div class="flex items-center gap-3">
                         @if (isset($item['icon']) && isset($icons[$item['icon']]))
@@ -64,9 +64,9 @@
                     class="mt-1 ml-4 space-y-1 border-l-2 border-base-300 pl-2">
                     @foreach ($item['sub'] as $subItem)
                         <a href="{{ route($subItem['route']) }}"
-                            class="block px-3 py-2 text-sm rounded-lg transition-colors
+                            class="block px-4 py-2.5 text-sm rounded-[10px] transition-colors
                                {{ $navigation->isActive($subItem['route'])
-                                   ? 'bg-primary/10 text-primary font-medium'
+                                   ? 'vision-nav-active font-medium'
                                    : 'text-base-content/60 hover:bg-base-200 hover:text-base-content' }}">
                             {{ $subItem['label'] }}
                         </a>
@@ -76,9 +76,9 @@
         @else
             {{-- Single navigation item --}}
             <a href="{{ route($item['route']) }}"
-                class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors
+                class="flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-[10px] transition-colors
                    {{ $navigation->isActive($item['route'])
-                       ? 'bg-primary/10 text-primary'
+                       ? 'vision-nav-active'
                        : 'text-base-content/70 hover:bg-base-200 hover:text-base-content' }}">
                 @if (isset($item['icon']) && isset($icons[$item['icon']]))
                     <span class="w-5 h-5 text-current [&>svg]:w-5 [&>svg]:h-5">{!! $icons[$item['icon']] !!}</span>
