@@ -2,6 +2,7 @@
 
 namespace App\Actions\Checkout;
 
+use App\Models\Card;
 use App\Models\CardOrder;
 use App\Models\Package;
 use App\Models\User;
@@ -17,8 +18,7 @@ class CheckoutWithWalletAction
     public function __construct(
         private readonly CardInventoryService $cardInventoryService,
         private readonly WalletService $walletService
-    ) {
-    }
+    ) {}
 
     /**
      * @param  array<int, array{package_id:int, quantity:int}>  $items
@@ -75,6 +75,22 @@ class CheckoutWithWalletAction
 
             if ((int) $wallet->points_balance < $pointsPortion) {
                 throw new RuntimeException('Insufficient points balance.');
+            }
+
+            foreach ($preparedItems as $preparedItem) {
+                /** @var Package $package */
+                $package = $preparedItem['package'];
+                $quantity = $preparedItem['quantity'];
+                $available = Card::query()
+                    ->where('package_id', $package->id)
+                    ->where('status', 'active')
+                    ->count();
+
+                if ($available < $quantity) {
+                    throw new RuntimeException(
+                        "لا يتوفر مخزون كافٍ لهذه الباقة حالياً ({$package->name}). المتاح: {$available}، المطلوب: {$quantity}."
+                    );
+                }
             }
 
             try {
