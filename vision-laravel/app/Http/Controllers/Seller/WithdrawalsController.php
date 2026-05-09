@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
-use App\Models\Withdrawal;
 use App\Models\Bank;
+use App\Models\Withdrawal;
 use Illuminate\Http\Request;
 
 class WithdrawalsController extends Controller
@@ -12,7 +12,7 @@ class WithdrawalsController extends Controller
     public function index(Request $request)
     {
         $seller = $request->user()->seller;
-        
+
         $query = Withdrawal::where('seller_id', $seller->id);
 
         if ($request->filled('status')) {
@@ -43,7 +43,7 @@ class WithdrawalsController extends Controller
     {
         $seller = request()->user()->seller;
         $banks = Bank::all();
-        
+
         return view('seller.withdrawals.create', compact('banks'));
     }
 
@@ -89,8 +89,8 @@ class WithdrawalsController extends Controller
     public function show(Withdrawal $withdrawal)
     {
         $seller = request()->user()->seller;
-        
-        if ($withdrawal->seller_id !== $seller->id) {
+
+        if ((int) $withdrawal->seller_id !== (int) $seller->id) {
             abort(403);
         }
 
