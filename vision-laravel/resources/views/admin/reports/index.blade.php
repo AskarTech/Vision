@@ -1,21 +1,21 @@
-<x-layouts.dashboard title="التقارير" description="ملخص مالي وسوقي للفترة" dashboardType="admin">
+<x-layouts.dashboard title="التقارير المالية" description="ملخص مالي وسوقي للفترة" dashboardType="admin">
     <x-slot name="badge"><x-ui.badge tone="info">التقارير</x-ui.badge></x-slot>
 
-    <x-ui.panel class="mb-6">
-        <form method="GET" action="{{ route('admin.reports.index') }}" class="flex flex-wrap items-end gap-2">
+    <x-ui.panel title="نطاق التقرير" description="اختر الفترة الزمنية">
+        <form method="GET" action="{{ route('admin.reports.index') }}" class="flex flex-wrap items-end gap-4">
             <div>
-                <label class="mb-1 block text-xs text-slate-400">من</label>
-                <input type="date" name="date_from" value="{{ \Illuminate\Support\Carbon::parse($dateFrom)->format('Y-m-d') }}" class="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100" />
+                <label class="mb-2 block text-sm font-bold text-slate-800">من</label>
+                <input type="date" name="date_from" value="{{ \Illuminate\Support\Carbon::parse($dateFrom)->format('Y-m-d') }}" class="admin-filter-field" />
             </div>
             <div>
-                <label class="mb-1 block text-xs text-slate-400">إلى</label>
-                <input type="date" name="date_to" value="{{ \Illuminate\Support\Carbon::parse($dateTo)->format('Y-m-d') }}" class="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100" />
+                <label class="mb-2 block text-sm font-bold text-slate-800">إلى</label>
+                <input type="date" name="date_to" value="{{ \Illuminate\Support\Carbon::parse($dateTo)->format('Y-m-d') }}" class="admin-filter-field" />
             </div>
             <button type="submit" class="btn btn-primary btn-sm">تحديث</button>
         </form>
     </x-ui.panel>
 
-    <section class="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <section class="admin-grid-stats mt-8">
         <x-ui.metric-card label="إيراد (مدفوع)" :value="number_format((float) ($stats['revenue'] ?? 0), 2)" caption="ريال في الفترة" tone="teal" />
         <x-ui.metric-card label="شحن محافظ معتمد" :value="number_format((float) ($stats['topups'] ?? 0), 2)" caption="ريال" tone="blue" />
         <x-ui.metric-card label="سحوبات معتمدة" :value="number_format((float) ($stats['withdrawals'] ?? 0), 2)" caption="ريال" tone="amber" />
@@ -24,29 +24,34 @@
 
     <div class="grid gap-6 lg:grid-cols-2">
         <x-ui.panel title="ملخص العملاء والشركاء">
-            <ul class="space-y-2 text-sm text-slate-300">
-                <li>عملاء جدد: <span class="font-bold text-white">{{ number_format($stats['new_customers'] ?? 0) }}</span></li>
-                <li>بائعون جدد: <span class="font-bold text-white">{{ number_format($stats['new_sellers'] ?? 0) }}</span></li>
-                <li>معدل إتمام الطلبات: <span class="font-bold text-emerald-300">{{ $stats['conversion_rate'] ?? 0 }}٪</span></li>
+            <ul class="space-y-3 text-sm text-slate-700">
+                <li>عملاء جدد: <span class="font-extrabold text-slate-900">{{ number_format($stats['new_customers'] ?? 0) }}</span></li>
+                <li>بائعون جدد: <span class="font-extrabold text-slate-900">{{ number_format($stats['new_sellers'] ?? 0) }}</span></li>
+                <li>معدل إتمام الطلبات: <span class="font-extrabold text-emerald-700">{{ $stats['conversion_rate'] ?? 0 }}٪</span></li>
             </ul>
-            <div class="mt-4 flex gap-2">
-                <a href="{{ route('admin.reports.sales', request()->query()) }}" class="btn btn-outline btn-sm border-white/20 text-slate-100">تقرير المبيعات</a>
-                <a href="{{ route('admin.reports.customers', request()->query()) }}" class="btn btn-outline btn-sm border-white/20 text-slate-100">أفضل العملاء</a>
+            <div class="mt-5 flex flex-wrap gap-2">
+                <a href="{{ route('admin.reports.sales', request()->query()) }}" class="admin-outline-btn">تقرير المبيعات</a>
+                <a href="{{ route('admin.reports.customers', request()->query()) }}" class="admin-outline-btn">أفضل العملاء</a>
             </div>
         </x-ui.panel>
 
         <x-ui.panel title="إيراد يومي (مدفوع)">
             <div class="max-h-64 overflow-auto">
-                <table class="min-w-full text-sm">
-                    <thead><tr class="text-right text-slate-400"><th class="py-2">اليوم</th><th class="py-2">المبلغ</th></tr></thead>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">اليوم</th>
+                            <th scope="col">المبلغ</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         @forelse ($dailyRevenue as $row)
-                            <tr class="border-t border-white/5 text-slate-200">
-                                <td class="py-2">{{ $row->date }}</td>
-                                <td class="py-2 font-mono">{{ number_format((float) $row->amount, 2) }}</td>
+                            <tr>
+                                <td class="font-normal text-slate-700">{{ $row->date }}</td>
+                                <td class="font-mono font-semibold text-slate-800">{{ number_format((float) $row->amount, 2) }}</td>
                             </tr>
                         @empty
-                            <tr><td colspan="2" class="py-4 text-center text-slate-500">لا بيانات في الفترة.</td></tr>
+                            <tr><td colspan="2" class="py-8 text-center text-slate-500">لا بيانات في الفترة.</td></tr>
                         @endforelse
                     </tbody>
                 </table>

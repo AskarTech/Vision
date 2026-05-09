@@ -1,13 +1,12 @@
-<x-layouts.dashboard title="تفاصيل البطاقة" dashboardType="admin">
-    <x-ui.page-header title="بطاقة #{{ $card->id }}" description="{{ $card->package?->name }}" />
-    <x-ui.panel>
-        <div class="grid gap-4 md:grid-cols-2 text-sm text-slate-300">
-            <p>الكود: <span class="text-white">{{ $card->code }}</span></p>
-            <p>الحالة: <x-ui.status-badge :status="$card->status" /></p>
-            <p>البائع: {{ $card->seller?->name ?? '-' }}</p>
-            <p>الشبكة: {{ $card->network?->name ?? '-' }}</p>
-            <p>السعر: {{ number_format((float)$card->price, 2) }}</p>
-            <p>تاريخ الرفع: {{ $card->uploaded_at?->format('Y-m-d H:i') ?? '-' }}</p>
+<x-layouts.dashboard title="بطاقة #{{ $card->id }}" :description="$card->package?->name ?? ''" dashboardType="admin">
+    <x-ui.panel title="تفاصيل الكود">
+        <div class="grid gap-4 text-sm text-slate-700 md:grid-cols-2">
+            <p><span class="font-semibold text-slate-900">الكود:</span> <span class="font-mono text-emerald-900">{{ $card->code }}</span></p>
+            <p><span class="font-semibold text-slate-900">الحالة:</span> <x-ui.status-badge :status="$card->status" /></p>
+            <p><span class="font-semibold text-slate-900">البائع:</span> {{ $card->seller?->name ?? '-' }}</p>
+            <p><span class="font-semibold text-slate-900">الشبكة:</span> {{ $card->network?->name ?? '-' }}</p>
+            <p><span class="font-semibold text-slate-900">السعر:</span> {{ number_format((float) $card->price, 2) }}</p>
+            <p><span class="font-semibold text-slate-900">تاريخ الرفع:</span> {{ $card->uploaded_at?->format('Y-m-d H:i') ?? '-' }}</p>
         </div>
     </x-ui.panel>
 </x-layouts.dashboard>

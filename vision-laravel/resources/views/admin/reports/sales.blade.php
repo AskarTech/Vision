@@ -1,19 +1,24 @@
-<x-layouts.dashboard title="تقرير المبيعات" dashboardType="admin">
-    <x-ui.page-header title="مبيعات البائعين" />
-    <x-ui.panel>
+<x-layouts.dashboard title="تقرير المبيعات" description="مبيعات البائعين والإيراد خلال الفترة" dashboardType="admin">
+    <x-ui.panel title="مبيعات الشركاء">
         <div class="overflow-x-auto">
-            <table class="table">
-                <thead><tr><th>البائع</th><th>عدد البطاقات</th><th>الإيراد</th></tr></thead>
-                <tbody>
-                @forelse($salesBySeller as $row)
+            <table class="admin-table">
+                <thead>
                     <tr>
-                        <td>{{ $row->name }}</td>
-                        <td>{{ $row->cards_sold }}</td>
-                        <td>{{ number_format((float)($row->revenue ?? 0), 2) }}</td>
+                        <th scope="col">البائع</th>
+                        <th scope="col">عدد البطاقات</th>
+                        <th scope="col">الإيراد</th>
                     </tr>
-                @empty
-                    <tr><td colspan="3" class="text-center">لا توجد بيانات</td></tr>
-                @endforelse
+                </thead>
+                <tbody>
+                    @forelse ($salesBySeller as $row)
+                        <tr>
+                            <td class="font-semibold text-slate-800">{{ $row->name }}</td>
+                            <td>{{ $row->cards_sold }}</td>
+                            <td class="font-mono font-semibold text-emerald-800">{{ number_format((float) ($row->revenue ?? 0), 2) }}</td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="3" class="py-10 text-center text-slate-500">لا توجد بيانات</td></tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

@@ -1,5 +1,4 @@
-<x-layouts.dashboard title="تفاصيل الباقة" dashboardType="admin">
-    <x-ui.page-header title="{{ $package->name }}" description="تفاصيل الباقة والمخزون المرتبط" />
+<x-layouts.dashboard :title="$package->name" description="تفاصيل الباقة والمخزون المرتبط" dashboardType="admin">
     <div class="grid gap-6 md:grid-cols-4">
         <x-ui.metric-card label="السعر" :value="number_format((float) $package->price, 2)" tone="teal" />
         <x-ui.metric-card label="الدورية" :value="$package->period_type" tone="blue" />

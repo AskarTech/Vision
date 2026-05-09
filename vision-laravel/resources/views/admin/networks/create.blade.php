@@ -1,5 +1,4 @@
-<x-layouts.dashboard title="إضافة شبكة" dashboardType="admin">
-    <x-ui.page-header title="إضافة شبكة جديدة" />
+<x-layouts.dashboard title="إضافة شبكة جديدة" dashboardType="admin">
     @include('admin.networks.partials.form', [
         'action' => route('admin.networks.store'),
         'method' => 'POST',

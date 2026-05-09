@@ -1,5 +1,4 @@
-<x-layouts.dashboard title="إضافة بائع" dashboardType="admin">
-    <x-ui.page-header title="إضافة بائع جديد" />
+<x-layouts.dashboard title="إضافة شريك جديد" dashboardType="admin">
     @include('admin.sellers.partials.form', [
         'action' => route('admin.sellers.store'),
         'method' => 'POST',
